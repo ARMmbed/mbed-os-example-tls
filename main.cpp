@@ -17,14 +17,14 @@
  *  limitations under the License.
  *
  *  This file is part of mbed TLS (https://tls.mbed.org)
- */
+*/
 
 #if !defined(TARGET_LIKE_MBED)
 
 #include <stdio.h>
 
 int main() {
-    printf("this program only works on mbed OS\n");
+    printf("This program only works on mbed OS.\n");
     return 0;
 }
 
@@ -47,12 +47,13 @@ int main() {
 #define UNSAFE 0
 
 #include "mbed.h"
-#include "EthernetInterface.h"
-#include "mbed-net-sockets/TCPStream.h"
-#include "test_env.h"
-#include "minar/minar.h"
+#include "NetworkStack.h"
+#include "LWIPInterface.h"
 
-#include "lwipv4_init.h"
+//#include "EthernetInterface.h"
+#include "TCPSocket.h"
+#include "test_env.h"
+//#include "lwipv4_init.h"
 
 #include "mbedtls/ssl.h"
 #include "mbedtls/entropy.h"
@@ -63,6 +64,10 @@ int main() {
 #endif
 
 namespace {
+
+Serial output(USBTX, USBRX);    
+NetworkStack *network_stack = NULL;
+    
 const char *HTTPS_SERVER_NAME = "developer.mbed.org";
 const int HTTPS_SERVER_PORT = 443;
 const int RECV_BUFFER_SIZE = 600;
@@ -83,6 +88,35 @@ const char *DRBG_PERS = "mbed TLS helloword client";
  * To add more than one root, just concatenate them.
  */
 const char SSL_CA_PEM[] =
+/* GlobalSign Root certificate */
+"-----BEGIN CERTIFICATE-----\n"
+"MIIEaTCCA1GgAwIBAgILBAAAAAABRE7wQkcwDQYJKoZIhvcNAQELBQAwVzELMAkG\n"
+"A1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNVBAsTB1Jv\n"
+"b3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xNDAyMjAxMDAw\n"
+"MDBaFw0yNDAyMjAxMDAwMDBaMGYxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i\n"
+"YWxTaWduIG52LXNhMTwwOgYDVQQDEzNHbG9iYWxTaWduIE9yZ2FuaXphdGlvbiBW\n"
+"YWxpZGF0aW9uIENBIC0gU0hBMjU2IC0gRzIwggEiMA0GCSqGSIb3DQEBAQUAA4IB\n"
+"DwAwggEKAoIBAQDHDmw/I5N/zHClnSDDDlM/fsBOwphJykfVI+8DNIV0yKMCLkZc\n"
+"C33JiJ1Pi/D4nGyMVTXbv/Kz6vvjVudKRtkTIso21ZvBqOOWQ5PyDLzm+ebomchj\n"
+"SHh/VzZpGhkdWtHUfcKc1H/hgBKueuqI6lfYygoKOhJJomIZeg0k9zfrtHOSewUj\n"
+"mxK1zusp36QUArkBpdSmnENkiN74fv7j9R7l/tyjqORmMdlMJekYuYlZCa7pnRxt\n"
+"Nw9KHjUgKOKv1CGLAcRFrW4rY6uSa2EKTSDtc7p8zv4WtdufgPDWi2zZCHlKT3hl\n"
+"2pK8vjX5s8T5J4BO/5ZS5gIg4Qdz6V0rvbLxAgMBAAGjggElMIIBITAOBgNVHQ8B\n"
+"Af8EBAMCAQYwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUlt5h8b0cFilT\n"
+"HMDMfTuDAEDmGnwwRwYDVR0gBEAwPjA8BgRVHSAAMDQwMgYIKwYBBQUHAgEWJmh0\n"
+"dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDMGA1UdHwQsMCow\n"
+"KKAmoCSGImh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5uZXQvcm9vdC5jcmwwPQYIKwYB\n"
+"BQUHAQEEMTAvMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNv\n"
+"bS9yb290cjEwHwYDVR0jBBgwFoAUYHtmGkUNl8qJUC99BM00qP/8/UswDQYJKoZI\n"
+"hvcNAQELBQADggEBAEYq7l69rgFgNzERhnF0tkZJyBAW/i9iIxerH4f4gu3K3w4s\n"
+"32R1juUYcqeMOovJrKV3UPfvnqTgoI8UV6MqX+x+bRDmuo2wCId2Dkyy2VG7EQLy\n"
+"XN0cvfNVlg/UBsD84iOKJHDTu/B5GqdhcIOKrwbFINihY9Bsrk8y1658GEV1BSl3\n"
+"30JAZGSGvip2CTFvHST0mdCF/vIhCPnG9vHQWe3WVjwIKANnuvD58ZAWR65n5ryA\n"
+"SOlCdjSXVWkkDoPWoC209fN5ikkodBpBocLTJIg1MGCUF7ThBCIxPTsvFwayuJ2G\n"
+"K1pp74P1S8SqtCr4fKGxhZSM9AyHDPSsQPhZSZg=\n"
+"-----END CERTIFICATE-----\n";
+
+#if OLD_CERTIFICATE
 /* GlobalSign Root R1 SHA1/RSA/2048
  *   Serial no.  04 00 00 00 00 01 15 4b 5a c3 94 */
 "-----BEGIN CERTIFICATE-----\n"
@@ -106,9 +140,10 @@ const char SSL_CA_PEM[] =
 "DKqC5JlR3XC321Y9YeRq4VzW9v493kHMB65jUr9TU/Qr6cf9tveCX4XSQRjbgbME\n"
 "HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\n"
 "-----END CERTIFICATE-----\n";
+#endif
 }
 
-using namespace mbed::Sockets::v0;
+//using namespace mbed::Sockets::v0;
 
 /**
  * \brief HelloHTTPS implements the logic for fetching a file from a webserver
@@ -124,7 +159,7 @@ public:
      * @param[in] port The port of the HTTPS server
      */
     HelloHTTPS(const char * domain, const uint16_t port) :
-            _stream(SOCKET_STACK_LWIP_IPV4), _domain(domain), _port(port)
+            _domain(domain), _port(port)
     {
 
         _error = false;
@@ -132,7 +167,7 @@ public:
         _got200 = false;
         _bpos = 0;
         _request_sent = 0;
-        _stream.open(SOCKET_AF_INET4);
+        _tcpsocket = new TCPSocket(network_stack);
 
         mbedtls_entropy_init(&_entropy);
         mbedtls_ctr_drbg_init(&_ctr_drbg);
@@ -151,7 +186,7 @@ public:
         mbedtls_ssl_config_free(&_ssl_conf);
     }
     /**
-     * Initiate the test.
+     * Start the test.
      *
      * Starts by clearing test flags, then resolves the address with DNS.
      *
@@ -217,15 +252,83 @@ public:
 
         mbedtls_ssl_set_hostname(&_ssl, HTTPS_SERVER_NAME);
 
-        mbedtls_ssl_set_bio(&_ssl, static_cast<void *>(&_stream),
+        mbedtls_ssl_set_bio(&_ssl, static_cast<void *>(_tcpsocket),
                                    ssl_send, ssl_recv, NULL );
 
 
         /* Connect to the server */
-        printf("Starting DNS lookup for %s\r\n", _domain);
-        /* Resolve the domain name: */
-        socket_error_t err = _stream.resolve(_domain, TCPStream::DNSHandler_t(this, &HelloHTTPS::onDNS));
-        _stream.error_check(err);
+        output.printf("Connecting with %s\r\n", _domain);
+        _tcpsocket->connect( _domain, _port );
+
+       /* Start the handshake, the rest will be done in onReceive() */
+        output.printf("Starting the TLS handshake...\r\n");
+        ret = mbedtls_ssl_handshake(&_ssl);
+        if (ret < 0) {
+            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
+                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
+                print_mbedtls_error("mbedtls_ssl_handshake", ret);
+                onError(_tcpsocket, -1 );
+            }
+            return;
+        }
+
+        ret = mbedtls_ssl_write(&_ssl, (const unsigned char *) _buffer, _bpos);
+        if (ret < 0) {
+            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
+                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
+                print_mbedtls_error("mbedtls_ssl_write", ret);
+                onError(_tcpsocket, -1 );
+            }
+            return;
+        }
+
+        /* It also means the handshake is done, time to print info */
+        printf("TLS connection to %s established\r\n", HTTPS_SERVER_NAME);
+
+        char buf[1024];
+        mbedtls_x509_crt_info(buf, sizeof(buf), "\r    ",
+                        mbedtls_ssl_get_peer_cert(&_ssl));
+        output.printf("Server certificate:\r\n%s\r", buf);
+
+#if defined(UNSAFE)
+        uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
+        if( flags != 0 )
+        {
+            mbedtls_x509_crt_verify_info(buf, sizeof (buf), "\r  ! ", flags);
+            printf("Certificate verification failed:\r\n%s\r\r\n", buf);
+        }
+        else
+#endif
+            printf("Certificate verification passed\r\n\r\n");
+
+
+        /* Read data out of the socket */
+        ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer, sizeof(_buffer));
+        if (ret < 0) {
+            if (ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
+                print_mbedtls_error("mbedtls_ssl_read", ret);
+                onError(_tcpsocket, -1 );
+            }
+            return;
+        }
+        _bpos = static_cast<size_t>(ret);
+
+        _buffer[_bpos] = 0;
+
+        /* Check each of the flags */
+        _got200 = _got200 || strstr(_buffer, HTTPS_OK_STR) != NULL;
+        _gothello = _gothello || strstr(_buffer, HTTPS_HELLO_STR) != NULL;
+
+        /* Print status messages */
+        output.printf("HTTPS: Received %d chars from server\r\n", _bpos);
+        output.printf("HTTPS: Received 200 OK status ... %s\r\n", _got200 ? "[OK]" : "[FAIL]");
+        output.printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
+        output.printf("HTTPS: Received message:\r\n\r\n");
+        output.printf("%s", _buffer);
+        _error = !(_got200 && _gothello);
+
+        _tcpsocket->close();
+//        MBED_HOSTTEST_RESULT(!error());
     }
     /**
      * Check if the test has completed.
@@ -245,7 +348,7 @@ public:
      * Closes the TCP socket
      */
     void close() {
-        _stream.close();
+        _tcpsocket->close();
         while (!_disconnected)
             __WFI();
     }
@@ -256,7 +359,7 @@ protected:
     static void print_mbedtls_error(const char *name, int err) {
         char buf[128];
         mbedtls_strerror(err, buf, sizeof (buf));
-        printf("%s() failed: -0x%04x (%d): %s\r\n", name, -err, err, buf);
+        output.printf("%s() failed: -0x%04x (%d): %s\r\n", name, -err, err, buf);
     }
 
 #if DEBUG_LEVEL > 0
@@ -277,7 +380,7 @@ protected:
             }
         }
 
-        printf("%s:%04d: |%d| %s", basename, line, level, str);
+        output.printf("%s:%04d: |%d| %s", basename, line, level, str);
     }
 
     /**
@@ -289,16 +392,16 @@ protected:
         char buf[1024];
         (void) data;
 
-        printf("\nVerifying certificate at depth %d:\n", depth);
+        output.printf("\nVerifying certificate at depth %d:\n", depth);
         mbedtls_x509_crt_info(buf, sizeof (buf) - 1, "  ", crt);
-        printf("%s", buf);
+        output.printf("%s", buf);
 
         if (*flags == 0)
-            printf("No verification issue for this certificate\n");
+            output.printf("No verification issue for this certificate\n");
         else
         {
             mbedtls_x509_crt_verify_info(buf, sizeof (buf), "  ! ", *flags);
-            printf("%s\n", buf);
+            output.printf("%s\n", buf);
         }
 
         return 0;
@@ -309,170 +412,58 @@ protected:
      * Receive callback for mbed TLS
      */
     static int ssl_recv(void *ctx, unsigned char *buf, size_t len) {
-        TCPStream *stream = static_cast<TCPStream *>(ctx);
-        socket_error_t err = stream->recv(buf, &len);
+        int recv = -1;
+        TCPSocket *socket = static_cast<TCPSocket *>(ctx);
+        recv = socket->recv(buf, len);
 
-        if (err == SOCKET_ERROR_NONE) {
-            return static_cast<int>(len);
-        } else if (err == SOCKET_ERROR_WOULD_BLOCK) {
+        if(NSAPI_ERROR_WOULD_BLOCK == recv){
             return MBEDTLS_ERR_SSL_WANT_READ;
-        } else {
+        }else if(recv < 0){
             return -1;
+        }else{
+            return recv;
         }
-    }
+   }
 
     /**
      * Send callback for mbed TLS
      */
     static int ssl_send(void *ctx, const unsigned char *buf, size_t len) {
-        TCPStream *stream = static_cast<TCPStream *>(ctx);
+       int size = -1;
+        TCPSocket *socket = static_cast<TCPSocket *>(ctx);
+        size = socket->send(buf, len);
 
-        socket_error_t err = stream->send(buf, len);
-
-        if (err == SOCKET_ERROR_NONE) {
-            return static_cast<int>(len);
-        } else if (err == SOCKET_ERROR_WOULD_BLOCK) {
-            return MBEDTLS_ERR_SSL_WANT_WRITE;
-        } else {
+        if(NSAPI_ERROR_WOULD_BLOCK == size){
+            return len;
+        }else if(size < 0){
             return -1;
+        }else{
+            return size;
         }
     }
 
-    void onError(Socket *s, socket_error_t err) {
-        (void) s;
-        printf("MBED: Socket Error: %s (%d)\r\n", socket_strerror(err), err);
-        _stream.close();
-        _error = true;
-        MBED_HOSTTEST_RESULT(false);
-    }
-    /**
-     * On Connect handler
-     * Starts the TLS handshake
-     */
-    void onConnect(TCPStream *s) {
-        char buf[16];
-        _remoteAddr.fmtIPv4(buf,sizeof(buf));
-        printf("Connected to %s:%d\r\n", buf, _port);
-
-        s->setOnReadable(TCPStream::ReadableHandler_t(this, &HelloHTTPS::onReceive));
-        s->setOnDisconnect(TCPStream::DisconnectHandler_t(this, &HelloHTTPS::onDisconnect));
-
-        /* Start the handshake, the rest will be done in onReceive() */
-        printf("Starting the TLS handshake...\r\n");
-        int ret = mbedtls_ssl_handshake(&_ssl);
-        if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_handshake", ret);
-                onError(s, SOCKET_ERROR_UNKNOWN);
-            }
-            return;
-        }
-    }
-    /**
-     * On Receive handler
-     * Parses the response from the server, to check for the HTTPS 200 status code and the expected response ("Hello World!")
-     */
-    void onReceive(Socket *s) {
-        /* Send request if not done yet */
-        if (!_request_sent) {
-            int ret = mbedtls_ssl_write(&_ssl, (const unsigned char *) _buffer, _bpos);
-            if (ret < 0) {
-                if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                    ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                    print_mbedtls_error("mbedtls_ssl_write", ret);
-                    onError(s, SOCKET_ERROR_UNKNOWN);
-                }
-                return;
-            }
-
-            /* If we get here, the request was sent */
-            _request_sent = 1;
-
-            /* It also means the handshake is done, time to print info */
-            printf("TLS connection to %s established\r\n", HTTPS_SERVER_NAME);
-            {
-                char buf[1024];
-                mbedtls_x509_crt_info(buf, sizeof(buf), "\r    ",
-                        mbedtls_ssl_get_peer_cert(&_ssl));
-                printf("Server certificate:\r\n%s\r", buf);
-
-#if defined(UNSAFE)
-                uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
-                if( flags != 0 )
-                {
-                    mbedtls_x509_crt_verify_info(buf, sizeof (buf), "\r  ! ", flags);
-                    printf("Certificate verification failed:\r\n%s\r\r\n", buf);
-                }
-                else
-#endif
-                    printf("Certificate verification passed\r\n\r\n");
-            }
-        }
-
-        /* Read data out of the socket */
-        int ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer, sizeof(_buffer));
-        if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_read", ret);
-                onError(s, SOCKET_ERROR_UNKNOWN);
-            }
-            return;
-        }
-        _bpos = static_cast<size_t>(ret);
-
-        _buffer[_bpos] = 0;
-
-        /* Check each of the flags */
-        _got200 = _got200 || strstr(_buffer, HTTPS_OK_STR) != NULL;
-        _gothello = _gothello || strstr(_buffer, HTTPS_HELLO_STR) != NULL;
-
-        /* Print status messages */
-        printf("HTTPS: Received %d chars from server\r\n", _bpos);
-        printf("HTTPS: Received 200 OK status ... %s\r\n", _got200 ? "[OK]" : "[FAIL]");
-        printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
-        printf("HTTPS: Received message:\r\n\r\n");
-        printf("%s", _buffer);
-        _error = !(_got200 && _gothello);
-
+    void onError(TCPSocket *s, int error) {
+        printf("MBED: Socket Error: %d\r\n", error);
         s->close();
+        _error = true;
+//        MBED_HOSTTEST_RESULT(false);
     }
-    /**
-     * On DNS Handler
-     * Reads the address returned by DNS, then starts the connect process.
-     */
-    void onDNS(Socket *s, struct socket_addr addr, const char *domain) {
-        /* Check that the result is a valid DNS response */
-        if (socket_addr_is_any(&addr)) {
-            /* Could not find DNS entry */
-            printf("Could not find DNS entry for %s", HTTPS_SERVER_NAME);
-            onError(s, SOCKET_ERROR_DNS_FAILED);
-        } else {
-            /* Start connecting to the remote host */
-            char buf[16];
-            _remoteAddr.setAddr(&addr);
-            _remoteAddr.fmtIPv4(buf,sizeof(buf));
-            printf("DNS Response Received:\r\n%s: %s\r\n", domain, buf);
-            printf("Connecting to %s:%d\r\n", buf, _port);
-            socket_error_t err = _stream.connect(_remoteAddr, _port, TCPStream::ConnectHandler_t(this, &HelloHTTPS::onConnect));
 
-            if (err != SOCKET_ERROR_NONE) {
-                onError(s, err);
-            }
-        }
-    }
+#if 0
     void onDisconnect(TCPStream *s) {
         s->close();
         MBED_HOSTTEST_RESULT(!error());
     }
 
+#endif
+
 protected:
-    TCPStream _stream;              /**< The TCP Socket */
+    TCPSocket* _tcpsocket;
+
     const char *_domain;            /**< The domain name of the HTTPS server */
     const uint16_t _port;           /**< The HTTPS server port */
     char _buffer[RECV_BUFFER_SIZE]; /**< The response buffer */
     size_t _bpos;                   /**< The current offset in the response buffer */
-    SocketAddr _remoteAddr;         /**< The remote address */
     volatile bool _got200;          /**< Status flag for HTTPS 200 */
     volatile bool _gothello;        /**< Status flag for finding the test string */
     volatile bool _error;           /**< Status flag for an error */
@@ -489,32 +480,36 @@ protected:
 /**
  * The main loop of the HTTPS Hello World test
  */
-EthernetInterface eth;
-HelloHTTPS *hello;
-
-void app_start(int, char*[]) {
+int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. Select a higher baud rate for
      * printf(), regardless of debug level for the sake of uniformity. */
-    Serial pc(USBTX, USBRX);
-    pc.baud(115200);
 
-    MBED_HOSTTEST_TIMEOUT(120);
-    MBED_HOSTTEST_SELECT(default);
-    MBED_HOSTTEST_DESCRIPTION(mbed TLS example HTTPS client);
-    MBED_HOSTTEST_START("MBEDTLS_EX_HTTPS_CLIENT");
+    // Sets the console baud-rate
+    output.baud(115200);
+
+//    MBED_HOSTTEST_TIMEOUT(120);
+//    MBED_HOSTTEST_SELECT(_default);
+//    MBED_HOSTTEST_DESCRIPTION(mbed TLS example HTTPS client);
+//    MBED_HOSTTEST_START("MBEDTLS_EX_HTTPS_CLIENT");
 
     /* Initialise with DHCP, connect, and start up the stack */
-    eth.init();
-    eth.connect();
-    lwipv4_socket_init();
+    LWIPInterface lwip;
 
-    hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT);
+    lwip.connect();
+    output.printf("Using Ethernet LWIP\r\n");
+    network_stack = &lwip;
 
-    printf("Client IP Address is %s\r\n", eth.getIPAddress());
+    const char *ip_addr = network_stack->get_ip_address();
+    if (ip_addr) {
+        output.printf("Client IP Address is %s\r\n",ip_addr);
+    } else {
+        output.printf("No Client IP Address\r\n");
+    }
 
-    mbed::util::FunctionPointer1<void, const char*> fp(hello, &HelloHTTPS::startTest);
-    minar::Scheduler::postCallback(fp.bind(HTTPS_PATH));
+
+    HelloHTTPS hello(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT);
+    hello.startTest(HTTPS_PATH);
 }
 
 #endif /* TARGET_LIKE_MBED */
