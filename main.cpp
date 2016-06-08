@@ -55,6 +55,7 @@ int main() {
 #include "test_env.h"
 //#include "lwipv4_init.h"
 
+#include "mbedtls/platform.h"
 #include "mbedtls/ssl.h"
 #include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
