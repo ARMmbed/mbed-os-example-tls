@@ -1,56 +1,46 @@
-# HTTPS File Download Example for TLS Client
+# HTTPS File Download Example for TLS Client on mbed OS
 
 This application downloads a file from an HTTPS server (developer.mbed.org) and looks for a specific string in that file.
 
-This example is implemented as a logic class (HelloHTTPS) wrapping a TCP socket and a TLS context. The logic class handles all events, leaving the main loop to just check if the process has finished.
+## Required hardware
 
-## Pre-requisites
-
-To build and run this example you must have:
-
-* A computer with the following software installed:
-  * [CMake](http://www.cmake.org/download/).
-  * [The ARM GCC toolchain](https://launchpad.net/gcc-arm-embedded).
-  * A serial terminal emulator (Like screen, pySerial and cu).
-* An [FRDM-K64F](http://developer.mbed.org/platforms/FRDM-K64F/) development board, or another board supported by mbed OS (in which case you'll have to substitute frdm-k64f-gcc with the appropriate target in the instructions below).
+* An [FRDM-K64F](http://developer.mbed.org/platforms/FRDM-K64F/) development board.
 * A micro-USB cable.
-* An Ethernet connection to the internet.
-* An Ethernet cable.
-* If your OS is Windows, please follow the installation instructions [for the serial port driver](https://developer.mbed.org/handbook/Windows-serial-configuration).
+* An Ethernet cable and connection to the internet.
+
+## Required software
+* [mbed-cli](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed-cli, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
+* [Serial port monitor](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications).
 
 ## Getting started
 
-1. Connect the FRDM-K64F to the internet using the Ethernet cable.
+1. Clone [this](https://github.com/ARMmbed/mbed-tls-sample) repository.
 
-2. Connect the FRDM-K64F to the computer with the micro-USB cable, being careful to use the "OpenSDA" connector on the target board.
+2. Open a command line tool and navigate to the project’s directory.
 
-3. Navigate to the mbedtls directory supplied with your release and open a terminal.
+3. Update mbed-os sources using the `mbed update` command.
 
-4. Set the yotta target:
+4. Build the application by selecting the hardware board and build the toolchain using the command `mbed compile -m K64F -t GCC_ARM -c -j0`. mbed-cli builds a binary file under the project’s `.build` directory.
 
-    ```
-    yotta target frdm-k64f-gcc
-    ```
+5. Connect the FRDM-K64F to the internet using the Ethernet cable.
 
-5. Build mbedtls and the examples. This will take a long time if it is the first time:
+6. Connect the FRDM-K64F to the computer with the micro-USB cable, being careful to use the **OpenSDA** connector on the target board. The board is listed as a mass-storage device.
 
-    ```
-    $ yotta build
-    ```
+7. Drag the binary `.build/K64F/GCC_ARM/mbed-tls-sample.bin` to the board to flash the application.
 
-6. Copy `build/frdm-k64f-gcc/test/mbedtls-test-example-tls-client.bin` to your mbed board and wait until the LED next to the USB port stops blinking.
+8. The board is automatically programmed with the new binary. A flashing LED on it indicates that it is still working. When the LED stops blinking, the board is ready to work.
 
-7. Start the serial terminal emulator and connect to the virtual serial port presented by FRDM-K64F. 
+9. Press the **RESET** button on the board to run the program.
 
-	Use the following settings:
+## Monitoring the application
 
-	* 115200 baud (not 9600).
-	* 8N1.
-	* No flow control. 
+The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://developer.mbed.org/handbook/Terminals) and connect to the [virtual serial port](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
 
-8. Press the Reset button on the board.
+* 115200 baud (not 9600).
+* 8N1.
+* No flow control.
 
-9. The output in the terminal window should look similar to this:
+After pressing the **RESET** button on the board, the output in the terminal window should look similar to this:
 
     ```
     {{timeout;120}}
@@ -109,8 +99,6 @@ To build and run this example you must have:
 
 ## Debugging the TLS connection
 
-If you are experiencing problems with this example, you should first rule out network issues by making sure the [simple HTTP file downloader example](https://github.com/ARMmbed/mbed-example-network-private/tree/master/test/helloworld-tcpclient) for the TCP module works as expected. If not, please follow the debug instructions for the HTTP file example before proceeding with the instructions below.
-
 To print out more debug information about the TLS connection, edit the file `source/main.cpp` and change the definition of `DEBUG_LEVEL` (near the top of the file) from 0 to a positive number:
 
 * Level 1 only prints non-zero return codes from SSL functions and information about the full certificate chain being verified.
@@ -129,6 +117,8 @@ If the TLS connection is failing with an error similar to:
     Failed to fetch /media/uploads/mbed_official/hello.txt from developer.mbed.org:443
     ```
 
-it probably means you need to update the contents of the `SSL_CA_PEM` constant (this can happen if you modify `HTTPS_SERVER_NAME`, or when `developer.mbed.org` switches to a new CA when updating its certificate). 
+it probably means you need to update the contents of the `SSL_CA_PEM` constant (this can happen if you modify `HTTPS_SERVER_NAME`, or when `developer.mbed.org` switches to a new CA when updating its certificate).
 
-Another reason for this error may be a proxy providing a different certificate. Proxies can be used in some network configurations or for performing man-in-the-middle attacks. If you choose to ignore this error and proceed with the connection anyway, you can change the definition of `UNSAFE` near the top of the file from 0 to 1. **Warning:** this removes all security against a possible active attacker, therefore use at your own risk, or for debugging only!
+Another reason for this error may be a proxy providing a different certificate. Proxies can be used in some network configurations or for performing man-in-the-middle attacks. If you choose to ignore this error and proceed with the connection anyway, you can change the definition of `UNSAFE` near the top of the file from 0 to 1.
+
+**Warning:** this removes all security against a possible active attacker, therefore use at your own risk, or for debugging only!
