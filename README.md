@@ -9,7 +9,7 @@ This application downloads a file from an HTTPS server (developer.mbed.org) and 
 * An Ethernet cable and connection to the internet.
 
 ## Required software
-* [mbed-cli](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed-cli, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
+* [mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
 * [Serial port monitor](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications).
 
 ## Getting started
@@ -18,9 +18,9 @@ This application downloads a file from an HTTPS server (developer.mbed.org) and 
 
 2. Open a command line tool and navigate to the project’s directory.
 
-3. Update mbed-os sources using the `mbed update` command.
+3. Update `mbed-os` sources using the `mbed update` command.
 
-4. Build the application by selecting the hardware board and build the toolchain using the command `mbed compile -m K64F -t GCC_ARM -c -j0`. mbed-cli builds a binary file under the project’s `.build` directory.
+4. Build the application by selecting the board and build toolchain using the command `mbed compile -m K64F -t GCC_ARM -c -j0`. mbed-cli builds a binary file under the project’s `.build` directory.
 
 5. Connect the FRDM-K64F to the internet using the Ethernet cable.
 
@@ -40,7 +40,7 @@ The application prints debug messages over the serial port, so you can monitor i
 * 8N1.
 * No flow control.
 
-After pressing the **RESET** button on the board, the output in the terminal window should look similar to this:
+After pressing the **RESET** button on the board, the output in the terminal window should be similar to this:
 
     ```
     {{timeout;120}}
@@ -110,15 +110,16 @@ To print out more debug information about the TLS connection, edit the file `sou
 * Level 4 (the maximum) includes full binary dumps of the packets.
 
 
-If the TLS connection is failing with an error similar to:
+The TLS connection can fail with an error similar to:
 
     ```
     mbedtls_ssl_write() failed: -0x2700 (-9984): X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
     Failed to fetch /media/uploads/mbed_official/hello.txt from developer.mbed.org:443
     ```
 
-it probably means you need to update the contents of the `SSL_CA_PEM` constant (this can happen if you modify `HTTPS_SERVER_NAME`, or when `developer.mbed.org` switches to a new CA when updating its certificate).
+This probably means you need to update the contents of the `SSL_CA_PEM` constant (this can happen if you modify `HTTPS_SERVER_NAME`, or when `developer.mbed.org` switches to a new CA when updating its certificate).
 
-Another reason for this error may be a proxy providing a different certificate. Proxies can be used in some network configurations or for performing man-in-the-middle attacks. If you choose to ignore this error and proceed with the connection anyway, you can change the definition of `UNSAFE` near the top of the file from 0 to 1.
+Another possible reason for this error is a proxy providing a different certificate. Proxies can be used in some network configurations or for performing man-in-the-middle attacks. If you choose to ignore this error and proceed with the connection anyway, you can change the definition of `UNSAFE` near the top of the file from 0 to 1.
 
-**Warning:** this removes all security against a possible active attacker, therefore use at your own risk, or for debugging only!
+**Warning:** this removes all security against a possible active attacker, so use at your own risk or for debugging only!
+
