@@ -42,7 +42,6 @@ The application prints debug messages over the serial port, so you can monitor i
 
 After pressing the **RESET** button on the board, the output in the terminal window should be similar to this:
 
-    ```
     {{timeout;120}}
     {{host_test_name;default}}
     {{description;mbed TLS example HTTPS client}}
@@ -95,7 +94,6 @@ After pressing the **RESET** button on the board, the output in the terminal win
     Hello world!
     {{success}}
     {{end}}
-    ```
 
 ## Debugging the TLS connection
 
@@ -112,10 +110,8 @@ To print out more debug information about the TLS connection, edit the file `sou
 
 The TLS connection can fail with an error similar to:
 
-    ```
     mbedtls_ssl_write() failed: -0x2700 (-9984): X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
     Failed to fetch /media/uploads/mbed_official/hello.txt from developer.mbed.org:443
-    ```
 
 This probably means you need to update the contents of the `SSL_CA_PEM` constant (this can happen if you modify `HTTPS_SERVER_NAME`, or when `developer.mbed.org` switches to a new CA when updating its certificate).
 
