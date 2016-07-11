@@ -19,17 +19,6 @@
  *  This file is part of mbed TLS (https://tls.mbed.org)
 */
 
-#if !defined(TARGET_LIKE_MBED)
-
-#include <stdio.h>
-
-int main() {
-    printf("This program only works on mbed OS.\n");
-    return 0;
-}
-
-#else
-
 /** \file main.cpp
  *  \brief An example TLS Client application
  *  This application sends an HTTPS request to developer.mbed.org and searches for a string in
@@ -48,12 +37,9 @@ int main() {
 
 #include "mbed.h"
 #include "NetworkStack.h"
-#include "LWIPInterface.h"
 
-//#include "EthernetInterface.h"
+#include "EthernetInterface.h"
 #include "TCPSocket.h"
-#include "test_env.h"
-//#include "lwipv4_init.h"
 
 #include "mbedtls/platform.h"
 #include "mbedtls/ssl.h"
@@ -66,9 +52,8 @@ int main() {
 
 namespace {
 
-Serial output(USBTX, USBRX);    
-NetworkStack *network_stack = NULL;
-    
+Serial output(USBTX, USBRX);
+
 const char *HTTPS_SERVER_NAME = "developer.mbed.org";
 const int HTTPS_SERVER_PORT = 443;
 const int RECV_BUFFER_SIZE = 600;
@@ -144,8 +129,6 @@ const char SSL_CA_PEM[] =
 #endif
 }
 
-//using namespace mbed::Sockets::v0;
-
 /**
  * \brief HelloHTTPS implements the logic for fetching a file from a webserver
  * using a TCP socket and parsing the result.
@@ -159,7 +142,7 @@ public:
      * @param[in] domain The domain name to fetch from
      * @param[in] port The port of the HTTPS server
      */
-    HelloHTTPS(const char * domain, const uint16_t port) :
+    HelloHTTPS(const char * domain, const uint16_t port, NetworkInterface *net_iface) :
             _domain(domain), _port(port)
     {
 
@@ -168,7 +151,7 @@ public:
         _got200 = false;
         _bpos = 0;
         _request_sent = 0;
-        _tcpsocket = new TCPSocket(network_stack);
+        _tcpsocket = new TCPSocket(net_iface);
 
         mbedtls_entropy_init(&_entropy);
         mbedtls_ctr_drbg_init(&_ctr_drbg);
@@ -329,7 +312,6 @@ public:
         _error = !(_got200 && _gothello);
 
         _tcpsocket->close();
-//        MBED_HOSTTEST_RESULT(!error());
     }
     /**
      * Check if the test has completed.
@@ -447,7 +429,6 @@ protected:
         printf("MBED: Socket Error: %d\r\n", error);
         s->close();
         _error = true;
-//        MBED_HOSTTEST_RESULT(false);
     }
 
 #if 0
@@ -486,31 +467,20 @@ int main() {
      * cause the other party to time out. Select a higher baud rate for
      * printf(), regardless of debug level for the sake of uniformity. */
 
-    // Sets the console baud-rate
+    /* Sets the console baud-rate */
     output.baud(115200);
 
-//    MBED_HOSTTEST_TIMEOUT(120);
-//    MBED_HOSTTEST_SELECT(_default);
-//    MBED_HOSTTEST_DESCRIPTION(mbed TLS example HTTPS client);
-//    MBED_HOSTTEST_START("MBEDTLS_EX_HTTPS_CLIENT");
-
-    /* Initialise with DHCP, connect, and start up the stack */
-    LWIPInterface lwip;
-
-    lwip.connect();
+    /* Inititalise with DHCP, connect, and start up the stack */
+    EthernetInterface eth_iface;
+    eth_iface.connect();
     output.printf("Using Ethernet LWIP\r\n");
-    network_stack = &lwip;
-
-    const char *ip_addr = network_stack->get_ip_address();
+    const char *ip_addr = eth_iface.get_ip_address();
     if (ip_addr) {
-        output.printf("Client IP Address is %s\r\n",ip_addr);
+        output.printf("Client IP Address is %s\r\n", ip_addr);
     } else {
         output.printf("No Client IP Address\r\n");
     }
 
-
-    HelloHTTPS hello(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT);
+    HelloHTTPS hello(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
     hello.startTest(HTTPS_PATH);
 }
-
-#endif /* TARGET_LIKE_MBED */
