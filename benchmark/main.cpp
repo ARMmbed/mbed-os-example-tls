@@ -1,7 +1,7 @@
 /*
  *  Benchmark demonstration program
  *
- *  Copyright (C) 2016, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2016, ARM Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -28,15 +28,7 @@
 #include MBEDTLS_CONFIG_FILE
 #endif
 
-#if defined(MBEDTLS_PLATFORM_C)
 #include "mbedtls/platform.h"
-#else
-#include <stdio.h>
-#define mbedtls_exit       exit
-#define mbedtls_printf     output.printf
-#define mbedtls_snprintf   snprintf
-#define mbedtls_free       free
-#endif
 
 #include <string.h>
 
@@ -180,8 +172,6 @@
         mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );
 #endif
 
-Serial output(USBTX, USBRX);
-
 static unsigned long mbedtls_timing_hardclock( void )
 {
     static int dwt_started = 0;
@@ -220,15 +210,6 @@ do {                                                                           \
                      i * BUFSIZE / 1024,                                       \
                      ( mbedtls_timing_hardclock() - tsc ) / ( j * BUFSIZE ) ); \
 } while( 0 )
-
-#if defined(MBEDTLS_ERROR_C)
-#define PRINT_ERROR                                            \
-        mbedtls_strerror( ret, ( char * )tmp, sizeof( tmp ) ); \
-        mbedtls_printf( "FAILED: %s\r\n", tmp );
-#else
-#define PRINT_ERROR                                    \
-        mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );
-#endif
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C) && defined(MBEDTLS_MEMORY_DEBUG)
 
@@ -914,10 +895,8 @@ static int benchmark( int argc, char *argv[] )
 }
 
 int main(void) {
-    output.baud(115200);
-
     int ret = benchmark(0, NULL);
     if (ret != 0) {
-        output.printf("Benchmark failed with error %d\r\n", ret);
+        mbedtls_printf("Benchmark failed with error %d\r\n", ret);
     }
 }

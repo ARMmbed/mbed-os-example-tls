@@ -4,17 +4,7 @@ This application benchmarks the various cryptographic primitives offered by mbed
 
 # Getting started
 
-## Required hardware
-
-Hardware requirements are in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
-
-## Required software
-
-Software requirements are in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
-
-## Building and running the example
-
-The building instructions for all samples are in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
+Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
 ## Monitoring the application
 

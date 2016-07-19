@@ -4,22 +4,15 @@ This application downloads a file from an HTTPS server (developer.mbed.org) and 
 
 # Getting started
 
+Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
+
 ## Required hardware
 
-This example also requires an Ethernet cable an connection to the internet additional to the hardware requirements in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
-
-## Required software
-
-Software requirements are in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
-
-## Building and running the example
-
-The building instructions for all samples are in the [main readme](https://github.com/ARMmbed/mbed-tls-sample/blob/master/README.md).
-
-__NOTE:__ Do not forget to plug the Ethernet cable before running the application!
-
+This example also requires an Ethernet cable an connection to the internet additional to the hardware requirements in the [main readme](../README.md).
 
 ## Monitoring the application
+
+__NOTE:__ Make sure that the Ethernet cable is plugged in correctly before running the application.
 
 The output in the terminal window should be similar to this:
 
