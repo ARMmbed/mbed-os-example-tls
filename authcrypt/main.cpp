@@ -26,19 +26,18 @@
 #include "mbedtls/debug.h"
 #endif
 
-#include <stdio.h>
-#include <string.h>
+#include "mbedtls/platform.h"
 
-Serial output(USBTX, USBRX);
+#include <string.h>
 
 static void print_hex(const char *title, const unsigned char buf[], size_t len)
 {
-    output.printf("%s: ", title);
+    mbedtls_printf("%s: ", title);
 
     for (size_t i = 0; i < len; i++)
-        output.printf("%02x", buf[i]);
+        mbedtls_printf("%02x", buf[i]);
 
-    output.printf("\r\n");
+    mbedtls_printf("\r\n");
 }
 
 /*
@@ -60,7 +59,7 @@ static int example(void)
     unsigned char ciphertext[128] = { 0 };
     int ret;
 
-    output.printf("\r\n\r\n");
+    mbedtls_printf("\r\n\r\n");
     print_hex("plaintext message", (unsigned char *) message, sizeof message);
 
     /*
@@ -90,13 +89,13 @@ static int example(void)
 
     ret = mbedtls_cipher_setup(&ctx, mbedtls_cipher_info_from_type(MBEDTLS_CIPHER_AES_128_CCM));
     if (ret != 0) {
-        output.printf("mbedtls_cipher_setup() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setup() returned -0x%04X\r\n", -ret);
         return 1;
     }
 
     ret = mbedtls_cipher_setkey(&ctx, secret_key, 8 * sizeof secret_key, MBEDTLS_ENCRYPT);
     if (ret != 0) {
-        output.printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
         return 1;
     }
 
@@ -126,7 +125,7 @@ static int example(void)
                               ciphertext + nonce_len, &ciphertext_len,
                               ciphertext + nonce_len + sizeof message, tag_len );
     if (ret != 0) {
-        output.printf("mbedtls_cipher_auth_encrypt() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_auth_encrypt() returned -0x%04X\r\n", -ret);
         return 1;
     }
     ciphertext_len += nonce_len + tag_len;
@@ -146,7 +145,7 @@ static int example(void)
 
     ret = mbedtls_cipher_setkey(&ctx, secret_key, 8 * sizeof secret_key, MBEDTLS_DECRYPT);
     if (ret != 0) {
-        output.printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
         return 1;
     }
 
@@ -158,27 +157,24 @@ static int example(void)
                               ciphertext + ciphertext_len - tag_len, tag_len );
     /* Checking the return code is CRITICAL for security here */
     if (ret == MBEDTLS_ERR_CIPHER_AUTH_FAILED) {
-        output.printf("Something bad is happening! Data is not authentic!\r\n");
+        mbedtls_printf("Something bad is happening! Data is not authentic!\r\n");
         return 1;
     }
     if (ret != 0) {
-        output.printf("mbedtls_cipher_authdecrypt() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_authdecrypt() returned -0x%04X\r\n", -ret);
         return 1;
     }
 
     print_hex("decrypted", decrypted, decrypted_len);
 
-    output.printf("\r\nDONE\r\n");
+    mbedtls_printf("\r\nDONE\r\n");
 
     return 0;
 }
 
 int main() {
-    /* Use 115200 bps for consistency with other examples */
-    output.baud(115200);
-
     int ret = example();
     if (ret != 0) {
-        output.printf("Example failed with error %d\r\n", ret);
+        mbedtls_printf("Example failed with error %d\r\n", ret);
     }
 }
