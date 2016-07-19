@@ -29,19 +29,18 @@
 #include "mbedtls/debug.h"
 #endif
 
-#include <cstdio>
-#include <string.h>
+#include "mbedtls/platform.h"
 
-Serial output(USBTX, USBRX);
+#include <string.h>
 
 static void print_hex(const char *title, const unsigned char buf[], size_t len)
 {
-    output.printf("%s: ", title);
+    mbedtls_printf("%s: ", title);
 
     for (size_t i = 0; i < len; i++)
-        output.printf("%02x", buf[i]);
+        mbedtls_printf("%02x", buf[i]);
 
-    output.printf("\r\n");
+    mbedtls_printf("\r\n");
 }
 
 static const char hello_str[] = "Hello, world!";
@@ -50,7 +49,7 @@ static const size_t hello_len = strlen(hello_str);
 
 static int example(void)
 {
-    output.printf("\r\n\r\n");
+    mbedtls_printf("\r\n\r\n");
 
     /*
      * Method 1: use all-in-one function of a specific SHA-xxx module
@@ -94,7 +93,7 @@ static int example(void)
 
     if (md_info3 == NULL)
     {
-        output.printf("SHA256 not available\r\n");
+        mbedtls_printf("SHA256 not available\r\n");
         return 1;
     }
 
@@ -102,7 +101,7 @@ static int example(void)
 
     if (ret3 != 0)
     {
-        output.printf("md() returned -0x%04X\r\n", -ret3);
+        mbedtls_printf("md() returned -0x%04X\r\n", -ret3);
         return 1;
     }
 
@@ -118,7 +117,7 @@ static int example(void)
 
     if (md_info4 == NULL)
     {
-        output.printf("SHA256 not available\r\n");
+        mbedtls_printf("SHA256 not available\r\n");
         return 1;
     }
 
@@ -129,7 +128,7 @@ static int example(void)
     int ret4 = mbedtls_md_init_ctx(&ctx4, md_info4);
     if (ret4 != 0)
     {
-        output.printf("md_init_ctx() returned -0x%04X\r\n", -ret4);
+        mbedtls_printf("md_init_ctx() returned -0x%04X\r\n", -ret4);
         return 1;
     }
 
@@ -147,17 +146,14 @@ static int example(void)
     mbedtls_md_free(&ctx4);
 
 
-    output.printf("\r\nDONE\r\n");
+    mbedtls_printf("\r\nDONE\r\n");
 
     return 0;
 }
 
 int main() {
-    // Set the console baud-rate
-    output.baud(115200);
-
     int ret = example();
     if (ret != 0) {
-        output.printf("Example failed with error %d\r\n", ret);
+        mbedtls_printf("Example failed with error %d\r\n", ret);
     }
 }
