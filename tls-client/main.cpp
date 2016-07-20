@@ -1,7 +1,7 @@
 /*
  *  Hello world example of a TLS client: fetch an HTTPS page
  *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2016, ARM Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -51,8 +51,6 @@
 #endif
 
 namespace {
-
-Serial output(USBTX, USBRX);
 
 const char *HTTPS_SERVER_NAME = "developer.mbed.org";
 const int HTTPS_SERVER_PORT = 443;
@@ -241,11 +239,11 @@ public:
 
 
         /* Connect to the server */
-        output.printf("Connecting with %s\r\n", _domain);
+        mbedtls_printf("Connecting with %s\r\n", _domain);
         _tcpsocket->connect( _domain, _port );
 
        /* Start the handshake, the rest will be done in onReceive() */
-        output.printf("Starting the TLS handshake...\r\n");
+        mbedtls_printf("Starting the TLS handshake...\r\n");
         ret = mbedtls_ssl_handshake(&_ssl);
         if (ret < 0) {
             if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
@@ -272,7 +270,7 @@ public:
         char buf[1024];
         mbedtls_x509_crt_info(buf, sizeof(buf), "\r    ",
                         mbedtls_ssl_get_peer_cert(&_ssl));
-        output.printf("Server certificate:\r\n%s\r", buf);
+        mbedtls_printf("Server certificate:\r\n%s\r", buf);
 
 #if defined(UNSAFE)
         uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
@@ -304,11 +302,11 @@ public:
         _gothello = _gothello || strstr(_buffer, HTTPS_HELLO_STR) != NULL;
 
         /* Print status messages */
-        output.printf("HTTPS: Received %d chars from server\r\n", _bpos);
-        output.printf("HTTPS: Received 200 OK status ... %s\r\n", _got200 ? "[OK]" : "[FAIL]");
-        output.printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
-        output.printf("HTTPS: Received message:\r\n\r\n");
-        output.printf("%s", _buffer);
+        mbedtls_printf("HTTPS: Received %d chars from server\r\n", _bpos);
+        mbedtls_printf("HTTPS: Received 200 OK status ... %s\r\n", _got200 ? "[OK]" : "[FAIL]");
+        mbedtls_printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
+        mbedtls_printf("HTTPS: Received message:\r\n\r\n");
+        mbedtls_printf("%s", _buffer);
         _error = !(_got200 && _gothello);
 
         _tcpsocket->close();
@@ -342,7 +340,7 @@ protected:
     static void print_mbedtls_error(const char *name, int err) {
         char buf[128];
         mbedtls_strerror(err, buf, sizeof (buf));
-        output.printf("%s() failed: -0x%04x (%d): %s\r\n", name, -err, err, buf);
+        mbedtls_printf("%s() failed: -0x%04x (%d): %s\r\n", name, -err, err, buf);
     }
 
 #if DEBUG_LEVEL > 0
@@ -363,7 +361,7 @@ protected:
             }
         }
 
-        output.printf("%s:%04d: |%d| %s", basename, line, level, str);
+        mbedtls_printf("%s:%04d: |%d| %s", basename, line, level, str);
     }
 
     /**
@@ -375,16 +373,16 @@ protected:
         char buf[1024];
         (void) data;
 
-        output.printf("\nVerifying certificate at depth %d:\n", depth);
+        mbedtls_printf("\nVerifying certificate at depth %d:\n", depth);
         mbedtls_x509_crt_info(buf, sizeof (buf) - 1, "  ", crt);
-        output.printf("%s", buf);
+        mbedtls_printf("%s", buf);
 
         if (*flags == 0)
-            output.printf("No verification issue for this certificate\n");
+            mbedtls_printf("No verification issue for this certificate\n");
         else
         {
             mbedtls_x509_crt_verify_info(buf, sizeof (buf), "  ! ", *flags);
-            output.printf("%s\n", buf);
+            mbedtls_printf("%s\n", buf);
         }
 
         return 0;
@@ -431,14 +429,6 @@ protected:
         _error = true;
     }
 
-#if 0
-    void onDisconnect(TCPStream *s) {
-        s->close();
-        MBED_HOSTTEST_RESULT(!error());
-    }
-
-#endif
-
 protected:
     TCPSocket* _tcpsocket;
 
@@ -464,21 +454,17 @@ protected:
  */
 int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
-     * cause the other party to time out. Select a higher baud rate for
-     * printf(), regardless of debug level for the sake of uniformity. */
-
-    /* Sets the console baud-rate */
-    output.baud(115200);
+     * cause the other party to time out. */
 
     /* Inititalise with DHCP, connect, and start up the stack */
     EthernetInterface eth_iface;
     eth_iface.connect();
-    output.printf("Using Ethernet LWIP\r\n");
+    mbedtls_printf("Using Ethernet LWIP\r\n");
     const char *ip_addr = eth_iface.get_ip_address();
     if (ip_addr) {
-        output.printf("Client IP Address is %s\r\n", ip_addr);
+        mbedtls_printf("Client IP Address is %s\r\n", ip_addr);
     } else {
-        output.printf("No Client IP Address\r\n");
+        mbedtls_printf("No Client IP Address\r\n");
     }
 
     HelloHTTPS hello(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
