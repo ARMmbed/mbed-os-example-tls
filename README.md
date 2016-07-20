@@ -40,7 +40,7 @@ Please browse the subdirectories for specific documentation.
 
 The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://developer.mbed.org/handbook/Terminals) and connect to the [virtual serial port](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
 
-* 115200 baud (not 9600).
+* 9600 baud.
 * 8N1.
 * No flow control.
 
