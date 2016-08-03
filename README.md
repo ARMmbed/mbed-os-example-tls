@@ -10,11 +10,11 @@ This repository contains a collection of mbed TLS example applications based on 
 
 ### Other hardware
 
-Although the only board supported by these examples is K64F, they should work on any mbed enabled hardware, if it has proper hardware entropy source, and this entropy source is integrated with mbed TLS. The single example that does not need an entropy source is `hashing`.
+Although the only board supported by these examples is K64F, they should work on any mbed enabled hardware, if it has a hardware entropy source, and this entropy source is integrated with mbed TLS. The single example that does not need an entropy source is `hashing`.
 
 If your board has no hardware entropy source or its entropy source is not integrated with mbed TLS, but you want to try these examples anyway, then you may want to consider compiling mbed TLS without real entropy sources.
 
-*Warning!* Without proper entropy sources mbed TLS does not provide any security whatsoever. If you still want to compile mbed TLS without real entropy sources, then consult the section "How to test without entropy sources" in the mbed TLS Porting Guide.
+*Warning!* Without entropy sources mbed TLS does not provide any security whatsoever. If you still want to compile mbed TLS without entropy sources, then consult the section "How to test without entropy sources" in the mbed TLS Porting Guide.
 
 ## Required software
 * [mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
@@ -44,10 +44,10 @@ If your board has no hardware entropy source or its entropy source is not integr
 ## Monitoring the application
 
 Please browse the subdirectories for specific documentation.
-* [authcrypt](./authcrypt/README.md)
-* [benchmark](./benchmark/README.md)
-* [hashing](./hashing/README.md)
-* [tls-client](./tls-client/README.md)
+* [authcrypt](./authcrypt/README.md): performs authenticated encryption and authenticated decryption of a buffer.
+* [benchmark](./benchmark/README.md): benchmarks the various cryptographic primitives offered by mbed TLS.
+* [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
+* [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (developer.mbed.org) and looks for a specific string in that file.
 
 The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://developer.mbed.org/handbook/Terminals) and connect to the [virtual serial port](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
 

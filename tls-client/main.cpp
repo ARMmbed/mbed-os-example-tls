@@ -53,9 +53,9 @@
 #if !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && !defined(MBEDTLS_ENTROPY_NV_SEED)
 
 #ifdef MBEDTLS_TEST_NULL_ENTROPY
-#warning "mbedTLS security feature is disabled. Connection will not be secure !! Implement proper hardware entropy for your selected hardware."
+#warning "mbedTLS security feature is disabled. Connection will not be secure ! Please implement hardware entropy for your selected hardware."
 #else
-#error "This hardware does not have entropy. Implement proper hardware entropy for your selected hardware."
+#error "This hardware does not have entropy. Please implement hardware entropy for your selected hardware."
 #endif // defined(MBEDTLS_TEST_NULL_ENTROPY)
 
 #endif // !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && !defined(MBEDTLS_ENTROPY_NV_SEED)
