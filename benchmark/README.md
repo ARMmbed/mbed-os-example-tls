@@ -2,7 +2,7 @@
 
 This application benchmarks the various cryptographic primitives offered by mbed TLS.
 
-# Getting started
+## Getting started
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 

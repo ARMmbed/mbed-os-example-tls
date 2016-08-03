@@ -2,7 +2,7 @@
 
 This application downloads a file from an HTTPS server (developer.mbed.org) and looks for a specific string in that file.
 
-# Getting started
+## Getting started
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
