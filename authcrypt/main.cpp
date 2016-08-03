@@ -30,6 +30,20 @@
 
 #include <string.h>
 
+#if !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && !defined(MBEDTLS_ENTROPY_NV_SEED)
+
+#ifdef MBEDTLS_TEST_NULL_ENTROPY
+#warning "mbedTLS security feature is disabled. The tests will not be secure !! Implement proper hardware entropy for your selected hardware."
+#else
+#error "This hardware does not have entropy. Implement proper hardware entropy for your selected hardware."
+#endif // defined(MBEDTLS_TEST_NULL_ENTROPY)
+
+#endif // !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && !defined(MBEDTLS_ENTROPY_NV_SEED)
+
+#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
+#include "mbedtls/memory_buffer_alloc.h"
+#endif
+
 static void print_hex(const char *title, const unsigned char buf[], size_t len)
 {
     mbedtls_printf("%s: ", title);
