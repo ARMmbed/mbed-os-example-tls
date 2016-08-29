@@ -267,8 +267,9 @@ public:
         /* It also means the handshake is done, time to print info */
         printf("TLS connection to %s established\r\n", HTTPS_SERVER_NAME);
 
-        char buf[1024];
-        mbedtls_x509_crt_info(buf, sizeof(buf), "\r    ",
+        const uint32_t buf_size = 1024;
+        char *buf = new char[buf_size];
+        mbedtls_x509_crt_info(buf, buf_size, "\r    ",
                         mbedtls_ssl_get_peer_cert(&_ssl));
         mbedtls_printf("Server certificate:\r\n%s\r", buf);
 
@@ -276,7 +277,7 @@ public:
         uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
         if( flags != 0 )
         {
-            mbedtls_x509_crt_verify_info(buf, sizeof (buf), "\r  ! ", flags);
+            mbedtls_x509_crt_verify_info(buf, buf_size, "\r  ! ", flags);
             printf("Certificate verification failed:\r\n%s\r\r\n", buf);
         }
         else
@@ -291,6 +292,7 @@ public:
                 print_mbedtls_error("mbedtls_ssl_read", ret);
                 onError(_tcpsocket, -1 );
             }
+            delete[] buf;
             return;
         }
         _bpos = static_cast<size_t>(ret);
@@ -310,6 +312,7 @@ public:
         _error = !(_got200 && _gothello);
 
         _tcpsocket->close();
+        delete[] buf;
     }
     /**
      * Check if the test has completed.
@@ -370,21 +373,23 @@ protected:
      */
     static int my_verify(void *data, mbedtls_x509_crt *crt, int depth, uint32_t *flags)
     {
-        char buf[1024];
+        const uint32_t buf_size = 1024;
+        char *buf = new char[buf_size];
         (void) data;
 
         mbedtls_printf("\nVerifying certificate at depth %d:\n", depth);
-        mbedtls_x509_crt_info(buf, sizeof (buf) - 1, "  ", crt);
+        mbedtls_x509_crt_info(buf, buf_size - 1, "  ", crt);
         mbedtls_printf("%s", buf);
 
         if (*flags == 0)
             mbedtls_printf("No verification issue for this certificate\n");
         else
         {
-            mbedtls_x509_crt_verify_info(buf, sizeof (buf), "  ! ", *flags);
+            mbedtls_x509_crt_verify_info(buf, buf_size, "  ! ", *flags);
             mbedtls_printf("%s\n", buf);
         }
 
+        delete[] buf;
         return 0;
     }
 #endif
@@ -467,6 +472,7 @@ int main() {
         mbedtls_printf("No Client IP Address\r\n");
     }
 
-    HelloHTTPS hello(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
-    hello.startTest(HTTPS_PATH);
+    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
+    hello->startTest(HTTPS_PATH);
+    delete hello;
 }
