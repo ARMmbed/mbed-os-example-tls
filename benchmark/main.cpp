@@ -142,6 +142,11 @@
 "-----END RSA PRIVATE KEY-----\r\n"
 
 /*
+ * Uncomment this line to enable ECDSA benchmark.
+ */
+//#define ENABLE_ECDSA
+
+/*
  * For heap usage estimates, we need an estimate of the overhead per allocated
  * block. ptmalloc2/3 (used in gnu libc for instance) uses 2 size_t per block,
  * so use that as our baseline.
@@ -728,7 +733,7 @@ static int benchmark( int argc, char *argv[] )
     }
 #endif
 
-#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C)
+#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C) && defined(ENABLE_ECDSA)
     if( todo.ecdsa )
     {
         mbedtls_ecdsa_context ecdsa;
