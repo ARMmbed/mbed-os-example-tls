@@ -17,7 +17,7 @@
  *  limitations under the License.
  *
  *  This file is part of mbed TLS (https://tls.mbed.org)
-*/
+ */
 
 /** \file main.cpp
  *  \brief An example TLS Client application
@@ -32,9 +32,6 @@
 /* Change to a number between 1 and 4 to debug the TLS connection */
 #define DEBUG_LEVEL 0
 
-/* Change to 1 to skip certificate verification (UNSAFE, for debug only!) */
-#define UNSAFE 0
-
 #include "mbed.h"
 #include "NetworkStack.h"
 
@@ -46,6 +43,7 @@
 #include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
 #include "mbedtls/error.h"
+
 #if DEBUG_LEVEL > 0
 #include "mbedtls/debug.h"
 #endif
@@ -100,31 +98,6 @@ const char SSL_CA_PEM[] =
 "K1pp74P1S8SqtCr4fKGxhZSM9AyHDPSsQPhZSZg=\n"
 "-----END CERTIFICATE-----\n";
 
-#if OLD_CERTIFICATE
-/* GlobalSign Root R1 SHA1/RSA/2048
- *   Serial no.  04 00 00 00 00 01 15 4b 5a c3 94 */
-"-----BEGIN CERTIFICATE-----\n"
-"MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkG\n"
-"A1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNVBAsTB1Jv\n"
-"b3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw05ODA5MDExMjAw\n"
-"MDBaFw0yODAxMjgxMjAwMDBaMFcxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i\n"
-"YWxTaWduIG52LXNhMRAwDgYDVQQLEwdSb290IENBMRswGQYDVQQDExJHbG9iYWxT\n"
-"aWduIFJvb3QgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDaDuaZ\n"
-"jc6j40+Kfvvxi4Mla+pIH/EqsLmVEQS98GPR4mdmzxzdzxtIK+6NiY6arymAZavp\n"
-"xy0Sy6scTHAHoT0KMM0VjU/43dSMUBUc71DuxC73/OlS8pF94G3VNTCOXkNz8kHp\n"
-"1Wrjsok6Vjk4bwY8iGlbKk3Fp1S4bInMm/k8yuX9ifUSPJJ4ltbcdG6TRGHRjcdG\n"
-"snUOhugZitVtbNV4FpWi6cgKOOvyJBNPc1STE4U6G7weNLWLBYy5d4ux2x8gkasJ\n"
-"U26Qzns3dLlwR5EiUWMWea6xrkEmCMgZK9FGqkjWZCrXgzT/LCrBbBlDSgeF59N8\n"
-"9iFo7+ryUp9/k5DPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E\n"
-"BTADAQH/MB0GA1UdDgQWBBRge2YaRQ2XyolQL30EzTSo//z9SzANBgkqhkiG9w0B\n"
-"AQUFAAOCAQEA1nPnfE920I2/7LqivjTFKDK1fPxsnCwrvQmeU79rXqoRSLblCKOz\n"
-"yj1hTdNGCbM+w6DjY1Ub8rrvrTnhQ7k4o+YviiY776BQVvnGCv04zcQLcFGUl5gE\n"
-"38NflNUVyRRBnMRddWQVDf9VMOyGj/8N7yy5Y0b2qvzfvGn9LhJIZJrglfCm7ymP\n"
-"AbEVtQwdpf5pLGkkeB6zpxxxYu7KyJesF12KwvhHhm4qxFYxldBniYUr+WymXUad\n"
-"DKqC5JlR3XC321Y9YeRq4VzW9v493kHMB65jUr9TU/Qr6cf9tveCX4XSQRjbgbME\n"
-"HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\n"
-"-----END CERTIFICATE-----\n";
-#endif
 }
 
 /**
@@ -216,9 +189,10 @@ public:
         mbedtls_ssl_conf_ca_chain(&_ssl_conf, &_cacert, NULL);
         mbedtls_ssl_conf_rng(&_ssl_conf, mbedtls_ctr_drbg_random, &_ctr_drbg);
 
-#if UNSAFE
-        mbedtls_ssl_conf_authmode(&_ssl_conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
-#endif
+        /* It is possible to disable authentication by passing
+         * MBEDTLS_SSL_VERIFY_NONE in the call to mbedtls_ssl_conf_authmode()
+         */
+        mbedtls_ssl_conf_authmode(&_ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
 
 #if DEBUG_LEVEL > 0
         mbedtls_ssl_conf_verify(&_ssl_conf, my_verify, NULL);
@@ -273,7 +247,6 @@ public:
                         mbedtls_ssl_get_peer_cert(&_ssl));
         mbedtls_printf("Server certificate:\r\n%s\r", buf);
 
-#if defined(UNSAFE)
         uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
         if( flags != 0 )
         {
@@ -281,7 +254,6 @@ public:
             printf("Certificate verification failed:\r\n%s\r\r\n", buf);
         }
         else
-#endif
             printf("Certificate verification passed\r\n\r\n");
 
 
