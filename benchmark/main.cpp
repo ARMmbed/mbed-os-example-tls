@@ -41,6 +41,7 @@
 #include "mbedtls/arc4.h"
 #include "mbedtls/des.h"
 #include "mbedtls/aes.h"
+#include "mbedtls/cmac.h"
 #include "mbedtls/blowfish.h"
 #include "mbedtls/camellia.h"
 #include "mbedtls/gcm.h"
@@ -164,7 +165,8 @@
 
 #define OPTIONS                                                           \
     "md4, md5, ripemd160, sha1, sha256, sha512,\r\n"                      \
-    "arc4, des3, des, aes_cbc, aes_gcm, aes_ccm, camellia, blowfish,\r\n" \
+    "arc4, camellia, blowfish,\r\n"                                       \
+    "des3, des, aes_cmac, des3_cmac, aes_cbc, aes_gcm, aes_ccm,\r\n"      \
     "havege, ctr_drbg, hmac_drbg\r\n"                                     \
     "rsa, dhm, ecdsa, ecdh.\r\n"
 
@@ -311,7 +313,8 @@ unsigned char buf[BUFSIZE];
 
 typedef struct {
     char md4, md5, ripemd160, sha1, sha256, sha512,
-         arc4, des3, des, aes_cbc, aes_gcm, aes_ccm, camellia, blowfish,
+         arc4, des3, des, aes_cbc, aes_gcm, aes_ccm,
+         aes_cmac, des3_cmac, camellia, blowfish,
          havege, ctr_drbg, hmac_drbg,
          rsa, dhm, ecdsa, ecdh;
 } todo_list;
@@ -360,6 +363,10 @@ static int benchmark( int argc, char *argv[] )
                 todo.aes_gcm = 1;
             else if( strcmp( argv[i], "aes_ccm" ) == 0 )
                 todo.aes_ccm = 1;
+            else if( strcmp( argv[i], "aes_cmac" ) == 0 )
+                todo.aes_cmac = 1;
+            else if( strcmp( argv[i], "des3_cmac" ) == 0 )
+                todo.des3_cmac = 1;
             else if( strcmp( argv[i], "camellia" ) == 0 )
                 todo.camellia = 1;
             else if( strcmp( argv[i], "blowfish" ) == 0 )
@@ -455,6 +462,22 @@ static int benchmark( int argc, char *argv[] )
                 mbedtls_des_crypt_cbc( &des, MBEDTLS_DES_ENCRYPT, BUFSIZE, tmp, buf, buf ) );
         mbedtls_des_free( &des );
     }
+#if defined(MBEDTLS_CMAC_C)
+    if( todo.des3_cmac )
+    {
+        unsigned char output[8];
+        const mbedtls_cipher_info_t *cipher_info;
+
+        memset( buf, 0, sizeof( buf ) );
+        memset( tmp, 0, sizeof( tmp ) );
+
+        cipher_info = mbedtls_cipher_info_from_type( MBEDTLS_CIPHER_DES_EDE3_ECB );
+
+        TIME_AND_TSC( "3DES-CMAC",
+                      mbedtls_cipher_cmac( cipher_info, tmp, 192, buf,
+                      BUFSIZE, output ) );
+    }
+#endif /* MBEDTLS_CMAC_C */
 #endif
 
 #if defined(MBEDTLS_AES_C)
@@ -524,6 +547,37 @@ static int benchmark( int argc, char *argv[] )
         }
     }
 #endif
+#if defined(MBEDTLS_CMAC_C)
+    if( todo.aes_cmac )
+    {
+        unsigned char output[16];
+        const mbedtls_cipher_info_t *cipher_info;
+        mbedtls_cipher_type_t cipher_type;
+        int keysize;
+
+        cipher_type = MBEDTLS_CIPHER_AES_128_ECB;
+        for( keysize = 128; keysize <= 256; keysize += 64 )
+        {
+            mbedtls_snprintf( title, sizeof( title ), "AES-CMAC-%d", keysize );
+
+            memset( buf, 0, sizeof( buf ) );
+            memset( tmp, 0, sizeof( tmp ) );
+
+            cipher_info = mbedtls_cipher_info_from_type( cipher_type );
+
+            TIME_AND_TSC( title,
+                          mbedtls_cipher_cmac( cipher_info, tmp, keysize,
+                                               buf, BUFSIZE, output ) );
+            cipher_type = (mbedtls_cipher_type_t)( cipher_type + 1 );
+        }
+
+        memset( buf, 0, sizeof( buf ) );
+        memset( tmp, 0, sizeof( tmp ) );
+        TIME_AND_TSC( "AES-CMAC-PRF-128",
+                      mbedtls_aes_cmac_prf_128( tmp, 16, buf, BUFSIZE,
+                                                output ) );
+    }
+#endif /* MBEDTLS_CMAC_C */
 #endif
 
 #if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
