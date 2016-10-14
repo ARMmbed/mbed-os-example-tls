@@ -31,11 +31,11 @@ If your board has no hardware entropy source or its entropy source is not integr
 
 1. Update `mbed-os` sources using the `mbed deploy` command.
 
-1. Build the application by selecting the board and build toolchain using the command `mbed compile -m K64F -t GCC_ARM`. mbed-cli builds a binary file under the project’s `.build` directory.
+1. Build the application by selecting the board and build toolchain using the command `mbed compile -m K64F -t GCC_ARM`. mbed-cli builds a binary file under the project’s `BUILD` directory.
 
 1. Connect the FRDM-K64F to the computer with the micro-USB cable, being careful to use the **OpenSDA** connector on the target board. The board is listed as a mass-storage device.
 
-1. Drag the binary `.build/K64F/GCC_ARM/<EXAMPLE>.bin` to the board to flash the application.
+1. Drag the binary `BUILD/K64F/GCC_ARM/<EXAMPLE>.bin` to the board to flash the application.
 
 1. The board is automatically programmed with the new binary. A flashing LED on it indicates that it is still working. When the LED stops blinking, the board is ready to work.
 
