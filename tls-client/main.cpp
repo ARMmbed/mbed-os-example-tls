@@ -207,7 +207,12 @@ public:
 
         /* Connect to the server */
         mbedtls_printf("Connecting with %s\r\n", _domain);
-        _tcpsocket->connect( _domain, _port );
+        ret = _tcpsocket->connect(_domain, _port);
+        if (ret != NSAPI_ERROR_OK) {
+            mbedtls_printf("Failed to connect\r\n");
+            onError(_tcpsocket, -1);
+            return;
+        }
 
        /* Start the handshake, the rest will be done in onReceive() */
         mbedtls_printf("Starting the TLS handshake...\r\n");
