@@ -34,4 +34,13 @@
 #endif /* !MBEDTLS_ENTROPY_HARDWARE_ALT && !MBEDTLS_ENTROPY_NV_SEED */
 
 #define MBEDTLS_SHA1_C
-#define MBEDTLS_MPI_WINDOW_SIZE 1
+
+/*
+ *  This value is sufficient for handling 2048 bit RSA keys.
+ *
+ *  Set this value higher to enable handling larger keys, but be aware that this
+ *  will increase the stack usage.
+ */
+#define MBEDTLS_MPI_MAX_SIZE        256
+
+#define MBEDTLS_MPI_WINDOW_SIZE     1
