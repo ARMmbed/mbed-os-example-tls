@@ -17,21 +17,11 @@
  *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 
-#if !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && !defined(MBEDTLS_ENTROPY_NV_SEED)
-
-#if !defined(MBEDTLS_TEST_NULL_ENTROPY)
-#warning                                                                \
-    "THIS HARDWARE DOES NOT HAVE ENTROPY. DISABLING MBED TLS SECURITY " \
-    "FEATURE."
-#define MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
-#define MBEDTLS_TEST_NULL_ENTROPY
-#endif /* !MBEDTLS_TEST_NULL_ENTROPY */
-
-#warning                                                                    \
-    "MBED TLS SECURITY FEATURE IS DISABLED. THE TESTS WILL NOT BE SECURE! " \
-    "PLEASE IMPLEMENT HARDWARE ENTROPY FOR YOUR SELECTED HARDWARE."
-
-#endif /* !MBEDTLS_ENTROPY_HARDWARE_ALT && !MBEDTLS_ENTROPY_NV_SEED */
+#if !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && \
+    !defined(MBEDTLS_ENTROPY_NV_SEED) && !defined(MBEDTLS_TEST_NULL_ENTROPY)
+#error "This hardware does not have an entropy source."
+#endif /* !MBEDTLS_ENTROPY_HARDWARE_ALT && !MBEDTLS_ENTROPY_NV_SEED &&
+        * !MBEDTLS_TEST_NULL_ENTROPY */
 
 #define MBEDTLS_SHA1_C
 
