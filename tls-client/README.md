@@ -8,7 +8,11 @@ Set up your environment if you have not done so already. For instructions, refer
 
 ## Required hardware
 
-This example also requires an Ethernet cable an connection to the internet additional to the hardware requirements in the [main readme](../README.md).
+This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
+
+The networking stack used in this example requires TLS functionality to be enabled on mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
+
+To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed.com/docs/mbed-os-handbook/en/5.2/advanced/tls_porting/).
 
 ## Monitoring the application
 
