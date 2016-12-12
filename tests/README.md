@@ -152,7 +152,5 @@ Another example with regular examples is shown below:
 
 ```
 
-```
-
 More details about ```htrun``` are [here](https://github.com/ARMmbed/htrun#testing-mbed-os-examples).
 
