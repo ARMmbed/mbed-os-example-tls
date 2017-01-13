@@ -1,4 +1,4 @@
-# mbed TLS Benchmark example on mbed OS
+# mbed TLS Authenticated Encryption example on mbed OS
 
 This application performs authenticated encryption and authenticated decryption of a buffer. It serves as a tutorial for the basic authenticated encryption functions of mbed TLS.
 
