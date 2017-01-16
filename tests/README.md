@@ -4,7 +4,7 @@ Examples are tested using tool [mbedhtrun](https://github.com/ARMmbed/htrun) and
 
 ## How to create templated log
 
-The idea is to check that repeated execution of the examples produce same serial output. An example produces serial output when code contains ```printf``` statements. Serial output may change for ligitimate reasons like use of random data or data and time stamps. Thats why the log is converted to a template. This means that either the text/lines that differ in every execution are removed or they are converted into regular expressions. See the example below:
+The idea is to check that repeated execution of the example produces serial output that matches expected pattern. An example produces serial output when code contains ```printf``` statements. Serial output may change for legitimate reasons like use of random data or date and time stamps. That's why the log is converted to a template. This means that either the text/lines that differ in every execution are removed or they are converted into regular expressions. See the example below:
 
 ```
 
@@ -94,7 +94,7 @@ Hello world!								Hello world!
 
 ```
 
-Please observe above that all the lines that have data that changes from execution to execution (on right) have been removed. It makes it possible htrun to compare these logs. htrun matches lines from the compare log (on left) one by one. It keeps on looking for a line until it matches. Once matched it moves on to match the next line. If it finds all lines from the compare log in the target serial output stream. Then it halts and passes the examples.
+Please observe above that all the lines that have data that changes from execution to execution (on right) have been removed enabling htrun to compare these logs. htrun matches lines from the compare log (on left) one by one. It keeps on looking for a line until it matches. Once matched it moves on to match the next line. If it finds all lines from the compare log in the target serial output stream. Then it halts and the test passes.
 
 Another example with regular examples is shown below:
 
