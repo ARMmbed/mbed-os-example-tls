@@ -23,7 +23,9 @@
 #endif /* !MBEDTLS_ENTROPY_HARDWARE_ALT && !MBEDTLS_ENTROPY_NV_SEED &&
         * !MBEDTLS_TEST_NULL_ENTROPY */
 
+#if !defined(MBEDTLS_SHA1_C)
 #define MBEDTLS_SHA1_C
+#endif /* !MBEDTLS_SHA1_C */
 
 /*
  *  This value is sufficient for handling 2048 bit RSA keys.
