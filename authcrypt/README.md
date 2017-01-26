@@ -6,6 +6,8 @@ This application performs authenticated encryption and authenticated decryption 
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
+You can also compile this example with the [mbed Online Compiler](https://developer.mbed.org/compiler/) by using [this project](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt).
+
 ## Monitoring the application
 
 The output in the terminal window should be similar to this:
