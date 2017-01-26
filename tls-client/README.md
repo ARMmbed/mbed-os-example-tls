@@ -6,6 +6,8 @@ This application downloads a file from an HTTPS server (developer.mbed.org) and 
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
+You can also compile this example with the [mbed Online Compiler](https://developer.mbed.org/compiler/) by using [this project](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
+
 ## Required hardware
 
 This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
