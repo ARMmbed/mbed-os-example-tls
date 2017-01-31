@@ -1,0 +1,6 @@
+Starting the TLS handshake...
+Server certificate:
+Certificate verification passed
+HTTPS: Received 'Hello world!' status ... [OK]
+HTTPS: Received message:
+Hello world!

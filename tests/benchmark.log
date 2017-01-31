@@ -1,0 +1,26 @@
+  SHA-256                  :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  SHA-512                  :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CBC-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CBC-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CBC-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-GCM-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-GCM-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-GCM-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CCM-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CCM-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  AES-CCM-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  CTR_DRBG \(NOPR\)          :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  CTR_DRBG \(PR\)            :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ Kb/s,\s*\d+ cycles/byte
+  RSA-2048                 :\s*\d+ ms/ public
+  RSA-2048                 :\s*\d+ ms/private
+  RSA-4096                 :\s*\d+ ms/ public
+  RSA-4096                 :\s*\d+ ms/private
+  ECDHE-secp384r1          :\s*\d+ ms/handshake
+  ECDHE-secp256r1          :\s*\d+ ms/handshake
+  ECDHE-Curve25519         :\s*\d+ ms/handshake
+  ECDH-secp384r1           :\s*\d+ ms/handshake
+  ECDH-secp256r1           :\s*\d+ ms/handshake
+  ECDH-Curve25519          :\s*\d+ ms/handshake
+DONE
