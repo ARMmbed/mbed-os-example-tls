@@ -469,8 +469,7 @@ int main() {
     hello->startTest(HTTPS_PATH);
     if (hello->error()) {
         mbedtls_printf("FAIL\r\n");
-    }
-    else {
+    } else {
         mbedtls_printf("DONE\r\n");
     }
     delete hello;
