@@ -55,10 +55,11 @@ const int HTTPS_SERVER_PORT = 443;
 
 const size_t RECV_BUFFER_SIZE = 600;
 const size_t CRT_BUFFER_SIZE = 1024;
+#if DEBUG_LEVEL > 0
 const size_t CRT_VERIFY_BUFFER_SIZE = 1024;
+#endif
 
 const char HTTPS_PATH[] = "/media/uploads/mbed_official/hello.txt";
-const size_t HTTPS_PATH_LEN = sizeof(HTTPS_PATH) - 1;
 
 /* Test related data */
 const char *HTTPS_OK_STR = "200 OK";
