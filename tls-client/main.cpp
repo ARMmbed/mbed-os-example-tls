@@ -434,6 +434,7 @@ int main() {
     /* Inititalise with DHCP, connect, and start up the stack */
     EthernetInterface eth_iface;
     eth_iface.connect();
+    mbedtls_printf("mac address = %s\r\n", eth_iface.get_mac_address());
     mbedtls_printf("Using Ethernet LWIP\r\n");
     const char *ip_addr = eth_iface.get_ip_address();
     if (ip_addr) {
