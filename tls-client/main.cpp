@@ -120,6 +120,7 @@ public:
         _bpos = 0;
         _request_sent = 0;
         _tcpsocket = new TCPSocket(net_iface);
+        _tcpsocket->set_blocking(false);
 
         mbedtls_entropy_init(&_entropy);
         mbedtls_ctr_drbg_init(&_ctr_drbg);
