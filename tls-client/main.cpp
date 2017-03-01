@@ -116,6 +116,7 @@ public:
         _bpos = 0;
         _request_sent = 0;
         _tcpsocket = new TCPSocket(net_iface);
+        _tcpsocket->set_blocking(false);
 
         mbedtls_entropy_init(&_entropy);
         mbedtls_ctr_drbg_init(&_ctr_drbg);
@@ -132,6 +133,8 @@ public:
         mbedtls_x509_crt_free(&_cacert);
         mbedtls_ssl_free(&_ssl);
         mbedtls_ssl_config_free(&_ssl_conf);
+        _tcpsocket->close();
+        delete _tcpsocket;
     }
     /**
      * Start the test.
@@ -216,23 +219,21 @@ public:
 
        /* Start the handshake, the rest will be done in onReceive() */
         mbedtls_printf("Starting the TLS handshake...\r\n");
-        ret = mbedtls_ssl_handshake(&_ssl);
+        do {
+            ret = mbedtls_ssl_handshake(&_ssl);
+        } while (ret != 0 && (ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_handshake", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_handshake", ret);
             return;
         }
 
-        ret = mbedtls_ssl_write(&_ssl, (const unsigned char *) _buffer, _bpos);
+        do {
+            ret = mbedtls_ssl_write(&_ssl, (const unsigned char *) _buffer, _bpos);
+        } while (ret != 0 && (ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_write", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_write", ret);
             return;
         }
 
@@ -256,12 +257,12 @@ public:
 
 
         /* Read data out of the socket */
-        ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer, sizeof(_buffer));
+        do {
+            ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer, sizeof(_buffer));
+        } while (ret != 0 && (ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_read", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_read", ret);
             delete[] buf;
             return;
         }
@@ -281,7 +282,6 @@ public:
         mbedtls_printf("%s", _buffer);
         _error = !(_got200 && _gothello);
 
-        _tcpsocket->close();
         delete[] buf;
     }
     /**
@@ -301,7 +301,7 @@ public:
     /**
      * Closes the TCP socket
      */
-    void close() {
+    void close() { // Do we need this functions?
         _tcpsocket->close();
         while (!_disconnected)
             __WFI();
@@ -375,6 +375,7 @@ protected:
         if(NSAPI_ERROR_WOULD_BLOCK == recv){
             return MBEDTLS_ERR_SSL_WANT_READ;
         }else if(recv < 0){
+            mbedtls_printf("Socket recv error %d\r\n", recv);
             return -1;
         }else{
             return recv;
@@ -390,8 +391,9 @@ protected:
         size = socket->send(buf, len);
 
         if(NSAPI_ERROR_WOULD_BLOCK == size){
-            return len;
+            return MBEDTLS_ERR_SSL_WANT_WRITE;
         }else if(size < 0){
+            mbedtls_printf("Socket send error %d\r\n", size);
             return -1;
         }else{
             return size;
