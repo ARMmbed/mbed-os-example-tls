@@ -166,8 +166,9 @@
 #define OPTIONS                                                           \
     "md4, md5, ripemd160, sha1, sha256, sha512,\r\n"                      \
     "arc4, camellia, blowfish,\r\n"                                       \
-    "des3, des, aes_cmac, des3_cmac, aes_cbc, aes_gcm, aes_ccm,\r\n"      \
-    "havege, ctr_drbg, hmac_drbg\r\n"                                     \
+    "des3, des, aes_cmac, des3_cmac, aes_cbc, \r\n"                       \
+    "aes_ctr, aes_gcm, aes_ccm,\r\n"                                      \
+    "havege, ctr_drbg, hmac_drbg,\r\n"                                    \
     "rsa, dhm, ecdsa, ecdh.\r\n"
 
 #if defined(MBEDTLS_ERROR_C)
@@ -313,7 +314,7 @@ unsigned char buf[BUFSIZE];
 
 typedef struct {
     char md4, md5, ripemd160, sha1, sha256, sha512,
-         arc4, des3, des, aes_cbc, aes_gcm, aes_ccm,
+         arc4, des3, des, aes_cbc, aes_ctr, aes_gcm, aes_ccm,
          aes_cmac, des3_cmac, camellia, blowfish,
          havege, ctr_drbg, hmac_drbg,
          rsa, dhm, ecdsa, ecdh;
@@ -359,6 +360,8 @@ static int benchmark( int argc, char *argv[] )
                 todo.des = 1;
             else if( strcmp( argv[i], "aes_cbc" ) == 0 )
                 todo.aes_cbc = 1;
+            else if( strcmp( argv[i], "aes_ctr" ) == 0 )
+                todo.aes_ctr = 1;
             else if( strcmp( argv[i], "aes_gcm" ) == 0 )
                 todo.aes_gcm = 1;
             else if( strcmp( argv[i], "aes_ccm" ) == 0 )
@@ -501,6 +504,30 @@ static int benchmark( int argc, char *argv[] )
         mbedtls_aes_free( &aes );
     }
 #endif
+
+#if defined(MBEDTLS_CIPHER_MODE_CTR)
+    if( todo.aes_ctr )
+    {
+        int keysize;
+        size_t nc_offset = 0;
+        unsigned char stream_block[16];
+        mbedtls_aes_context aes;
+        mbedtls_aes_init( &aes );
+        for( keysize = 128; keysize <= 256; keysize += 64 )
+        {
+            mbedtls_snprintf( title, sizeof( title ), "AES-CTR-%d", keysize );
+
+            memset( buf, 0, sizeof( buf ) );
+            memset( tmp, 0, sizeof( tmp ) );
+            mbedtls_aes_setkey_enc( &aes, tmp, keysize );
+
+            TIME_AND_TSC( title,
+                mbedtls_aes_crypt_ctr( &aes, BUFSIZE, &nc_offset, tmp, stream_block, buf, buf ) );
+        }
+        mbedtls_aes_free( &aes );
+    }
+#endif
+
 #if defined(MBEDTLS_GCM_C)
     if( todo.aes_gcm )
     {
