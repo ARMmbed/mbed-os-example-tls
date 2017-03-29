@@ -204,6 +204,7 @@ static unsigned long mbedtls_timing_before( void )
 {
     timer.reset( );
     timer.start( );
+    return( 0 );
 }
 static unsigned long mbedtls_timing_after( void )
 {
