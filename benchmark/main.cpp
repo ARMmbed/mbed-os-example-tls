@@ -179,6 +179,8 @@
         mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );
 #endif
 
+#if defined(CoreDebug_DEMCR_TRCENA_Msk) && defined(DWT_CTRL_CYCCNTENA_Msk)
+/* DWT cycle counter is available (Cortex-M3, Cortex-M4) */
 static unsigned long mbedtls_timing_hardclock( void )
 {
     static int dwt_started = 0;
@@ -191,6 +193,26 @@ static unsigned long mbedtls_timing_hardclock( void )
 
     return( DWT->CYCCNT );
 }
+#define mbedtls_timing_before() (mbedtls_timing_hardclock())
+#define mbedtls_timing_after() (mbedtls_timing_hardclock())
+#define MBEDTLS_TIMING_UNIT "cycles"
+
+#else /* No cycle counter, default to mbed microsecond timer */
+
+static Timer timer;
+static unsigned long mbedtls_timing_before( void )
+{
+    timer.reset( );
+    timer.start( );
+    return( 0 );
+}
+static unsigned long mbedtls_timing_after( void )
+{
+    timer.stop( );
+    return( timer.read_us() );
+}
+#define MBEDTLS_TIMING_UNIT "usec"
+#endif
 
 static volatile int alarmed;
 static void alarm() { alarmed = 1; }
@@ -207,15 +229,15 @@ do {                                                                           \
         CODE;                                                                  \
     }                                                                          \
                                                                                \
-    tsc = mbedtls_timing_hardclock();                                          \
+    tsc = mbedtls_timing_before();                                             \
     for( j = 0; j < 1024; j++ )                                                \
     {                                                                          \
         CODE;                                                                  \
     }                                                                          \
                                                                                \
-    mbedtls_printf( "%9lu KB/s,  %9lu cycles/byte\r\n",                        \
+    mbedtls_printf( "%9lu KB/s,  %9lu " MBEDTLS_TIMING_UNIT  "/byte\r\n",      \
                      i * BUFSIZE / 1024,                                       \
-                     ( mbedtls_timing_hardclock() - tsc ) / ( j * BUFSIZE ) ); \
+                     ( mbedtls_timing_after() - tsc ) / ( j * BUFSIZE ) );     \
 } while( 0 )
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C) && defined(MBEDTLS_MEMORY_DEBUG)
