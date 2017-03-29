@@ -179,25 +179,12 @@
         mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );
 #endif
 
-static unsigned long mbedtls_timing_hardclock( void )
-{
-    static int dwt_started = 0;
-
-    if( dwt_started == 0 )
-    {
-        CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-        DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-    }
-
-    return( DWT->CYCCNT );
-}
-
 static volatile int alarmed;
 static void alarm() { alarmed = 1; }
 
 #define TIME_AND_TSC( TITLE, CODE )                                            \
 do {                                                                           \
-    unsigned long i, j, tsc;                                                   \
+    unsigned long i;                                                           \
     Timeout t;                                                                 \
                                                                                \
     mbedtls_printf( HEADER_FORMAT, TITLE );                                    \
@@ -207,15 +194,8 @@ do {                                                                           \
         CODE;                                                                  \
     }                                                                          \
                                                                                \
-    tsc = mbedtls_timing_hardclock();                                          \
-    for( j = 0; j < 1024; j++ )                                                \
-    {                                                                          \
-        CODE;                                                                  \
-    }                                                                          \
-                                                                               \
-    mbedtls_printf( "%9lu KB/s,  %9lu cycles/byte\r\n",                        \
-                     i * BUFSIZE / 1024,                                       \
-                     ( mbedtls_timing_hardclock() - tsc ) / ( j * BUFSIZE ) ); \
+    mbedtls_printf( "%9lu KB/s\r\n",                                           \
+                     i * BUFSIZE / 1024 );                                     \
 } while( 0 )
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C) && defined(MBEDTLS_MEMORY_DEBUG)
