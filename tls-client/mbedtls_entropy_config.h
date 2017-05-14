@@ -17,11 +17,12 @@
  *  This file is part of mbed TLS (https://tls.mbed.org)
  */
 
-#if !defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && \
-    !defined(MBEDTLS_ENTROPY_NV_SEED) && !defined(MBEDTLS_TEST_NULL_ENTROPY)
+#if !defined(MBEDTLS_ENTROPY_C) || (!defined(MBEDTLS_ENTROPY_HARDWARE_ALT) && \
+    !defined(MBEDTLS_ENTROPY_NV_SEED) && !defined(MBEDTLS_TEST_NULL_ENTROPY))
 #error "This hardware does not have an entropy source."
-#endif /* !MBEDTLS_ENTROPY_HARDWARE_ALT && !MBEDTLS_ENTROPY_NV_SEED &&
-        * !MBEDTLS_TEST_NULL_ENTROPY */
+#endif /* !MBEDTLS_ENTROPY_C || (!MBEDTLS_ENTROPY_HARDWARE_ALT &&
+        * !MBEDTLS_ENTROPY_NV_SEED && !MBEDTLS_TEST_NULL_ENTROPY)
+        */
 
 #if !defined(MBEDTLS_SHA1_C)
 #define MBEDTLS_SHA1_C
