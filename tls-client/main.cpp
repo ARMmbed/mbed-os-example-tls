@@ -48,6 +48,11 @@
 #include "mbedtls/debug.h"
 #endif
 
+#include "greentea-client/test_env.h"
+#include "utest/utest.h"
+
+using namespace utest::v1;
+
 namespace {
 
 const char *HTTPS_SERVER_NAME = "developer.mbed.org";
@@ -427,7 +432,7 @@ protected:
 /**
  * The main loop of the HTTPS Hello World test
  */
-int main() {
+void tls_client() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
@@ -445,4 +450,24 @@ int main() {
     HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
     hello->startTest(HTTPS_PATH);
     delete hello;
+}
+
+utest::v1::status_t greentea_failure_handler(const Case *const source, const failure_t reason) {
+    greentea_case_failure_abort_handler(source, reason);
+    return STATUS_CONTINUE;
+}
+
+Case cases[] = {
+    Case("tls_client", tls_client, greentea_failure_handler)
+};
+
+utest::v1::status_t greentea_test_setup(const size_t number_of_cases) {
+    GREENTEA_SETUP(180, "default_auto");
+    return greentea_test_setup_handler(number_of_cases);
+}
+
+Specification specification(greentea_test_setup, cases, greentea_test_teardown_handler);
+
+int main() {
+    Harness::run(specification);
 }
