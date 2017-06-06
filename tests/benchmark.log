@@ -1,18 +1,18 @@
-  SHA-256                  :\s*\d+ KB/s,\s*\d+ cycles/byte
-  SHA-512                  :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CBC-128              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CBC-192              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CBC-256              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-GCM-128              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-GCM-192              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-GCM-256              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CCM-128              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CCM-192              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  AES-CCM-256              :\s*\d+ KB/s,\s*\d+ cycles/byte
-  CTR_DRBG \(NOPR\)          :\s*\d+ KB/s,\s*\d+ cycles/byte
-  CTR_DRBG \(PR\)            :\s*\d+ KB/s,\s*\d+ cycles/byte
-  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ KB/s,\s*\d+ cycles/byte
-  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ KB/s,\s*\d+ cycles/byte
+  SHA-256                  :\s*\d+ KB/s
+  SHA-512                  :\s*\d+ KB/s
+  AES-CBC-128              :\s*\d+ KB/s
+  AES-CBC-192              :\s*\d+ KB/s
+  AES-CBC-256              :\s*\d+ KB/s
+  AES-GCM-128              :\s*\d+ KB/s
+  AES-GCM-192              :\s*\d+ KB/s
+  AES-GCM-256              :\s*\d+ KB/s
+  AES-CCM-128              :\s*\d+ KB/s
+  AES-CCM-192              :\s*\d+ KB/s
+  AES-CCM-256              :\s*\d+ KB/s
+  CTR_DRBG \(NOPR\)          :\s*\d+ KB/s
+  CTR_DRBG \(PR\)            :\s*\d+ KB/s
+  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ KB/s
+  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ KB/s
   RSA-2048                 :\s*\d+ ms/ public
   RSA-2048                 :\s*\d+ ms/private
   RSA-4096                 :\s*\d+ ms/ public
