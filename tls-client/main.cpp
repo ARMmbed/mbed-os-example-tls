@@ -55,7 +55,6 @@ const int HTTPS_SERVER_PORT = 443;
 const int RECV_BUFFER_SIZE = 600;
 
 const char HTTPS_PATH[] = "/media/uploads/mbed_official/hello.txt";
-const size_t HTTPS_PATH_LEN = sizeof(HTTPS_PATH) - 1;
 
 /* Test related data */
 const char *HTTPS_OK_STR = "200 OK";
@@ -110,12 +109,13 @@ public:
             _domain(domain), _port(port)
     {
 
-        _error = false;
         _gothello = false;
         _got200 = false;
         _bpos = 0;
         _request_sent = 0;
         _tcpsocket = new TCPSocket(net_iface);
+        _tcpsocket->set_blocking(false);
+        _buffer[RECV_BUFFER_SIZE - 1] = 0;
 
         mbedtls_entropy_init(&_entropy);
         mbedtls_ctr_drbg_init(&_ctr_drbg);
@@ -132,6 +132,8 @@ public:
         mbedtls_x509_crt_free(&_cacert);
         mbedtls_ssl_free(&_ssl);
         mbedtls_ssl_config_free(&_ssl_conf);
+        _tcpsocket->close();
+        delete _tcpsocket;
     }
     /**
      * Start the test.
@@ -145,11 +147,8 @@ public:
         /* Initialize the flags */
         _got200 = false;
         _gothello = false;
-        _error = false;
         _disconnected = false;
         _request_sent = false;
-        /* Fill the request buffer */
-        _bpos = snprintf(_buffer, sizeof(_buffer) - 1, "GET %s HTTP/1.1\nHost: %s\n\n", path, HTTPS_SERVER_NAME);
 
         /*
          * Initialize TLS-related stuf.
@@ -159,14 +158,12 @@ public:
                           (const unsigned char *) DRBG_PERS,
                           sizeof (DRBG_PERS))) != 0) {
             print_mbedtls_error("mbedtls_crt_drbg_init", ret);
-            _error = true;
             return;
         }
 
         if ((ret = mbedtls_x509_crt_parse(&_cacert, (const unsigned char *) SSL_CA_PEM,
                            sizeof (SSL_CA_PEM))) != 0) {
             print_mbedtls_error("mbedtls_x509_crt_parse", ret);
-            _error = true;
             return;
         }
 
@@ -175,7 +172,6 @@ public:
                         MBEDTLS_SSL_TRANSPORT_STREAM,
                         MBEDTLS_SSL_PRESET_DEFAULT)) != 0) {
             print_mbedtls_error("mbedtls_ssl_config_defaults", ret);
-            _error = true;
             return;
         }
 
@@ -195,7 +191,6 @@ public:
 
         if ((ret = mbedtls_ssl_setup(&_ssl, &_ssl_conf)) != 0) {
             print_mbedtls_error("mbedtls_ssl_setup", ret);
-            _error = true;
             return;
         }
 
@@ -210,29 +205,39 @@ public:
         ret = _tcpsocket->connect(_domain, _port);
         if (ret != NSAPI_ERROR_OK) {
             mbedtls_printf("Failed to connect\r\n");
-            onError(_tcpsocket, -1);
+            printf("MBED: Socket Error: %d\r\n", ret);
+            _tcpsocket->close();
             return;
         }
 
        /* Start the handshake, the rest will be done in onReceive() */
         mbedtls_printf("Starting the TLS handshake...\r\n");
-        ret = mbedtls_ssl_handshake(&_ssl);
+        do {
+            ret = mbedtls_ssl_handshake(&_ssl);
+        } while (ret != 0 && (ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_handshake", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_handshake", ret);
+            _tcpsocket->close();
             return;
         }
 
-        ret = mbedtls_ssl_write(&_ssl, (const unsigned char *) _buffer, _bpos);
+        /* Fill the request buffer */
+        _bpos = snprintf(_buffer, sizeof(_buffer) - 1, 
+                         "GET %s HTTP/1.1\nHost: %s\n\n", path, HTTPS_SERVER_NAME);
+
+        int offset = 0;
+        do {
+            ret = mbedtls_ssl_write(&_ssl, 
+                                    (const unsigned char *) _buffer + offset, 
+                                    _bpos - offset);
+            if (ret > 0)
+              offset += ret;
+        } while (offset < _bpos && (ret > 0 || ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ &&
-                ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_write", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_write", ret);
+            _tcpsocket->close();
             return;
         }
 
@@ -256,22 +261,32 @@ public:
 
 
         /* Read data out of the socket */
-        ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer, sizeof(_buffer));
+        offset = 0;
+        do {
+            ret = mbedtls_ssl_read(&_ssl, (unsigned char *) _buffer + offset,
+                                   sizeof(_buffer) - offset - 1);
+            if (ret > 0)
+              offset += ret;
+
+            /* Check each of the flags */
+            _buffer[offset] = 0;
+            _got200 = _got200 || strstr(_buffer, HTTPS_OK_STR) != NULL;
+            _gothello = _gothello || strstr(_buffer, HTTPS_HELLO_STR) != NULL;
+        } while ( (!_got200 || !_gothello) &&
+                (ret > 0 || ret == MBEDTLS_ERR_SSL_WANT_READ ||
+                ret == MBEDTLS_ERR_SSL_WANT_WRITE));
         if (ret < 0) {
-            if (ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE) {
-                print_mbedtls_error("mbedtls_ssl_read", ret);
-                onError(_tcpsocket, -1 );
-            }
+            print_mbedtls_error("mbedtls_ssl_read", ret);
             delete[] buf;
+            _tcpsocket->close();
             return;
         }
-        _bpos = static_cast<size_t>(ret);
+        _bpos = static_cast<size_t>(offset);
 
         _buffer[_bpos] = 0;
 
-        /* Check each of the flags */
-        _got200 = _got200 || strstr(_buffer, HTTPS_OK_STR) != NULL;
-        _gothello = _gothello || strstr(_buffer, HTTPS_HELLO_STR) != NULL;
+        /* Close socket before status */
+        _tcpsocket->close();
 
         /* Print status messages */
         mbedtls_printf("HTTPS: Received %d chars from server\r\n", _bpos);
@@ -279,33 +294,10 @@ public:
         mbedtls_printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
         mbedtls_printf("HTTPS: Received message:\r\n\r\n");
         mbedtls_printf("%s", _buffer);
-        _error = !(_got200 && _gothello);
 
-        _tcpsocket->close();
         delete[] buf;
     }
-    /**
-     * Check if the test has completed.
-     * @return Returns true if done, false otherwise.
-     */
-    bool done() {
-        return _error || (_got200 && _gothello);
-    }
-    /**
-     * Check if there was an error
-     * @return Returns true if there was an error, false otherwise.
-     */
-    bool error() {
-        return _error;
-    }
-    /**
-     * Closes the TCP socket
-     */
-    void close() {
-        _tcpsocket->close();
-        while (!_disconnected)
-            __WFI();
-    }
+
 protected:
     /**
      * Helper for pretty-printing mbed TLS error codes
@@ -375,6 +367,7 @@ protected:
         if(NSAPI_ERROR_WOULD_BLOCK == recv){
             return MBEDTLS_ERR_SSL_WANT_READ;
         }else if(recv < 0){
+            mbedtls_printf("Socket recv error %d\r\n", recv);
             return -1;
         }else{
             return recv;
@@ -390,18 +383,13 @@ protected:
         size = socket->send(buf, len);
 
         if(NSAPI_ERROR_WOULD_BLOCK == size){
-            return len;
+            return MBEDTLS_ERR_SSL_WANT_WRITE;
         }else if(size < 0){
+            mbedtls_printf("Socket send error %d\r\n", size);
             return -1;
         }else{
             return size;
         }
-    }
-
-    void onError(TCPSocket *s, int error) {
-        printf("MBED: Socket Error: %d\r\n", error);
-        s->close();
-        _error = true;
     }
 
 protected:
@@ -413,7 +401,6 @@ protected:
     size_t _bpos;                   /**< The current offset in the response buffer */
     volatile bool _got200;          /**< Status flag for HTTPS 200 */
     volatile bool _gothello;        /**< Status flag for finding the test string */
-    volatile bool _error;           /**< Status flag for an error */
     volatile bool _disconnected;
     volatile bool _request_sent;
 
