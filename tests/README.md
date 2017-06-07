@@ -99,57 +99,32 @@ Please observe above that all the lines that have data that changes from executi
 Another example with regular examples is shown below:
 
 ```
-
-  SHA-256                  :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  SHA-256                  :       1922 Kb/s,         61 cycl
-								
-  SHA-512                  :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  SHA-512                  :        614 Kb/s,        191 cycl
-								
-  AES-CBC-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CBC-128              :       1401 Kb/s,         83 cycl
-								
-  AES-CBC-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CBC-192              :       1231 Kb/s,         95 cycl
-								
-  AES-CBC-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CBC-256              :       1097 Kb/s,        106 cycl
-								
-  AES-GCM-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-GCM-128              :        429 Kb/s,        273 cycl
-								
-  AES-GCM-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-GCM-192              :        412 Kb/s,        285 cycl
-								
-  AES-GCM-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-GCM-256              :        395 Kb/s,        297 cycl
-								
-  AES-CCM-128              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CCM-128              :        604 Kb/s,        194 cycl
-								
-  AES-CCM-192              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CCM-192              :        539 Kb/s,        217 cycl
-								
-  AES-CCM-256              :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  AES-CCM-256              :        487 Kb/s,        241 cycl
-								
-  CTR_DRBG \(NOPR\)          :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  CTR_DRBG (NOPR)          :       1145 Kb/s,        102 cycl
-								
-  CTR_DRBG \(PR\)            :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  CTR_DRBG (PR)            :        821 Kb/s,        142 cycl
-								
-  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  HMAC_DRBG SHA-256 (NOPR) :        219 Kb/s,        537 cycl
-								
-  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ Kb/s,\s*\d+ cycles/byte							      |	  HMAC_DRBG SHA-256 (PR)   :        193 Kb/s,        612 cycl
-								
-  RSA-2048                 :\s*\d+ ms/ public							      |	  RSA-2048                 :      30 ms/ public
-								
-  RSA-2048                 :\s*\d+ ms/private							      |	  RSA-2048                 :    1054 ms/private
-								
-  RSA-4096                 :\s*\d+ ms/ public							      |	  RSA-4096                 :     101 ms/ public
-								
-  RSA-4096                 :\s*\d+ ms/private							      |	  RSA-4096                 :    5790 ms/private
-								
-  ECDHE-secp384r1          :\s*\d+ ms/handshake							      |	  ECDHE-secp384r1          :    1023 ms/handshake
-								
-  ECDHE-secp256r1          :\s*\d+ ms/handshake							      |	  ECDHE-secp256r1          :     678 ms/handshake
-								
-  ECDHE-Curve25519         :\s*\d+ ms/handshake							      |	  ECDHE-Curve25519         :     580 ms/handshake
-								
-  ECDH-secp384r1           :\s*\d+ ms/handshake							      |	  ECDH-secp384r1           :     503 ms/handshake
-								
-  ECDH-secp256r1           :\s*\d+ ms/handshake							      |	  ECDH-secp256r1           :     336 ms/handshake
-								
-  ECDH-Curve25519          :\s*\d+ ms/handshake							      |	  ECDH-Curve25519          :     300 ms/handshake
-
+  SHA-256                  :\s*\d+ KB/s         |   SHA-256                  :       1922 KB/s
+  SHA-512                  :\s*\d+ KB/s         |   SHA-512                  :        614 KB/s
+  AES-CBC-128              :\s*\d+ KB/s         |   AES-CBC-128              :       1401 KB/s
+  AES-CBC-192              :\s*\d+ KB/s         |   AES-CBC-192              :       1231 KB/s
+  AES-CBC-256              :\s*\d+ KB/s         |   AES-CBC-256              :       1097 KB/s
+  AES-GCM-128              :\s*\d+ KB/s         |   AES-GCM-128              :        429 KB/s
+  AES-GCM-192              :\s*\d+ KB/s         |   AES-GCM-192              :        412 KB/s
+  AES-GCM-256              :\s*\d+ KB/s         |   AES-GCM-256              :        395 KB/s
+  AES-CCM-128              :\s*\d+ KB/s         |   AES-CCM-128              :        604 KB/s
+  AES-CCM-192              :\s*\d+ KB/s         |   AES-CCM-192              :        539 KB/s
+  AES-CCM-256              :\s*\d+ KB/s         |   AES-CCM-256              :        487 KB/s
+  CTR_DRBG \(NOPR\)          :\s*\d+ KB/s       |   CTR_DRBG (NOPR)          :       1145 KB/s
+  CTR_DRBG \(PR\)            :\s*\d+ KB/s       |   CTR_DRBG (PR)            :        821 KB/s
+  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ KB/s       |   HMAC_DRBG SHA-256 (NOPR) :        219 KB/s
+  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ KB/s       |   HMAC_DRBG SHA-256 (PR)   :        193 KB/s
+  RSA-2048                 :\s*\d+ ms/ public   |   RSA-2048                 :      30 ms/ public
+  RSA-2048                 :\s*\d+ ms/private   |   RSA-2048                 :    1054 ms/private
+  RSA-4096                 :\s*\d+ ms/ public   |   RSA-4096                 :     101 ms/ public
+  RSA-4096                 :\s*\d+ ms/private   |   RSA-4096                 :    5790 ms/private
+  ECDHE-secp384r1          :\s*\d+ ms/handshake |   ECDHE-secp384r1          :    1023 ms/handshake
+  ECDHE-secp256r1          :\s*\d+ ms/handshake |   ECDHE-secp256r1          :     678 ms/handshake
+  ECDHE-Curve25519         :\s*\d+ ms/handshake |   ECDHE-Curve25519         :     580 ms/handshake
+  ECDH-secp384r1           :\s*\d+ ms/handshake |   ECDH-secp384r1           :     503 ms/handshake
+  ECDH-secp256r1           :\s*\d+ ms/handshake |   ECDH-secp256r1           :     336 ms/handshake
+  ECDH-Curve25519          :\s*\d+ ms/handshake |   ECDH-Curve25519          :     300 ms/handshake
+DONE                                            | DONE
 ```
 
 More details about ```htrun``` are [here](https://github.com/ARMmbed/htrun#testing-mbed-os-examples).
