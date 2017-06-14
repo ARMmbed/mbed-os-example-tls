@@ -46,8 +46,11 @@ static const char metadata[] = "eg sequence number, routing info";
 
 class Authcrypt {
 public:
-    Authcrypt() : ciphertext(), decrypted()
+    Authcrypt()
     {
+        memset(ciphertext, 0, sizeof(ciphertext));
+        memset(decrypted, 0, sizeof(decrypted));
+
         mbedtls_entropy_init(&entropy);
         mbedtls_ctr_drbg_init(&drbg);
         mbedtls_cipher_init(&cipher);
@@ -58,9 +61,9 @@ public:
         memset(ciphertext, 0, sizeof(ciphertext));
         memset(decrypted, 0, sizeof(decrypted));
 
-        mbedtls_entropy_free(&entropy);
-        mbedtls_ctr_drbg_free(&drbg);
         mbedtls_cipher_free(&cipher);
+        mbedtls_ctr_drbg_free(&drbg);
+        mbedtls_entropy_free(&entropy);
     }
 
     int run()
