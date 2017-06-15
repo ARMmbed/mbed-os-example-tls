@@ -24,10 +24,10 @@
 #include "mbedtls/platform.h"
 
 int main() {
-    int ret, exit_code = MBEDTLS_EXIT_SUCCESS;
+    int exit_code = MBEDTLS_EXIT_SUCCESS;
     Authcrypt *authcrypt = new Authcrypt();
 
-    if ((ret = authcrypt->run()) != 0) {
+    if (authcrypt->run() != 0) {
         exit_code = MBEDTLS_EXIT_FAILURE;
         mbedtls_printf("\r\nFAIL\r\n");
     }
