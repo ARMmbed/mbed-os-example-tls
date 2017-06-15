@@ -48,6 +48,19 @@ public:
      */
     int run();
 
+private:
+    /**
+     * Print a buffer's contents in hexadecimal
+     *
+     * \param[in]   title
+     *              The string to print before the hex string
+     * \param[in]   buf
+     *              The buffer to print in hex
+     * \param[in]   len
+     *              The length of the buffer
+     */
+    void print_hex(const char *title, const unsigned char buf[], size_t len);
+
     /**
      * The pre-shared key
      *
@@ -65,19 +78,6 @@ public:
      * Metadata transmitted in the clear but authenticated
      */
     static const char metadata[];
-
-private:
-    /**
-     * Print a buffer's contents in hexadecimal
-     *
-     * \param[in]   title
-     *              The string to print before the hex string
-     * \param[in]   buf
-     *              The buffer to print in hex
-     * \param[in]   len
-     *              The length of the buffer
-     */
-    void print_hex(const char *title, const unsigned char buf[], size_t len);
 
     /**
      * Ciphertext buffer large enough to hold message + nonce + tag
