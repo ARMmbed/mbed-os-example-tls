@@ -11,6 +11,7 @@ You can also compile this example with the [mbed Online Compiler](https://os.mbe
 ## Required hardware
 
 This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
+Please read different networking setups instructions from [Easy Connect](https://github.com/ARMmbed/easy-connect/blob/master/README.md).
 
 The networking stack used in this example requires TLS functionality to be enabled on mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
 
@@ -18,13 +19,17 @@ To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed
 
 ## Monitoring the application
 
-__NOTE:__ Make sure that the Ethernet cable is plugged in correctly before running the application.
+__NOTE:__ Make sure that the network is functional before running the application.
 
 The output in the terminal window should be similar to this:
 
 ```
 Using Ethernet LWIP
-Client IP Address is 172.16.8.12
+Client IP Address is 10.2.203.43
+Connecting with developer.mbed.org
+[EasyConnect] Connected to Network successfully
+[EasyConnect] MAC address ae:41:46:27:31:e7
+[EasyConnect] IP address 192.168.64.255
 Connecting with os.mbed.com
 Starting the TLS handshake...
 TLS connection to os.mbed.com established

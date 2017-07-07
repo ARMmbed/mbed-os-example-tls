@@ -33,6 +33,7 @@
 #define DEBUG_LEVEL 0
 
 #include "mbed.h"
+#include "easy-connect.h"
 #include "NetworkStack.h"
 
 #include "EthernetInterface.h"
@@ -418,18 +419,15 @@ int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
-    /* Inititalise with DHCP, connect, and start up the stack */
-    EthernetInterface eth_iface;
-    eth_iface.connect();
-    mbedtls_printf("Using Ethernet LWIP\r\n");
-    const char *ip_addr = eth_iface.get_ip_address();
-    if (ip_addr) {
-        mbedtls_printf("Client IP Address is %s\r\n", ip_addr);
-    } else {
-        mbedtls_printf("No Client IP Address\r\n");
+    /* Use the easy-connect lib to support multiple network bearers.   */
+    /* See https://github.com/ARMmbed/easy-connect README.md for info. */
+    NetworkInterface* network = easy_connect(true); /* has 1 argument, enable_logging (pass in true to log to serial port) */
+    if (!network) {
+        printf("Connecting to the network failed... See serial output.\r\n");
+        return 1;
     }
 
-    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
+    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network);
     hello->startTest(HTTPS_PATH);
     delete hello;
 }
