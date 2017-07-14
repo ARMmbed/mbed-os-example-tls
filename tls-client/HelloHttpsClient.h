@@ -34,50 +34,18 @@
 
 #include <stdint.h>
 
-/* Change to a number between 1 and 4 to debug the TLS connection */
+/**
+ * Change to a number between 1 and 4 to debug the TLS connection
+ */
 #define HELLO_HTTPS_CLIENT_DEBUG_LEVEL  0
 
-/* Personalization string for the drbg */
-const char DRBG_PERSONALIZED_STR[] = "mbed TLS helloword client";
 
-/* Length of error string buffer for logging failures related to mbed TLS */
-const size_t ERROR_LOG_BUFFER_LENGTH = 128;
-
-/* Chain of trusted CAs in PEM format */
-const char TLS_PEM_CA[] = "-----BEGIN CERTIFICATE-----\n"
-    "MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkG\n"
-    "A1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNVBAsTB1Jv\n"
-    "b3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw05ODA5MDExMjAw\n"
-    "MDBaFw0yODAxMjgxMjAwMDBaMFcxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i\n"
-    "YWxTaWduIG52LXNhMRAwDgYDVQQLEwdSb290IENBMRswGQYDVQQDExJHbG9iYWxT\n"
-    "aWduIFJvb3QgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDaDuaZ\n"
-    "jc6j40+Kfvvxi4Mla+pIH/EqsLmVEQS98GPR4mdmzxzdzxtIK+6NiY6arymAZavp\n"
-    "xy0Sy6scTHAHoT0KMM0VjU/43dSMUBUc71DuxC73/OlS8pF94G3VNTCOXkNz8kHp\n"
-    "1Wrjsok6Vjk4bwY8iGlbKk3Fp1S4bInMm/k8yuX9ifUSPJJ4ltbcdG6TRGHRjcdG\n"
-    "snUOhugZitVtbNV4FpWi6cgKOOvyJBNPc1STE4U6G7weNLWLBYy5d4ux2x8gkasJ\n"
-    "U26Qzns3dLlwR5EiUWMWea6xrkEmCMgZK9FGqkjWZCrXgzT/LCrBbBlDSgeF59N8\n"
-    "9iFo7+ryUp9/k5DPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E\n"
-    "BTADAQH/MB0GA1UdDgQWBBRge2YaRQ2XyolQL30EzTSo//z9SzANBgkqhkiG9w0B\n"
-    "AQUFAAOCAQEA1nPnfE920I2/7LqivjTFKDK1fPxsnCwrvQmeU79rXqoRSLblCKOz\n"
-    "yj1hTdNGCbM+w6DjY1Ub8rrvrTnhQ7k4o+YviiY776BQVvnGCv04zcQLcFGUl5gE\n"
-    "38NflNUVyRRBnMRddWQVDf9VMOyGj/8N7yy5Y0b2qvzfvGn9LhJIZJrglfCm7ymP\n"
-    "AbEVtQwdpf5pLGkkeB6zpxxxYu7KyJesF12KwvhHhm4qxFYxldBniYUr+WymXUad\n"
-    "DKqC5JlR3XC321Y9YeRq4VzW9v493kHMB65jUr9TU/Qr6cf9tveCX4XSQRjbgbME\n"
-    "HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\n"
-    "-----END CERTIFICATE-----\n";
-
-/* Path to the file that will be requested from the server */
-const char HTTP_REQUEST_FILE_PATH[] = "/media/uploads/mbed_official/hello.txt";
-
-/*
+/**
  * Length (in bytes) for generic buffers used to hold debug or HTTP
  * request/response strings
  */
-const size_t GENERAL_PURPOSE_BUFFER_LENGTH = 1024;
+#define GENERAL_PURPOSE_BUFFER_LENGTH   1024
 
-/* Expected strings in the HTTP response from the server */
-const char HTTP_OK_STR[] = "200 OK";
-const char HTTP_HELLO_STR[] = "Hello world!";
 
 /**
  * This class implements the logic for fetching a file from a webserver using
@@ -94,13 +62,13 @@ public:
      * \param[in]   in_server_port
      *              The server port
      */
-    HelloHttpsClient( const char *in_server_name,
-                      const uint16_t in_server_port );
+    HelloHttpsClient(const char *in_server_name,
+                     const uint16_t in_server_port);
 
     /**
      * Free any allocated resources
      */
-    ~HelloHttpsClient( void );
+    ~HelloHttpsClient();
 
     /**
      * Start the connection to the server and request to read the file at
@@ -108,29 +76,19 @@ public:
      *
      * \return  0 if successful
      */
-    int run( void );
+    int run();
 
 private:
     /**
      * Create a TCPSocket object that can be used to communicate with the server
      */
-    int createTCPSocket( void );
+    int configureTCPSocket();
 
     /**
      * Configure the mbed TLS structures required to establish a TLS connection
      * with the server
      */
-    int configureTlsContexts( void );
-
-    /**
-     * Log an error message to serial
-     *
-     * \param[in]   func_name
-     *              The name of the mbed TLS function that returned the error
-     * \param[in]   ret
-     *              The error code returned by the mbed TLS function
-     */
-    void logTlsError( const char *func_name, int ret );
+    int configureTlsContexts();
 
     /**
      * Wrapper function around TCPSocket that gets called by mbed TLS whenever
@@ -146,7 +104,7 @@ private:
      * \return  If successful, the number of bytes received, a negative value
      *          otherwise.
      */
-    static int sslRecv( void *ctx, unsigned char *buf, size_t len );
+    static int sslRecv(void *ctx, unsigned char *buf, size_t len);
 
     /**
      * Wrapper function around TCPSocket that gets called by mbed TLS whenever
@@ -162,7 +120,7 @@ private:
      * \return  If successful, the number of bytes sent, a negative value
      *          otherwise
      */
-    static int sslSend( void *ctx, const unsigned char *buf, size_t len );
+    static int sslSend(void *ctx, const unsigned char *buf, size_t len);
 
     /**
      * Callback to handle debug prints to serial
@@ -178,8 +136,8 @@ private:
      * \param[in]   str
      *              The string to log to serial
      */
-    static void sslDebug( void *ctx, int level, const char *file, int line,
-                          const char *str );
+    static void sslDebug(void *ctx, int level, const char *file, int line,
+                         const char *str);
 
     /**
      * Callback to handle certificate verification
@@ -195,18 +153,48 @@ private:
      *
      * /return  0 if successful
      */
-    static int sslVerify( void *data, mbedtls_x509_crt *crt, int depth,
-                          uint32_t *flags );
+    static int sslVerify(void *data, mbedtls_x509_crt *crt, int depth,
+                         uint32_t *flags);
 
 private:
     /**
+     * Personalization string for the drbg
+     */
+    static const char *DRBG_PERSONALIZED_STR;
+
+    /**
+     *  Length of error string buffer for logging failures related to mbed TLS
+     */
+    static const size_t ERROR_LOG_BUFFER_LENGTH;
+
+    /**
+     * Chain of trusted CAs in PEM format
+     */
+    static const char *TLS_PEM_CA;
+
+    /**
+     * Path to the file that will be requested from the server
+     */
+    static const char *HTTP_REQUEST_FILE_PATH;
+
+    /**
+     * Expected strings in the HTTP response from the server
+     */
+    static const char *HTTP_OK_STR;
+
+    /**
+     * Expected strings in the HTTP response from the server
+     */
+    static const char *HTTP_HELLO_STR;
+
+    /**
      * Instance of EthernetInterface used to create a TCPSocket
      */
-    EthernetInterface *eth_iface;
+    EthernetInterface eth_iface;
     /**
      * Instance of TCPSocket used to communicate with the server
      */
-    TCPSocket *socket;
+    TCPSocket socket;
 
     /**
      * The domain/IP address of the server to contact

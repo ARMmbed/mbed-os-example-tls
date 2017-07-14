@@ -47,7 +47,7 @@ const int SERVER_PORT = 443;
 /**
  * The main function driving the HTTPS client.
  */
-int main( void )
+int main()
 {
     /*
      * The default 9600 bps is too slow to print full TLS debug info and could
@@ -58,33 +58,22 @@ int main( void )
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
     /* Allocate a HTTPS client */
-    client = new HelloHttpsClient( SERVER_NAME, SERVER_PORT );
-    if( client == NULL )
-    {
-        mbedtls_printf( "Failed to allocate HelloHttpsClient object\r\n" );
-        goto exit;
+    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT);
+    if (client == NULL) {
+        mbedtls_printf("Failed to allocate HelloHttpsClient object\r\n"
+                       "\r\nFAIL\r\n");
+        return exit_code;
     }
 
     /* Run the client */
-    if( client->run() != 0 )
-    {
-        goto cleanup;
+    if (client->run() != 0) {
+        mbedtls_printf("\r\nFAIL\r\n");
+    } else {
+        exit_code = MBEDTLS_EXIT_SUCCESS;
+        mbedtls_printf("\r\nDONE\r\n");
     }
 
-    exit_code = MBEDTLS_EXIT_SUCCESS;
-
-cleanup:
     delete client;
 
-exit:
-    if( exit_code == MBEDTLS_EXIT_SUCCESS )
-    {
-        mbedtls_printf( "DONE\r\n" );
-    }
-    else
-    {
-        mbedtls_printf( "FAIL\r\n" );
-    }
-
-    return( exit_code );
+    return exit_code;
 }

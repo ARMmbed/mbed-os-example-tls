@@ -35,12 +35,47 @@
 #include <stdint.h>
 #include <string.h>
 
-HelloHttpsClient::HelloHttpsClient( const char *in_server_name,
-                                    const uint16_t in_server_port ) :
-    eth_iface( NULL ),
-    socket( NULL ),
-    server_name( in_server_name ),
-    server_port( in_server_port )
+const char *HelloHttpsClient::DRBG_PERSONALIZED_STR =
+                                                "mbed TLS helloword client";
+
+const size_t HelloHttpsClient::ERROR_LOG_BUFFER_LENGTH = 128;
+
+const char *HelloHttpsClient::TLS_PEM_CA =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkG\n"
+    "A1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNVBAsTB1Jv\n"
+    "b3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw05ODA5MDExMjAw\n"
+    "MDBaFw0yODAxMjgxMjAwMDBaMFcxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i\n"
+    "YWxTaWduIG52LXNhMRAwDgYDVQQLEwdSb290IENBMRswGQYDVQQDExJHbG9iYWxT\n"
+    "aWduIFJvb3QgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDaDuaZ\n"
+    "jc6j40+Kfvvxi4Mla+pIH/EqsLmVEQS98GPR4mdmzxzdzxtIK+6NiY6arymAZavp\n"
+    "xy0Sy6scTHAHoT0KMM0VjU/43dSMUBUc71DuxC73/OlS8pF94G3VNTCOXkNz8kHp\n"
+    "1Wrjsok6Vjk4bwY8iGlbKk3Fp1S4bInMm/k8yuX9ifUSPJJ4ltbcdG6TRGHRjcdG\n"
+    "snUOhugZitVtbNV4FpWi6cgKOOvyJBNPc1STE4U6G7weNLWLBYy5d4ux2x8gkasJ\n"
+    "U26Qzns3dLlwR5EiUWMWea6xrkEmCMgZK9FGqkjWZCrXgzT/LCrBbBlDSgeF59N8\n"
+    "9iFo7+ryUp9/k5DPAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E\n"
+    "BTADAQH/MB0GA1UdDgQWBBRge2YaRQ2XyolQL30EzTSo//z9SzANBgkqhkiG9w0B\n"
+    "AQUFAAOCAQEA1nPnfE920I2/7LqivjTFKDK1fPxsnCwrvQmeU79rXqoRSLblCKOz\n"
+    "yj1hTdNGCbM+w6DjY1Ub8rrvrTnhQ7k4o+YviiY776BQVvnGCv04zcQLcFGUl5gE\n"
+    "38NflNUVyRRBnMRddWQVDf9VMOyGj/8N7yy5Y0b2qvzfvGn9LhJIZJrglfCm7ymP\n"
+    "AbEVtQwdpf5pLGkkeB6zpxxxYu7KyJesF12KwvhHhm4qxFYxldBniYUr+WymXUad\n"
+    "DKqC5JlR3XC321Y9YeRq4VzW9v493kHMB65jUr9TU/Qr6cf9tveCX4XSQRjbgbME\n"
+    "HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\n"
+    "-----END CERTIFICATE-----\n";
+
+const char *HelloHttpsClient::HTTP_REQUEST_FILE_PATH =
+                                    "/media/uploads/mbed_official/hello.txt";
+
+const char *HelloHttpsClient::HTTP_HELLO_STR = "Hello world!";
+
+const char *HelloHttpsClient::HTTP_OK_STR = "200 OK";
+
+HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
+                                   const uint16_t in_server_port) :
+    eth_iface(),
+    socket(),
+    server_name(in_server_name),
+    server_port(in_server_port)
 {
     mbedtls_entropy_init(&entropy);
     mbedtls_ctr_drbg_init(&ctr_drbg);
@@ -49,7 +84,7 @@ HelloHttpsClient::HelloHttpsClient( const char *in_server_name,
     mbedtls_ssl_config_init(&ssl_conf);
 }
 
-HelloHttpsClient::~HelloHttpsClient( void )
+HelloHttpsClient::~HelloHttpsClient()
 {
     mbedtls_entropy_free(&entropy);
     mbedtls_ctr_drbg_free(&ctr_drbg);
@@ -57,208 +92,294 @@ HelloHttpsClient::~HelloHttpsClient( void )
     mbedtls_ssl_free(&ssl);
     mbedtls_ssl_config_free(&ssl_conf);
 
-    if( eth_iface != NULL )
-        delete eth_iface;
-    if( socket != NULL )
-        delete socket;
+    socket.close();
 }
 
-int HelloHttpsClient::createTCPSocket( void )
+int HelloHttpsClient::run()
+{
+    int ret;
+    size_t req_len, req_offset, resp_offset;
+    uint32_t flags;
+    bool resp_200, resp_hello;
+
+    /* Configure the EthernetInterface and TCPSocket */
+    if ((ret = configureTCPSocket()) != 0)
+        return ret;
+
+    /* Configure already initialized mbed TLS structures */
+    if ((ret = configureTlsContexts()) != 0)
+        return ret;
+
+    /* Start a connection to the server */
+    if ((ret = socket.connect(server_name, server_port)) != NSAPI_ERROR_OK) {
+        mbedtls_printf("socket.connect() returned %d\r\n", ret);
+        return ret;
+    } else {
+        mbedtls_printf("Successfully connected to %s at port %u\r\n",
+                       server_name, server_port);
+    }
+
+    /* Start the TLS handshake */
+    mbedtls_printf("Starting the TLS handshake...\r\n");
+    do {
+        ret = mbedtls_ssl_handshake(&ssl);
+    } while(ret != 0 &&
+            (ret == MBEDTLS_ERR_SSL_WANT_READ ||
+            ret == MBEDTLS_ERR_SSL_WANT_WRITE));
+    if (ret < 0) {
+        mbedtls_printf("mbedtls_ssl_handshake() returned -0x%04X\r\n", -ret);
+        return ret;
+    } else {
+        mbedtls_printf("Successfully completed the TLS handshake\r\n");
+    }
+
+    /* Fill the request buffer */
+    ret = snprintf(gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH - 1,
+                   "GET %s HTTP/1.1\nHost: %s\n\n", HTTP_REQUEST_FILE_PATH,
+                   server_name);
+    req_len = static_cast<size_t>(ret);
+    if (ret < 0 || req_len >= GENERAL_PURPOSE_BUFFER_LENGTH - 1) {
+        mbedtls_printf("Failed to compose HTTP request using snprintf: %d\r\n",
+                       ret);
+        return ret;
+    }
+
+    /* Send the HTTP request to the server over TLS */
+    req_offset = 0;
+    do {
+        ret = mbedtls_ssl_write(&ssl,
+                reinterpret_cast<const unsigned char *>(gp_buf + req_offset),
+                req_len - req_offset);
+        if (ret > 0)
+            req_offset += static_cast<size_t>(ret);
+    }
+    while(req_offset < req_len &&
+          (ret > 0 ||
+          ret == MBEDTLS_ERR_SSL_WANT_WRITE ||
+          ret == MBEDTLS_ERR_SSL_WANT_READ));
+    if (ret < 0) {
+        mbedtls_printf("mbedtls_ssl_write() returned -0x%04X\r\n", -ret);
+        return ret;
+    }
+
+    /* Print information about the TLS connection */
+    ret = mbedtls_x509_crt_info(gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH,
+                                "\r  ", mbedtls_ssl_get_peer_cert(&ssl));
+    if (ret < 0) {
+        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
+        return ret;
+    } else {
+        mbedtls_printf("Server certificate:\r\n%s\r\n", gp_buf);
+    }
+
+    /* Ensure certificate verification was successful */
+    flags = mbedtls_ssl_get_verify_result(&ssl);
+    if (flags != 0) {
+        ret = mbedtls_x509_crt_verify_info(gp_buf,
+                                           GENERAL_PURPOSE_BUFFER_LENGTH,
+                                           "\r  ! ", flags);
+        if (ret < 0) {
+            mbedtls_printf("mbedtls_x509_crt_verify_info() returned "
+                           "-0x%04X\r\n", -ret);
+            return ret;
+        } else {
+            mbedtls_printf("Certificate verification failed (flags %lu):"
+                           "\r\n%s\r\n", flags, gp_buf);
+            return -1;
+        }
+    } else {
+        mbedtls_printf("Certificate verification passed\r\n");
+    }
+
+    mbedtls_printf("Established TLS connection to %s\r\n", server_name);
+
+    /* Read response from the server */
+    resp_offset = 0;
+    resp_200 = false;
+    resp_hello = false;
+    do {
+        ret = mbedtls_ssl_read(&ssl,
+                    reinterpret_cast<unsigned char *>(gp_buf  + resp_offset),
+                    GENERAL_PURPOSE_BUFFER_LENGTH - resp_offset - 1 );
+        if (ret > 0)
+            resp_offset += static_cast<size_t>( ret );
+
+        /* Ensure that the response string is null-terminated */
+        gp_buf[resp_offset] = '\0';
+
+        /* Check  if we received expected string */
+        resp_200 = resp_200 || strstr(gp_buf, HTTP_OK_STR) != NULL;
+        resp_hello = resp_hello || strstr(gp_buf, HTTP_HELLO_STR) != NULL;
+    } while((!resp_200 || !resp_hello) &&
+            (ret > 0 ||
+            ret == MBEDTLS_ERR_SSL_WANT_READ || MBEDTLS_ERR_SSL_WANT_WRITE));
+    if (ret < 0) {
+        mbedtls_printf("mbedtls_ssl_read() returned -0x%04X\r\n", -ret);
+        return ret;
+    }
+    gp_buf[resp_offset] = '\0';
+
+    /* Display response information */
+    mbedtls_printf("HTTP: Received %u chars from server\r\n", resp_offset);
+    mbedtls_printf("HTTP: Received '%s' status ... %s\r\n", HTTP_OK_STR,
+                   resp_200 ? "OK" : "FAIL");
+    mbedtls_printf("HTTP: Received message:\r\n%s\r\n", gp_buf);
+
+    return 0;
+}
+
+int HelloHttpsClient::configureTCPSocket()
 {
     int ret;
     const char *ip_addr;
 
-    eth_iface = new EthernetInterface();
-    if( eth_iface == NULL )
-    {
-        mbedtls_printf( "Failed to allocate EthernetInterface\r\n" );
-        return( -1 );
-    }
-
     /* Initialise the ethernet interface and start up the stack */
-    if( ( ret = eth_iface->connect() ) != 0 )
-    {
-        mbedtls_printf( "Failed call to eth_iface.connect(): %d\r\n", ret );
-        return( ret );
+    if ((ret = eth_iface.connect()) != 0) {
+        mbedtls_printf("eth_iface.connect() returned %d\r\n", ret);
+        return ret;
     }
 
-    ip_addr = eth_iface->get_ip_address();
-    if( ip_addr != NULL )
-    {
-        mbedtls_printf( "Client IP address is %s\r\n", ip_addr );
-    }
-    else
-    {
-        mbedtls_printf( "Failed to get client IP address\r\n" );
-        return( -1 );
+    if ((ip_addr = eth_iface.get_ip_address()) != NULL) {
+        mbedtls_printf("Client IP address is %s\r\n", ip_addr);
+    } else {
+        mbedtls_printf("Failed to get client IP address\r\n");
+        return -1;
     }
 
-    /* Create a TCPSocket */
-    socket = new TCPSocket( eth_iface );
-    if ( socket == NULL )
-    {
-        mbedtls_printf( "Failed to allocate TCPSocket object\r\n" );
-        return( -1 );
+    if ((ret = socket.open(&eth_iface)) != NSAPI_ERROR_OK) {
+        mbedtls_printf("socket.open() returned %d\r\n", ret);
+        return ret;
     }
-    socket->set_blocking( false );
 
-    return( 0 );
+    socket.set_blocking(false);
+
+    return 0;
 }
 
-void HelloHttpsClient::logTlsError( const char *func_name, int ret )
-{
-    char buf[ERROR_LOG_BUFFER_LENGTH];
-
-    mbedtls_strerror( ret, buf, sizeof( buf ) );
-    mbedtls_printf( "Failed call to %s:\r\n", func_name );
-    mbedtls_printf( "\t\tError (-0x%04X): %s\r\n", -ret, buf );
-}
-
-int HelloHttpsClient::configureTlsContexts( void )
+int HelloHttpsClient::configureTlsContexts()
 {
     int ret;
 
-    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func, &entropy,
-            reinterpret_cast<const unsigned char *>( DRBG_PERSONALIZED_STR ),
-            sizeof( DRBG_PERSONALIZED_STR ) );
-    if( ret != 0 )
-    {
-        logTlsError( "mbedtls_ctr_drbg_seed()", ret );
-        return( ret );
+    ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+            reinterpret_cast<const unsigned char *>(DRBG_PERSONALIZED_STR),
+            strlen(DRBG_PERSONALIZED_STR) + 1);
+    if (ret != 0) {
+        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\r\n", -ret);
+        return ret;
     }
 
-    ret = mbedtls_x509_crt_parse( &cacert,
-                        reinterpret_cast<const unsigned char *>( TLS_PEM_CA ),
-                        sizeof( TLS_PEM_CA ) );
-    if( ret != 0 )
-    {
-        logTlsError( "mbedtls_x509_crt_parse()", ret );
-        return( ret );
+    ret = mbedtls_x509_crt_parse(&cacert,
+                        reinterpret_cast<const unsigned char *>(TLS_PEM_CA),
+                        strlen(TLS_PEM_CA) + 1);
+    if (ret != 0) {
+        mbedtls_printf("mbedtls_x509_crt_parse() returned -0x%04X\r\n", -ret);
+        return ret;
     }
 
-    ret = mbedtls_ssl_config_defaults( &ssl_conf, MBEDTLS_SSL_IS_CLIENT,
-                                       MBEDTLS_SSL_TRANSPORT_STREAM,
-                                       MBEDTLS_SSL_PRESET_DEFAULT );
-    if( ret != 0 )
-    {
-        logTlsError( "mbedtls_ssl_config_defaults()", ret );
-        return( ret );
+    ret = mbedtls_ssl_config_defaults(&ssl_conf, MBEDTLS_SSL_IS_CLIENT,
+                                      MBEDTLS_SSL_TRANSPORT_STREAM,
+                                      MBEDTLS_SSL_PRESET_DEFAULT);
+    if (ret != 0) {
+        mbedtls_printf("mbedtls_ssl_config_defaults() returned -0x%04X\r\n",
+                       -ret);
+        return ret;
     }
 
-    mbedtls_ssl_conf_ca_chain( &ssl_conf, &cacert, NULL );
-    mbedtls_ssl_conf_rng( &ssl_conf, mbedtls_ctr_drbg_random, &ctr_drbg );
+    mbedtls_ssl_conf_ca_chain(&ssl_conf, &cacert, NULL);
+    mbedtls_ssl_conf_rng(&ssl_conf, mbedtls_ctr_drbg_random, &ctr_drbg);
 
     /*
      * It is possible to disable authentication by passing
      * MBEDTLS_SSL_VERIFY_NONE in the call to mbedtls_ssl_conf_authmode()
      */
-    mbedtls_ssl_conf_authmode( &ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED );
+    mbedtls_ssl_conf_authmode(&ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
 
 #if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
-    mbedtls_ssl_conf_verify( &ssl_conf, sslVerify, NULL );
-    mbedtls_ssl_conf_dbg( &ssl_conf, sslDebug, NULL );
-    mbedtls_debug_set_threshold( HELLO_HTTPS_CLIENT_DEBUG_LEVEL );
+    mbedtls_ssl_conf_verify(&ssl_conf, sslVerify, NULL);
+    mbedtls_ssl_conf_dbg(&ssl_conf, sslDebug, NULL);
+    mbedtls_debug_set_threshold(HELLO_HTTPS_CLIENT_DEBUG_LEVEL);
 #endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
 
-    ret = mbedtls_ssl_setup( &ssl, &ssl_conf );
-    if( ret != 0 )
-    {
-        logTlsError( "mbedtls_ssl_setup()", ret );
+    if ((ret = mbedtls_ssl_setup( &ssl, &ssl_conf)) != 0) {
+        mbedtls_printf("mbedtls_ssl_setup() returned -0x%04X\r\n", -ret);
+        return ret;
+    }
+
+    if ((ret = mbedtls_ssl_set_hostname( &ssl, server_name )) != 0) {
+        mbedtls_printf("mbedtls_ssl_set_hostname() returned -0x%04X\r\n",
+                       -ret);
         return( ret );
     }
 
-    ret = mbedtls_ssl_set_hostname( &ssl, server_name );
-    if( ret != 0 )
-    {
-        logTlsError( "mbedtls_ssl_set_hostname()", ret );
-        return( ret );
-    }
+    mbedtls_ssl_set_bio(&ssl, static_cast<void *>(&socket), sslSend, sslRecv,
+                        NULL);
 
-    mbedtls_ssl_set_bio( &ssl, static_cast<void *>( socket ), sslSend,
-                         sslRecv, NULL );
-
-    return( 0 );
+    return 0;
 }
 
-int HelloHttpsClient::sslRecv( void *ctx, unsigned char *buf, size_t len )
+int HelloHttpsClient::sslRecv(void *ctx, unsigned char *buf, size_t len)
 {
-    TCPSocket *socket = static_cast<TCPSocket *>( ctx );
-    int ret = socket->recv( buf, len );
+    TCPSocket *socket = static_cast<TCPSocket *>(ctx);
+    int ret = socket->recv(buf, len);
 
-    if( ret == NSAPI_ERROR_WOULD_BLOCK )
-    {
-        return( MBEDTLS_ERR_SSL_WANT_READ );
-    }
-    else if( ret < 0 )
-    {
-        mbedtls_printf( "Failed call to socket->recv(): %d\r\n", ret );
-    }
+    if (ret == NSAPI_ERROR_WOULD_BLOCK)
+        ret = MBEDTLS_ERR_SSL_WANT_READ;
+    else if (ret < 0)
+        mbedtls_printf("socket.recv() returned %d\r\n", ret);
 
-    return( ret );
+    return ret;
 }
 
-int HelloHttpsClient::sslSend( void *ctx, const unsigned char *buf, size_t len )
+int HelloHttpsClient::sslSend(void *ctx, const unsigned char *buf, size_t len)
 {
-    TCPSocket *socket = static_cast<TCPSocket *>( ctx );
-    int ret = socket->send( buf, len );
+    TCPSocket *socket = static_cast<TCPSocket *>(ctx);
+    int ret = socket->send(buf, len);
 
-    if( ret == NSAPI_ERROR_WOULD_BLOCK )
-    {
-        return( MBEDTLS_ERR_SSL_WANT_WRITE );
-    }
-    else if( ret < 0 )
-    {
-        mbedtls_printf( "Failed call to socket->send(): %d\r\n", ret );
-    }
+    if (ret == NSAPI_ERROR_WOULD_BLOCK)
+        ret = MBEDTLS_ERR_SSL_WANT_WRITE;
+    else if ( ret < 0 )
+        mbedtls_printf("socket.send() returned %d\r\n", ret);
 
-    return( ret );
+    return ret;
 }
 
-void HelloHttpsClient::sslDebug( void *ctx, int level, const char *file,
-                                 int line, const char *str )
+void HelloHttpsClient::sslDebug(void *ctx, int level, const char *file,
+                                int line, const char *str)
 {
     (void)ctx;
 
     const char *p, *basename;
 
     /* Extract basename from file */
-    for( p = basename = file; *p != '\0'; p++ )
-    {
-        if( *p == '/' || *p == '\\' )
-        {
+    for (p = basename = file; *p != '\0'; p++) {
+        if (*p == '/' || *p == '\\')
             basename = p + 1;
-        }
     }
 
-    mbedtls_printf( "%s:%d: |%d| %s\r", basename, line, level, str );
+    mbedtls_printf("%s:%d: |%d| %s\r", basename, line, level, str);
 }
 
-int HelloHttpsClient::sslVerify( void *data, mbedtls_x509_crt *crt, int depth,
-                                 uint32_t *flags )
+int HelloHttpsClient::sslVerify(void *data, mbedtls_x509_crt *crt, int depth,
+                                uint32_t *flags)
 {
     (void)data;
 
     int ret = -1;
     char *buf = new char[GENERAL_PURPOSE_BUFFER_LENGTH];
 
-    if( buf == NULL )
-    {
+    if (buf == NULL) {
         mbedtls_printf( "Failed to allocate sslVerify() buffer\r\n" );
         goto exit;
     }
 
-    ret = mbedtls_x509_crt_info( buf, GENERAL_PURPOSE_BUFFER_LENGTH,
-                                 "\r  ", crt );
-    if( ret < 0 )
-    {
-        mbedtls_printf( "Failed call to mbedtls_x509_crt_info(): -0x%04X\r\n",
-                        ret );
+    ret = mbedtls_x509_crt_info(buf, GENERAL_PURPOSE_BUFFER_LENGTH,
+                                "\r  ", crt );
+    if (ret < 0) {
+        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
         goto cleanup;
-    }
-    else
-    {
-        mbedtls_printf( "Verifying certificate at depth %d:\r\n%s\r\n",
-                        depth, buf );
+    } else {
+        mbedtls_printf("Verifying certificate at depth %d:\r\n%s\r\n",
+                       depth, buf);
     }
 
     ret = 0;
@@ -267,165 +388,6 @@ cleanup:
     delete[] buf;
 
 exit:
-    return( ret );
+    return ret;
 }
 
-int HelloHttpsClient::run( void )
-{
-    int ret;
-    size_t req_len, req_offset, resp_offset;
-    uint32_t flags;
-    bool resp_200, resp_hello;
-
-    /* Configure the EthernetInterface and TCPSocket */
-    if( ( ret = createTCPSocket() ) != 0 )
-        goto exit;
-
-    /* Configure already initialized mbed TLS structures */
-    if( ( ret = configureTlsContexts() ) != 0 )
-        goto exit;
-
-    /* Start a connection to the server */
-    if( ( ret = socket->connect( server_name, server_port ) ) != NSAPI_ERROR_OK )
-    {
-        mbedtls_printf( "Failed call to socket->connect(): %d\r\n", ret );
-        goto exit;
-    }
-    else
-    {
-        mbedtls_printf( "Successfully connected to %s at port %u\r\n",
-                        server_name, server_port );
-    }
-
-    /* Start the TLS handshake */
-    do
-    {
-        ret = mbedtls_ssl_handshake( &ssl );
-    }
-    while( ret != 0 && ( ret == MBEDTLS_ERR_SSL_WANT_READ ||
-           ret == MBEDTLS_ERR_SSL_WANT_WRITE ) );
-    if( ret < 0 )
-    {
-        logTlsError( "mbedtls_ssl_handshake()", ret );
-        goto close_socket;
-    }
-    else
-    {
-        mbedtls_printf( "Successfully completed the TLS handshake\r\n" );
-    }
-
-    /* Fill the request buffer */
-    ret = snprintf( gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH - 1,
-                    "GET %s HTTP/1.1\nHost: %s\n\n", HTTP_REQUEST_FILE_PATH,
-                    server_name );
-    req_len = static_cast<size_t>( ret );
-    if( ret < 0 || req_len >= GENERAL_PURPOSE_BUFFER_LENGTH - 1 )
-    {
-        mbedtls_printf( "Failed to compose HTTP request using snprintf: %d\r\n",
-                        ret );
-        goto close_socket;
-    }
-
-    /* Send the HTTP request to the server over TLS */
-    req_offset = 0;
-    do
-    {
-        ret = mbedtls_ssl_write( &ssl,
-            reinterpret_cast<const unsigned char *>( gp_buf  + req_offset ),
-            req_len - req_offset );
-        if( ret > 0 )
-        {
-            req_offset += static_cast<size_t>( ret );
-        }
-    }
-    while( req_offset < req_len && ( ret > 0 ||
-           ret == MBEDTLS_ERR_SSL_WANT_WRITE ) );
-    if( ret < 0 )
-    {
-        logTlsError( "mbedtls_ssl_write()", ret );
-        goto close_socket;
-    }
-
-    /* Print information about the TLS connection */
-    ret = mbedtls_x509_crt_info( gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH,
-                                 "\r  ", mbedtls_ssl_get_peer_cert( &ssl ) );
-    if( ret < 0 )
-    {
-        logTlsError( "mbedtls_x509_crt_info()", ret );
-        goto close_socket;
-    }
-    else
-    {
-        mbedtls_printf( "Server certificate:\r\n%s\r", gp_buf );
-    }
-
-    /* Ensure certificate verification was successful */
-    flags = mbedtls_ssl_get_verify_result( &ssl );
-    if( flags != 0 )
-    {
-        ret = mbedtls_x509_crt_verify_info( gp_buf,
-                                            GENERAL_PURPOSE_BUFFER_LENGTH,
-                                            "\r  ! ", flags );
-        if( ret < 0 )
-        {
-            logTlsError( "mbedtls_x509_crt_verify_info()", ret );
-        }
-        else
-        {
-            mbedtls_printf( "Certificate verification failed:\r\n%s\r\n",
-                            gp_buf );
-        }
-        goto close_socket;
-    }
-    else
-    {
-        mbedtls_printf( "Certificate verification passed\r\n\r\n" );
-    }
-
-    mbedtls_printf( "Established TLS connection to %s\r\n", server_name );
-
-    /* Read response from the server */
-    resp_offset = 0;
-    resp_200 = false;
-    resp_hello = false;
-    do
-    {
-        ret = mbedtls_ssl_read( &ssl,
-                    reinterpret_cast<unsigned char *>( gp_buf  + resp_offset ),
-                    GENERAL_PURPOSE_BUFFER_LENGTH - resp_offset - 1 );
-        if( ret > 0 )
-        {
-            resp_offset += static_cast<size_t>( ret );
-        }
-
-        /* Ensure that the response string is null-terminated */
-        gp_buf[resp_offset] = '\0';
-
-        /* Check  if we received expected string */
-        resp_200 = resp_200 || strstr( gp_buf, HTTP_OK_STR ) != NULL;
-        resp_hello = resp_hello || strstr( gp_buf, HTTP_HELLO_STR ) != NULL;
-    }
-    while( ( !resp_200 || !resp_hello ) &&
-            ( ret > 0 || ret == MBEDTLS_ERR_SSL_WANT_READ ) );
-    if( ret < 0 )
-    {
-        logTlsError( "mbedtls_ssl_read()", ret );
-        goto close_socket;
-    }
-    gp_buf[resp_offset] = '\0';
-
-    /* Display response information */
-    mbedtls_printf( "HTTP: Received %d chars from server\r\n", resp_offset );
-    mbedtls_printf( "HTTP: Received '%s' status ... %s\r\n", HTTP_OK_STR,
-                    resp_200 ? "OK" : "FAIL" );
-    mbedtls_printf( "HTTP: Received message:\r\n%s\r\n", gp_buf );
-
-    /* Connection succeeded */
-    ret = 0;
-
-close_socket:
-    socket->close();
-
-exit:
-    return( ret );
-}
