@@ -1,5 +1,6 @@
 Client IP address is
 Successfully connected to developer.mbed.org at port 443
+Starting the TLS handshake...
 Successfully completed the TLS handshake
 Server certificate:
 Certificate verification passed
