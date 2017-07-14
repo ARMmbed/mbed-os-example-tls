@@ -295,7 +295,7 @@ int HelloHttpsClient::configureTlsContexts()
     mbedtls_ssl_conf_authmode(&ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
 
 #if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
-    mbedtls_ssl_conf_verify(&ssl_conf, sslVerify, NULL);
+    mbedtls_ssl_conf_verify(&ssl_conf, sslVerify, this);
     mbedtls_ssl_conf_dbg(&ssl_conf, sslDebug, NULL);
     mbedtls_debug_set_threshold(HELLO_HTTPS_CLIENT_DEBUG_LEVEL);
 #endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
@@ -359,35 +359,23 @@ void HelloHttpsClient::sslDebug(void *ctx, int level, const char *file,
     mbedtls_printf("%s:%d: |%d| %s\r", basename, line, level, str);
 }
 
-int HelloHttpsClient::sslVerify(void *data, mbedtls_x509_crt *crt, int depth,
+int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
                                 uint32_t *flags)
 {
-    (void)data;
+    HelloHttpsClient *client = static_cast<HelloHttpsClient *>(ctx);
 
     int ret = -1;
-    char *buf = new char[GENERAL_PURPOSE_BUFFER_LENGTH];
 
-    if (buf == NULL) {
-        mbedtls_printf( "Failed to allocate sslVerify() buffer\r\n" );
-        goto exit;
-    }
-
-    ret = mbedtls_x509_crt_info(buf, GENERAL_PURPOSE_BUFFER_LENGTH,
+    ret = mbedtls_x509_crt_info(client->gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH,
                                 "\r  ", crt );
     if (ret < 0) {
         mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
-        goto cleanup;
     } else {
+        ret = 0;
         mbedtls_printf("Verifying certificate at depth %d:\r\n%s\r\n",
-                       depth, buf);
+                       depth, client->gp_buf);
     }
 
-    ret = 0;
-
-cleanup:
-    delete[] buf;
-
-exit:
     return ret;
 }
 

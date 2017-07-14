@@ -37,15 +37,13 @@
 /**
  * Change to a number between 1 and 4 to debug the TLS connection
  */
-#define HELLO_HTTPS_CLIENT_DEBUG_LEVEL  0
-
+#define HELLO_HTTPS_CLIENT_DEBUG_LEVEL  1
 
 /**
  * Length (in bytes) for generic buffers used to hold debug or HTTP
  * request/response strings
  */
 #define GENERAL_PURPOSE_BUFFER_LENGTH   1024
-
 
 /**
  * This class implements the logic for fetching a file from a webserver using
@@ -153,7 +151,7 @@ private:
      *
      * /return  0 if successful
      */
-    static int sslVerify(void *data, mbedtls_x509_crt *crt, int depth,
+    static int sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
                          uint32_t *flags);
 
 private:
