@@ -24,9 +24,6 @@ __NOTE:__ Make sure that the network is functional before running the applicatio
 The output in the terminal window should be similar to this:
 
 ```
-Using Ethernet LWIP
-Client IP Address is 10.2.203.43
-Connecting with developer.mbed.org
 [EasyConnect] Connected to Network successfully
 [EasyConnect] MAC address ae:41:46:27:31:e7
 [EasyConnect] IP address 192.168.64.255

@@ -421,8 +421,12 @@ int main() {
 
     /* Use the easy-connect lib to support multiple network bearers.   */
     /* See https://github.com/ARMmbed/easy-connect README.md for info. */
-    NetworkInterface* network = easy_connect(true); /* has 1 argument, enable_logging (pass in true to log to serial port) */
-    if (!network) {
+#if DEBUG_LEVEL > 0
+    NetworkInterface* network = easy_connect(true);
+#else
+    NetworkInterface* network = easy_connect(false);
+#endif /* DEBUG_LEVEL > 0 */
+    if (NULL == network) {
         printf("Connecting to the network failed... See serial output.\n");
         return 1;
     }
