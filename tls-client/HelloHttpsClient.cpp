@@ -114,10 +114,9 @@ int HelloHttpsClient::run()
     if ((ret = socket.connect(server_name, server_port)) != NSAPI_ERROR_OK) {
         mbedtls_printf("socket.connect() returned %d\r\n", ret);
         return ret;
-    } else {
-        mbedtls_printf("Successfully connected to %s at port %u\r\n",
-                       server_name, server_port);
     }
+    mbedtls_printf("Successfully connected to %s at port %u\r\n",
+                   server_name, server_port);
 
     /* Start the TLS handshake */
     mbedtls_printf("Starting the TLS handshake...\r\n");
@@ -129,9 +128,8 @@ int HelloHttpsClient::run()
     if (ret < 0) {
         mbedtls_printf("mbedtls_ssl_handshake() returned -0x%04X\r\n", -ret);
         return ret;
-    } else {
-        mbedtls_printf("Successfully completed the TLS handshake\r\n");
     }
+    mbedtls_printf("Successfully completed the TLS handshake\r\n");
 
     /* Fill the request buffer */
     ret = snprintf(gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH - 1,
@@ -168,9 +166,8 @@ int HelloHttpsClient::run()
     if (ret < 0) {
         mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
         return ret;
-    } else {
-        mbedtls_printf("Server certificate:\r\n%s\r\n", gp_buf);
     }
+    mbedtls_printf("Server certificate:\r\n%s\r\n", gp_buf);
 
     /* Ensure certificate verification was successful */
     flags = mbedtls_ssl_get_verify_result(&ssl);
