@@ -196,9 +196,9 @@ int HelloHttpsClient::run()
     do {
         ret = mbedtls_ssl_read(&ssl,
                     reinterpret_cast<unsigned char *>(gp_buf  + resp_offset),
-                    sizeof(gp_buf) - resp_offset - 1 );
+                    sizeof(gp_buf) - resp_offset - 1);
         if (ret > 0)
-            resp_offset += static_cast<size_t>( ret );
+            resp_offset += static_cast<size_t>(ret);
 
         /* Ensure that the response string is null-terminated */
         gp_buf[resp_offset] = '\0';
@@ -303,7 +303,7 @@ int HelloHttpsClient::configureTlsContexts()
     if ((ret = mbedtls_ssl_set_hostname( &ssl, server_name )) != 0) {
         mbedtls_printf("mbedtls_ssl_set_hostname() returned -0x%04X\r\n",
                        -ret);
-        return( ret );
+        return ret;
     }
 
     mbedtls_ssl_set_bio(&ssl, static_cast<void *>(&socket), sslSend, sslRecv,
@@ -332,7 +332,7 @@ int HelloHttpsClient::sslSend(void *ctx, const unsigned char *buf, size_t len)
 
     if (ret == NSAPI_ERROR_WOULD_BLOCK)
         ret = MBEDTLS_ERR_SSL_WANT_WRITE;
-    else if ( ret < 0 )
+    else if (ret < 0)
         mbedtls_printf("socket.send() returned %d\r\n", ret);
 
     return ret;
@@ -361,7 +361,7 @@ int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
 
     int ret = -1;
 
-    ret = mbedtls_x509_crt_info(client->gp_buf, sizeof(gp_buf), "\r  ", crt );
+    ret = mbedtls_x509_crt_info(client->gp_buf, sizeof(gp_buf), "\r  ", crt);
     if (ret < 0) {
         mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
     } else {
