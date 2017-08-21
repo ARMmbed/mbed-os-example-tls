@@ -132,11 +132,11 @@ int HelloHttpsClient::run()
     mbedtls_printf("Successfully completed the TLS handshake\r\n");
 
     /* Fill the request buffer */
-    ret = snprintf(gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH - 1,
+    ret = snprintf(gp_buf, sizeof(gp_buf),
                    "GET %s HTTP/1.1\nHost: %s\n\n", HTTP_REQUEST_FILE_PATH,
                    server_name);
     req_len = static_cast<size_t>(ret);
-    if (ret < 0 || req_len >= GENERAL_PURPOSE_BUFFER_LENGTH - 1) {
+    if (ret < 0 || req_len >= sizeof(gp_buf)) {
         mbedtls_printf("Failed to compose HTTP request using snprintf: %d\r\n",
                        ret);
         return ret;
@@ -161,7 +161,7 @@ int HelloHttpsClient::run()
     }
 
     /* Print information about the TLS connection */
-    ret = mbedtls_x509_crt_info(gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH,
+    ret = mbedtls_x509_crt_info(gp_buf, sizeof(gp_buf),
                                 "\r  ", mbedtls_ssl_get_peer_cert(&ssl));
     if (ret < 0) {
         mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
@@ -172,8 +172,7 @@ int HelloHttpsClient::run()
     /* Ensure certificate verification was successful */
     flags = mbedtls_ssl_get_verify_result(&ssl);
     if (flags != 0) {
-        ret = mbedtls_x509_crt_verify_info(gp_buf,
-                                           GENERAL_PURPOSE_BUFFER_LENGTH,
+        ret = mbedtls_x509_crt_verify_info(gp_buf, sizeof(gp_buf),
                                            "\r  ! ", flags);
         if (ret < 0) {
             mbedtls_printf("mbedtls_x509_crt_verify_info() returned "
@@ -197,7 +196,7 @@ int HelloHttpsClient::run()
     do {
         ret = mbedtls_ssl_read(&ssl,
                     reinterpret_cast<unsigned char *>(gp_buf  + resp_offset),
-                    GENERAL_PURPOSE_BUFFER_LENGTH - resp_offset - 1 );
+                    sizeof(gp_buf) - resp_offset - 1 );
         if (ret > 0)
             resp_offset += static_cast<size_t>( ret );
 
@@ -362,8 +361,7 @@ int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
 
     int ret = -1;
 
-    ret = mbedtls_x509_crt_info(client->gp_buf, GENERAL_PURPOSE_BUFFER_LENGTH,
-                                "\r  ", crt );
+    ret = mbedtls_x509_crt_info(client->gp_buf, sizeof(gp_buf), "\r  ", crt );
     if (ret < 0) {
         mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
     } else {
