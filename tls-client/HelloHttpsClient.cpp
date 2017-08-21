@@ -214,7 +214,6 @@ int HelloHttpsClient::run()
         mbedtls_printf("mbedtls_ssl_read() returned -0x%04X\r\n", -ret);
         return ret;
     }
-    gp_buf[resp_offset] = '\0';
 
     /* Display response information */
     mbedtls_printf("HTTP: Received %u chars from server\r\n", resp_offset);
