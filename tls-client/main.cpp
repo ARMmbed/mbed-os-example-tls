@@ -21,7 +21,7 @@
 
 /** \file main.cpp
  *  \brief An example TLS Client application
- *  This application sends an HTTPS request to developer.mbed.org and searches for a string in
+ *  This application sends an HTTPS request to os.mbed.com and searches for a string in
  *  the result.
  *
  *  This example is implemented as a logic class (HelloHTTPS) wrapping a TCP socket.
@@ -50,7 +50,7 @@
 
 namespace {
 
-const char *HTTPS_SERVER_NAME = "developer.mbed.org";
+const char *HTTPS_SERVER_NAME = "os.mbed.com";
 const int HTTPS_SERVER_PORT = 443;
 const int RECV_BUFFER_SIZE = 600;
 
@@ -64,7 +64,7 @@ const char *HTTPS_HELLO_STR = "Hello world!";
 const char *DRBG_PERS = "mbed TLS helloword client";
 
 /* List of trusted root CA certificates
- * currently only GlobalSign, the CA for developer.mbed.org
+ * currently only GlobalSign, the CA for os.mbed.com
  *
  * To add more than one root, just concatenate them.
  */
