@@ -24,7 +24,7 @@
  *
  * \brief An example TLS Client application
  *
- * This application sends an HTTPS request to developer.mbed.org and searches
+ * This application sends an HTTPS request to os.mbed.com and searches
  * for a string in the result.
  *
  * This example is implemented as a logic class (HelloHttpsClient) wrapping a
@@ -39,7 +39,7 @@
 #include "HelloHttpsClient.h"
 
 /* Domain/IP address of the server to contact */
-const char SERVER_NAME[] = "developer.mbed.org";
+const char SERVER_NAME[] = "os.mbed.com";
 
 /* Port used to connect to the server */
 const int SERVER_PORT = 443;
