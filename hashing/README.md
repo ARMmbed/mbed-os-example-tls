@@ -6,7 +6,7 @@ This application performs hashing of a buffer with SHA-256 using various APIs. I
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
-You can also compile this example with the [mbed Online Compiler](https://developer.mbed.org/compiler/) by using [this project](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-hashing).
+You can also compile this example with the [mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing).
 
 ## Monitoring the application
 
