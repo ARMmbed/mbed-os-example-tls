@@ -5,7 +5,7 @@ This repository contains a collection of mbed TLS example applications based on 
 # Getting started
 
 ## Required hardware
-* An [FRDM-K64F](http://developer.mbed.org/platforms/FRDM-K64F/) development board.
+* An [FRDM-K64F](http://os.mbed.com/platforms/FRDM-K64F/) development board.
 * A micro-USB cable.
 
 ### Other hardware
@@ -18,13 +18,13 @@ If your board has no hardware entropy source or its entropy source is not integr
 
 ## Required software
 * [mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
-* [Serial port monitor](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications).
+* [Serial port monitor](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications).
 
-An alternative to mbed CLI is to use the [mbed Online Compiler](https://developer.mbed.org/compiler/). In this case, you need to import the example projects from [mbed developer](https://developer.mbed.org/) to your mbed Online Compiler session using the links below:
-* [authcrypt](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt)
-* [benchmark](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-benchmark)
-* [hashing](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
-* [tls-client](https://developer.mbed.org/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
+An alternative to mbed CLI is to use the [mbed Online Compiler](https://os.mbed.com/compiler/). In this case, you need to import the example projects from [mbed developer](https://os.mbed.com/) to your mbed Online Compiler session using the links below:
+* [authcrypt](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt)
+* [benchmark](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-benchmark)
+* [hashing](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
+* [tls-client](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
 
 ## Building and running the examples
 
@@ -53,9 +53,9 @@ Please browse the subdirectories for specific documentation.
 * [authcrypt](./authcrypt/README.md): performs authenticated encryption and authenticated decryption of a buffer.
 * [benchmark](./benchmark/README.md): benchmarks the various cryptographic primitives offered by mbed TLS.
 * [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
-* [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (developer.mbed.org) and looks for a specific string in that file.
+* [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
-The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://developer.mbed.org/handbook/Terminals) and connect to the [virtual serial port](https://developer.mbed.org/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
+The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://os.mbed.com/handbook/Terminals) and connect to the [virtual serial port](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
 
 * 9600 baud.
 * 8N1.
