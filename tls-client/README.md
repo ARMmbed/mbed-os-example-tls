@@ -39,7 +39,6 @@ Server certificate:
     RSA key size      : 2048 bits
     basic constraints : CA=false
     subject alt name  : *.mbed.com, mbed.org, *.mbed.org, mbed.com
-    subject alt name  : *.mbed.com, mbed.org, *.mbed.org, mbed.com
     key usage         : Digital Signature, Key Encipherment
     ext key usage     : TLS Web Server Authentication, TLS Web Client Authentication
 Certificate verification passed
