@@ -29,7 +29,7 @@ int main() {
 
     if (authcrypt->run() != 0) {
         exit_code = MBEDTLS_EXIT_FAILURE;
-        mbedtls_printf("\r\nFAIL\r\n");
+        mbedtls_printf("\nFAIL\n");
     }
 
     delete authcrypt;
