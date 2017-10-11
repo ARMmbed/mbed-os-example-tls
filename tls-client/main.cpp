@@ -34,10 +34,6 @@
 
 #include "mbed.h"
 #include "easy-connect.h"
-#include "NetworkStack.h"
-
-#include "EthernetInterface.h"
-#include "TCPSocket.h"
 
 #include "mbedtls/platform.h"
 #include "mbedtls/ssl.h"
