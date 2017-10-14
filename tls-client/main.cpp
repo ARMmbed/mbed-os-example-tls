@@ -415,8 +415,16 @@ int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
+    printf("\nStarting mbed-os-example-tls/tls-client\n");
+#if defined(MBED_MAJOR_VERSION)
+    printf("Using Mbed OS %d.%d.%d\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+#else
+    printf("Using Mbed OS from master.\n");
+#endif
+
     /* Use the easy-connect lib to support multiple network bearers.   */
     /* See https://github.com/ARMmbed/easy-connect README.md for info. */
+
 #if DEBUG_LEVEL > 0
     NetworkInterface* network = easy_connect(true);
 #else
