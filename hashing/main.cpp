@@ -40,7 +40,7 @@ static void print_hex(const char *title, const unsigned char buf[], size_t len)
     for (size_t i = 0; i < len; i++)
         mbedtls_printf("%02x", buf[i]);
 
-    mbedtls_printf("\r\n");
+    mbedtls_printf("\n");
 }
 
 static const char hello_str[] = "Hello, world!";
@@ -54,7 +54,7 @@ static int example(mbedtls_platform_context* ctx)
     // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
     (void)ctx;
 
-    mbedtls_printf("\r\n\r\n");
+    mbedtls_printf("\n\n");
 
     /*
      * Method 1: use all-in-one function of a specific SHA-xxx module
@@ -98,7 +98,7 @@ static int example(mbedtls_platform_context* ctx)
 
     if (md_info3 == NULL)
     {
-        mbedtls_printf("SHA256 not available\r\n");
+        mbedtls_printf("SHA256 not available\n");
         return 1;
     }
 
@@ -106,7 +106,7 @@ static int example(mbedtls_platform_context* ctx)
 
     if (ret3 != 0)
     {
-        mbedtls_printf("md() returned -0x%04X\r\n", -ret3);
+        mbedtls_printf("md() returned -0x%04X\n", -ret3);
         return 1;
     }
 
@@ -122,7 +122,7 @@ static int example(mbedtls_platform_context* ctx)
 
     if (md_info4 == NULL)
     {
-        mbedtls_printf("SHA256 not available\r\n");
+        mbedtls_printf("SHA256 not available\n");
         return 1;
     }
 
@@ -133,7 +133,7 @@ static int example(mbedtls_platform_context* ctx)
     int ret4 = mbedtls_md_init_ctx(&ctx4, md_info4);
     if (ret4 != 0)
     {
-        mbedtls_printf("md_init_ctx() returned -0x%04X\r\n", -ret4);
+        mbedtls_printf("md_init_ctx() returned -0x%04X\n", -ret4);
         return 1;
     }
 
@@ -151,7 +151,7 @@ static int example(mbedtls_platform_context* ctx)
     mbedtls_md_free(&ctx4);
 
 
-    mbedtls_printf("\r\nDONE\r\n");
+    mbedtls_printf("\nDONE\n");
 
     return 0;
 }
@@ -161,13 +161,13 @@ int main() {
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
     if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
-        printf("Platform initialization failed with error %d\r\n", exit_code);
+        printf("Platform initialization failed with error %d\n", exit_code);
         return MBEDTLS_EXIT_FAILURE;
     }
 
     exit_code = example(&platform_ctx);
     if (exit_code != 0) {
-        mbedtls_printf("Example failed with error %d\r\n", exit_code);
+        mbedtls_printf("Example failed with error %d\n", exit_code);
         exit_code = MBEDTLS_EXIT_FAILURE;
     }
 
