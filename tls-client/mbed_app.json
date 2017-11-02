@@ -1,8 +1,36 @@
 {
     "macros": [
+        "MBED_CONF_APP_MAIN_STACK_SIZE=4096",
         "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_entropy_config.h\""
     ],
+    "config": {
+        "network-interface":{
+            "help": "options are ETHERNET, WIFI_ESP8266, WIFI_ODIN, WIFI_IDW01M1, WIFI_RTW, MESH_LOWPAN_ND, MESH_THREAD",
+            "value": "ETHERNET"
+        },
+        "esp8266-tx": {
+            "help": "Pin used as TX (connects to ESP8266 RX)",
+            "value": "PTD3"
+        },
+        "esp8266-rx": {
+            "help": "Pin used as RX (connects to ESP8266 TX)",
+            "value": "PTD2"
+        },
+        "esp8266-debug": {
+            "value": true
+        },
+        "wifi-ssid": {
+            "value": "\"SSID\""
+        },
+        "wifi-password": {
+            "value": "\"Password\""
+        }
+    },
     "target_overrides": {
+        "*": {
+             "platform.stdio-baud-rate": 9600,
+             "platform.stdio-convert-newlines": true
+        },
         "UBLOX_EVK_ODIN_W2": {
             "target.device_has_remove": ["EMAC"]
         }

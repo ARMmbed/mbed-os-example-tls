@@ -33,10 +33,7 @@
 #define DEBUG_LEVEL 0
 
 #include "mbed.h"
-#include "NetworkStack.h"
-
-#include "EthernetInterface.h"
-#include "TCPSocket.h"
+#include "easy-connect.h"
 
 #include "mbedtls/platform.h"
 #include "mbedtls/ssl.h"
@@ -201,17 +198,17 @@ public:
 
 
         /* Connect to the server */
-        mbedtls_printf("Connecting with %s\r\n", _domain);
+        mbedtls_printf("Connecting with %s\n", _domain);
         ret = _tcpsocket->connect(_domain, _port);
         if (ret != NSAPI_ERROR_OK) {
-            mbedtls_printf("Failed to connect\r\n");
-            printf("MBED: Socket Error: %d\r\n", ret);
+            mbedtls_printf("Failed to connect\n");
+            printf("MBED: Socket Error: %d\n", ret);
             _tcpsocket->close();
             return;
         }
 
        /* Start the handshake, the rest will be done in onReceive() */
-        mbedtls_printf("Starting the TLS handshake...\r\n");
+        mbedtls_printf("Starting the TLS handshake...\n");
         do {
             ret = mbedtls_ssl_handshake(&_ssl);
         } while (ret != 0 && (ret == MBEDTLS_ERR_SSL_WANT_READ ||
@@ -242,22 +239,22 @@ public:
         }
 
         /* It also means the handshake is done, time to print info */
-        printf("TLS connection to %s established\r\n", HTTPS_SERVER_NAME);
+        printf("TLS connection to %s established\n", HTTPS_SERVER_NAME);
 
         const uint32_t buf_size = 1024;
         char *buf = new char[buf_size];
         mbedtls_x509_crt_info(buf, buf_size, "\r    ",
                         mbedtls_ssl_get_peer_cert(&_ssl));
-        mbedtls_printf("Server certificate:\r\n%s\r", buf);
+        mbedtls_printf("Server certificate:\n%s", buf);
 
         uint32_t flags = mbedtls_ssl_get_verify_result(&_ssl);
         if( flags != 0 )
         {
             mbedtls_x509_crt_verify_info(buf, buf_size, "\r  ! ", flags);
-            printf("Certificate verification failed:\r\n%s\r\r\n", buf);
+            printf("Certificate verification failed:\n%s\n", buf);
         }
         else
-            printf("Certificate verification passed\r\n\r\n");
+            printf("Certificate verification passed\n\n");
 
 
         /* Read data out of the socket */
@@ -289,10 +286,10 @@ public:
         _tcpsocket->close();
 
         /* Print status messages */
-        mbedtls_printf("HTTPS: Received %d chars from server\r\n", _bpos);
-        mbedtls_printf("HTTPS: Received 200 OK status ... %s\r\n", _got200 ? "[OK]" : "[FAIL]");
-        mbedtls_printf("HTTPS: Received '%s' status ... %s\r\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
-        mbedtls_printf("HTTPS: Received message:\r\n\r\n");
+        mbedtls_printf("HTTPS: Received %d chars from server\n", _bpos);
+        mbedtls_printf("HTTPS: Received 200 OK status ... %s\n", _got200 ? "[OK]" : "[FAIL]");
+        mbedtls_printf("HTTPS: Received '%s' status ... %s\n", HTTPS_HELLO_STR, _gothello ? "[OK]" : "[FAIL]");
+        mbedtls_printf("HTTPS: Received message:\n\n");
         mbedtls_printf("%s", _buffer);
 
         delete[] buf;
@@ -305,7 +302,7 @@ protected:
     static void print_mbedtls_error(const char *name, int err) {
         char buf[128];
         mbedtls_strerror(err, buf, sizeof (buf));
-        mbedtls_printf("%s() failed: -0x%04x (%d): %s\r\n", name, -err, err, buf);
+        mbedtls_printf("%s() failed: -0x%04x (%d): %s\n", name, -err, err, buf);
     }
 
 #if DEBUG_LEVEL > 0
@@ -367,7 +364,7 @@ protected:
         if(NSAPI_ERROR_WOULD_BLOCK == recv){
             return MBEDTLS_ERR_SSL_WANT_READ;
         }else if(recv < 0){
-            mbedtls_printf("Socket recv error %d\r\n", recv);
+            mbedtls_printf("Socket recv error %d\n", recv);
             return -1;
         }else{
             return recv;
@@ -385,7 +382,7 @@ protected:
         if(NSAPI_ERROR_WOULD_BLOCK == size){
             return MBEDTLS_ERR_SSL_WANT_WRITE;
         }else if(size < 0){
-            mbedtls_printf("Socket send error %d\r\n", size);
+            mbedtls_printf("Socket send error %d\n", size);
             return -1;
         }else{
             return size;
@@ -418,18 +415,27 @@ int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
-    /* Inititalise with DHCP, connect, and start up the stack */
-    EthernetInterface eth_iface;
-    eth_iface.connect();
-    mbedtls_printf("Using Ethernet LWIP\r\n");
-    const char *ip_addr = eth_iface.get_ip_address();
-    if (ip_addr) {
-        mbedtls_printf("Client IP Address is %s\r\n", ip_addr);
-    } else {
-        mbedtls_printf("No Client IP Address\r\n");
+    printf("\nStarting mbed-os-example-tls/tls-client\n");
+#if defined(MBED_MAJOR_VERSION)
+    printf("Using Mbed OS %d.%d.%d\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+#else
+    printf("Using Mbed OS from master.\n");
+#endif
+
+    /* Use the easy-connect lib to support multiple network bearers.   */
+    /* See https://github.com/ARMmbed/easy-connect README.md for info. */
+
+#if DEBUG_LEVEL > 0
+    NetworkInterface* network = easy_connect(true);
+#else
+    NetworkInterface* network = easy_connect(false);
+#endif /* DEBUG_LEVEL > 0 */
+    if (NULL == network) {
+        printf("Connecting to the network failed... See serial output.\n");
+        return 1;
     }
 
-    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, &eth_iface);
+    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network);
     hello->startTest(HTTPS_PATH);
     delete hello;
 }
