@@ -54,6 +54,15 @@ int main()
      * cause the other party to time out.
      */
 
+    mbedtls_printf("Starting mbed-os-example-tls/tls-client\n");
+
+#if defined(MBED_MAJOR_VERSION)
+    mbedtls_printf("Using Mbed OS %d.%d.%d\n",
+                   MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+#else
+    printf("Using Mbed OS from master.\n");
+#endif /* MBEDTLS_MAJOR_VERSION */
+
     HelloHttpsClient *client;
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
