@@ -75,7 +75,7 @@ int Authcrypt::run()
     int ret = mbedtls_ctr_drbg_seed(&drbg, mbedtls_entropy_func, &entropy,
                                     secret_key, sizeof(secret_key));
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -83,14 +83,14 @@ int Authcrypt::run()
     ret = mbedtls_cipher_setup(&cipher,
                     mbedtls_cipher_info_from_type(MBEDTLS_CIPHER_AES_128_CCM));
     if (ret != 0) {
-        mbedtls_printf("mbedtls_cipher_setup() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setup() returned -0x%04X\n", -ret);
         return ret;
     }
 
     ret = mbedtls_cipher_setkey(&cipher, secret_key,
                                 8 * sizeof(secret_key), MBEDTLS_ENCRYPT);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -125,7 +125,7 @@ int Authcrypt::run()
                         ciphertext + nonce_len + sizeof(message),
                         tag_len);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_cipher_auth_encrypt() returned -0x%04X\r\n",
+        mbedtls_printf("mbedtls_cipher_auth_encrypt() returned -0x%04X\n",
                        -ret);
         return ret;
     }
@@ -144,7 +144,7 @@ int Authcrypt::run()
     ret = mbedtls_cipher_setkey(&cipher, secret_key, 8 * sizeof(secret_key),
                                 MBEDTLS_DECRYPT);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_cipher_setkey() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -160,14 +160,14 @@ int Authcrypt::run()
                        "authentic!\r\n");
         return ret;
     } else if (ret != 0) {
-        mbedtls_printf("mbedtls_cipher_authdecrypt() returned -0x%04X\r\n",
+        mbedtls_printf("mbedtls_cipher_authdecrypt() returned -0x%04X\n",
                        -ret);
         return ret;
     }
 
     print_hex("decrypted", decrypted, decrypted_len);
 
-    mbedtls_printf("\r\nDONE\r\n");
+    mbedtls_printf("\nDONE\n");
 
     return 0;
 }
@@ -181,5 +181,5 @@ void Authcrypt::print_hex(const char *title,
     for (size_t i = 0; i < len; i++)
         mbedtls_printf("%02x", buf[i]);
 
-    mbedtls_printf("\r\n");
+    mbedtls_printf("\n");
 }
