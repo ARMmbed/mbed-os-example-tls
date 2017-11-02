@@ -1,4 +1,4 @@
-# HTTPS File Download Example for TLS Client on mbed OS
+# HTTPS File Download Example for TLS Client on Mbed OS
 
 This application downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
@@ -6,13 +6,13 @@ This application downloads a file from an HTTPS server (os.mbed.com) and looks f
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
-You can also compile this example with the [mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
+You can also compile this example with the [Mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
 
 ## Required hardware
 
 This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
 
-The networking stack used in this example requires TLS functionality to be enabled on mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
+The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
 
 To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/tls_porting/).
 
