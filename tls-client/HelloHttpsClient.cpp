@@ -112,24 +112,24 @@ int HelloHttpsClient::run()
 
     /* Start a connection to the server */
     if ((ret = socket.connect(server_name, server_port)) != NSAPI_ERROR_OK) {
-        mbedtls_printf("socket.connect() returned %d\r\n", ret);
+        mbedtls_printf("socket.connect() returned %d\n", ret);
         return ret;
     }
-    mbedtls_printf("Successfully connected to %s at port %u\r\n",
+    mbedtls_printf("Successfully connected to %s at port %u\n",
                    server_name, server_port);
 
     /* Start the TLS handshake */
-    mbedtls_printf("Starting the TLS handshake...\r\n");
+    mbedtls_printf("Starting the TLS handshake...\n");
     do {
         ret = mbedtls_ssl_handshake(&ssl);
     } while(ret != 0 &&
             (ret == MBEDTLS_ERR_SSL_WANT_READ ||
             ret == MBEDTLS_ERR_SSL_WANT_WRITE));
     if (ret < 0) {
-        mbedtls_printf("mbedtls_ssl_handshake() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ssl_handshake() returned -0x%04X\n", -ret);
         return ret;
     }
-    mbedtls_printf("Successfully completed the TLS handshake\r\n");
+    mbedtls_printf("Successfully completed the TLS handshake\n");
 
     /* Fill the request buffer */
     ret = snprintf(gp_buf, sizeof(gp_buf),
@@ -137,7 +137,7 @@ int HelloHttpsClient::run()
                    server_name);
     req_len = static_cast<size_t>(ret);
     if (ret < 0 || req_len >= sizeof(gp_buf)) {
-        mbedtls_printf("Failed to compose HTTP request using snprintf: %d\r\n",
+        mbedtls_printf("Failed to compose HTTP request using snprintf: %d\n",
                        ret);
         return ret;
     }
@@ -156,7 +156,7 @@ int HelloHttpsClient::run()
           ret == MBEDTLS_ERR_SSL_WANT_WRITE ||
           ret == MBEDTLS_ERR_SSL_WANT_READ));
     if (ret < 0) {
-        mbedtls_printf("mbedtls_ssl_write() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ssl_write() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -164,10 +164,10 @@ int HelloHttpsClient::run()
     ret = mbedtls_x509_crt_info(gp_buf, sizeof(gp_buf),
                                 "\r  ", mbedtls_ssl_get_peer_cert(&ssl));
     if (ret < 0) {
-        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\n", -ret);
         return ret;
     }
-    mbedtls_printf("Server certificate:\r\n%s\r\n", gp_buf);
+    mbedtls_printf("Server certificate:\n%s\n", gp_buf);
 
     /* Ensure certificate verification was successful */
     flags = mbedtls_ssl_get_verify_result(&ssl);
@@ -176,18 +176,18 @@ int HelloHttpsClient::run()
                                            "\r  ! ", flags);
         if (ret < 0) {
             mbedtls_printf("mbedtls_x509_crt_verify_info() returned "
-                           "-0x%04X\r\n", -ret);
+                           "-0x%04X\n", -ret);
             return ret;
         } else {
             mbedtls_printf("Certificate verification failed (flags %lu):"
-                           "\r\n%s\r\n", flags, gp_buf);
+                           "\n%s\n", flags, gp_buf);
             return -1;
         }
     } else {
-        mbedtls_printf("Certificate verification passed\r\n");
+        mbedtls_printf("Certificate verification passed\n");
     }
 
-    mbedtls_printf("Established TLS connection to %s\r\n", server_name);
+    mbedtls_printf("Established TLS connection to %s\n", server_name);
 
     /* Read response from the server */
     resp_offset = 0;
@@ -210,15 +210,15 @@ int HelloHttpsClient::run()
             (ret > 0 ||
             ret == MBEDTLS_ERR_SSL_WANT_READ || MBEDTLS_ERR_SSL_WANT_WRITE));
     if (ret < 0) {
-        mbedtls_printf("mbedtls_ssl_read() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ssl_read() returned -0x%04X\n", -ret);
         return ret;
     }
 
     /* Display response information */
-    mbedtls_printf("HTTP: Received %u chars from server\r\n", resp_offset);
-    mbedtls_printf("HTTP: Received '%s' status ... %s\r\n", HTTP_OK_STR,
+    mbedtls_printf("HTTP: Received %u chars from server\n", resp_offset);
+    mbedtls_printf("HTTP: Received '%s' status ... %s\n", HTTP_OK_STR,
                    resp_200 ? "OK" : "FAIL");
-    mbedtls_printf("HTTP: Received message:\r\n%s\r\n", gp_buf);
+    mbedtls_printf("HTTP: Received message:\n%s\n", gp_buf);
 
     return 0;
 }
@@ -230,19 +230,19 @@ int HelloHttpsClient::configureTCPSocket()
 
     /* Initialise the ethernet interface and start up the stack */
     if ((ret = eth_iface.connect()) != 0) {
-        mbedtls_printf("eth_iface.connect() returned %d\r\n", ret);
+        mbedtls_printf("eth_iface.connect() returned %d\n", ret);
         return ret;
     }
 
     if ((ip_addr = eth_iface.get_ip_address()) != NULL) {
-        mbedtls_printf("Client IP address is %s\r\n", ip_addr);
+        mbedtls_printf("Client IP address is %s\n", ip_addr);
     } else {
-        mbedtls_printf("Failed to get client IP address\r\n");
+        mbedtls_printf("Failed to get client IP address\n");
         return -1;
     }
 
     if ((ret = socket.open(&eth_iface)) != NSAPI_ERROR_OK) {
-        mbedtls_printf("socket.open() returned %d\r\n", ret);
+        mbedtls_printf("socket.open() returned %d\n", ret);
         return ret;
     }
 
@@ -259,7 +259,7 @@ int HelloHttpsClient::configureTlsContexts()
             reinterpret_cast<const unsigned char *>(DRBG_PERSONALIZED_STR),
             strlen(DRBG_PERSONALIZED_STR) + 1);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -267,7 +267,7 @@ int HelloHttpsClient::configureTlsContexts()
                         reinterpret_cast<const unsigned char *>(TLS_PEM_CA),
                         strlen(TLS_PEM_CA) + 1);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_x509_crt_parse() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_x509_crt_parse() returned -0x%04X\n", -ret);
         return ret;
     }
 
@@ -275,7 +275,7 @@ int HelloHttpsClient::configureTlsContexts()
                                       MBEDTLS_SSL_TRANSPORT_STREAM,
                                       MBEDTLS_SSL_PRESET_DEFAULT);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ssl_config_defaults() returned -0x%04X\r\n",
+        mbedtls_printf("mbedtls_ssl_config_defaults() returned -0x%04X\n",
                        -ret);
         return ret;
     }
@@ -296,12 +296,12 @@ int HelloHttpsClient::configureTlsContexts()
 #endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
 
     if ((ret = mbedtls_ssl_setup( &ssl, &ssl_conf)) != 0) {
-        mbedtls_printf("mbedtls_ssl_setup() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_ssl_setup() returned -0x%04X\n", -ret);
         return ret;
     }
 
     if ((ret = mbedtls_ssl_set_hostname( &ssl, server_name )) != 0) {
-        mbedtls_printf("mbedtls_ssl_set_hostname() returned -0x%04X\r\n",
+        mbedtls_printf("mbedtls_ssl_set_hostname() returned -0x%04X\n",
                        -ret);
         return ret;
     }
@@ -320,7 +320,7 @@ int HelloHttpsClient::sslRecv(void *ctx, unsigned char *buf, size_t len)
     if (ret == NSAPI_ERROR_WOULD_BLOCK)
         ret = MBEDTLS_ERR_SSL_WANT_READ;
     else if (ret < 0)
-        mbedtls_printf("socket.recv() returned %d\r\n", ret);
+        mbedtls_printf("socket.recv() returned %d\n", ret);
 
     return ret;
 }
@@ -333,7 +333,7 @@ int HelloHttpsClient::sslSend(void *ctx, const unsigned char *buf, size_t len)
     if (ret == NSAPI_ERROR_WOULD_BLOCK)
         ret = MBEDTLS_ERR_SSL_WANT_WRITE;
     else if (ret < 0)
-        mbedtls_printf("socket.send() returned %d\r\n", ret);
+        mbedtls_printf("socket.send() returned %d\n", ret);
 
     return ret;
 }
@@ -363,10 +363,10 @@ int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
 
     ret = mbedtls_x509_crt_info(client->gp_buf, sizeof(gp_buf), "\r  ", crt);
     if (ret < 0) {
-        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\r\n", -ret);
+        mbedtls_printf("mbedtls_x509_crt_info() returned -0x%04X\n", -ret);
     } else {
         ret = 0;
-        mbedtls_printf("Verifying certificate at depth %d:\r\n%s\r\n",
+        mbedtls_printf("Verifying certificate at depth %d:\n%s\n",
                        depth, client->gp_buf);
     }
 

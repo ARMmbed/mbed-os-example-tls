@@ -60,17 +60,17 @@ int main()
     /* Allocate a HTTPS client */
     client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT);
     if (client == NULL) {
-        mbedtls_printf("Failed to allocate HelloHttpsClient object\r\n"
-                       "\r\nFAIL\r\n");
+        mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
+                       "\nFAIL\n");
         return exit_code;
     }
 
     /* Run the client */
     if (client->run() != 0) {
-        mbedtls_printf("\r\nFAIL\r\n");
+        mbedtls_printf("\nFAIL\n");
     } else {
         exit_code = MBEDTLS_EXIT_SUCCESS;
-        mbedtls_printf("\r\nDONE\r\n");
+        mbedtls_printf("\nDONE\n");
     }
 
     delete client;
