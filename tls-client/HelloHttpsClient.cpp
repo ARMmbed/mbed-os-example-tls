@@ -21,8 +21,7 @@
 
 #include "HelloHttpsClient.h"
 
-#include "NetworkInterface.h"
-#include "TCPSocket.h"
+#include "easy-connect.h"
 
 #include "mbedtls/platform.h"
 #include "mbedtls/config.h"
@@ -72,7 +71,6 @@ const char *HelloHttpsClient::HTTP_OK_STR = "200 OK";
 
 HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
                                    const uint16_t in_server_port) :
-    eth_iface(),
     socket(),
     server_name(in_server_name),
     server_port(in_server_port)
@@ -102,7 +100,7 @@ int HelloHttpsClient::run()
     uint32_t flags;
     bool resp_200, resp_hello;
 
-    /* Configure the EthernetInterface and TCPSocket */
+    /* Configure the TCPSocket */
     if ((ret = configureTCPSocket()) != 0)
         return ret;
 
@@ -226,22 +224,23 @@ int HelloHttpsClient::run()
 int HelloHttpsClient::configureTCPSocket()
 {
     int ret;
-    const char *ip_addr;
 
-    /* Initialise the ethernet interface and start up the stack */
-    if ((ret = eth_iface.connect()) != 0) {
-        mbedtls_printf("eth_iface.connect() returned %d\n", ret);
-        return ret;
-    }
-
-    if ((ip_addr = eth_iface.get_ip_address()) != NULL) {
-        mbedtls_printf("Client IP address is %s\n", ip_addr);
-    } else {
-        mbedtls_printf("Failed to get client IP address\n");
+    /*
+     * Use easy-connect lib to support multiple network bearers. See
+     * https://github.com/ARMmbed/easy-connect README.md for more information.
+     */
+#if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
+    NetworkInterface *network = easy_connect(true);
+#else
+    NetworkInterface *network = easy_connect(false);
+#endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
+    if(network == NULL) {
+        mbedtls_printf("easy_connect() returned NULL\n"
+                       "Failed to connect to the network\n");
         return -1;
     }
 
-    if ((ret = socket.open(&eth_iface)) != NSAPI_ERROR_OK) {
+    if ((ret = socket.open(network)) != NSAPI_ERROR_OK) {
         mbedtls_printf("socket.open() returned %d\n", ret);
         return ret;
     }

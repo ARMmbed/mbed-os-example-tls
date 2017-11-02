@@ -22,7 +22,6 @@
 #ifndef _HELLOHTTPSCLIENT_H_
 #define _HELLOHTTPSCLIENT_H_
 
-#include "EthernetInterface.h"
 #include "TCPSocket.h"
 
 #include "mbedtls/config.h"
@@ -185,10 +184,6 @@ private:
      */
     static const char *HTTP_HELLO_STR;
 
-    /**
-     * Instance of EthernetInterface used to create a TCPSocket
-     */
-    EthernetInterface eth_iface;
     /**
      * Instance of TCPSocket used to communicate with the server
      */
