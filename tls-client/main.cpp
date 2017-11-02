@@ -54,6 +54,9 @@ int main()
      * cause the other party to time out.
      */
 
+    HelloHttpsClient *client;
+    int exit_code = MBEDTLS_EXIT_FAILURE;
+
     mbedtls_printf("Starting mbed-os-example-tls/tls-client\n");
 
 #if defined(MBED_MAJOR_VERSION)
@@ -62,9 +65,6 @@ int main()
 #else
     printf("Using Mbed OS from master.\n");
 #endif /* MBEDTLS_MAJOR_VERSION */
-
-    HelloHttpsClient *client;
-    int exit_code = MBEDTLS_EXIT_FAILURE;
 
     /* Allocate a HTTPS client */
     client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT);
