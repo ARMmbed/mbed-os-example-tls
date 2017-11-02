@@ -1,12 +1,12 @@
-# mbed TLS Authenticated Encryption example on mbed OS
+# Mbed TLS Authenticated Encryption example on Mbed OS
 
-This application performs authenticated encryption and authenticated decryption of a buffer. It serves as a tutorial for the basic authenticated encryption functions of mbed TLS.
+This application performs authenticated encryption and authenticated decryption of a buffer. It serves as a tutorial for the basic authenticated encryption functions of Mbed TLS.
 
 ## Getting started
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
-You can also compile this example with the [mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt).
+You can also compile this example with the [Mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt).
 
 ## Monitoring the application
 
