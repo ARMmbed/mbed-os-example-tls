@@ -1,4 +1,4 @@
-# HTTPS File Download Example for TLS Client on mbed OS
+# HTTPS File Download Example for TLS Client on Mbed OS
 
 This application downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
@@ -6,14 +6,14 @@ This application downloads a file from an HTTPS server (os.mbed.com) and looks f
 
 Set up your environment if you have not done so already. For instructions, refer to the [main readme](../README.md).
 
-You can also compile this example with the [mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
+You can also compile this example with the [Mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
 
 ## Required hardware
 
 This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
 Please read different networking setups instructions from [Easy Connect](https://github.com/ARMmbed/easy-connect/blob/master/README.md).
 
-The networking stack used in this example requires TLS functionality to be enabled on mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
+The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
 
 To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/tls_porting/).
 
@@ -36,7 +36,7 @@ Server certificate:
     cert. version     : 3
     serial number     : 65:7B:6D:8D:15:A5:B6:86:87:6B:5E:BC
     issuer name       : C=BE, O=GlobalSign nv-sa, CN=GlobalSign Organization Validation CA - SHA256 - G2
-    subject name      : C=GB, ST=Cambridgeshire, L=Cambridge, O=ARM Ltd, CN=*.mbed.com
+    subject name      : C=GB, ST=Cambridgeshire, L=Cambridge, O=Arm Ltd, CN=*.mbed.com
     issued  on        : 2017-04-03 13:54:02
     expires on        : 2018-05-06 10:31:02
     signed using      : RSA with SHA-256
@@ -91,4 +91,3 @@ This probably means you need to update the contents of the `SSL_CA_PEM` constant
 Another possible reason for this error is a proxy providing a different certificate. Proxies can be used in some network configurations or for performing man-in-the-middle attacks. If you choose to ignore this error and proceed with the connection anyway, you can change the definition of `UNSAFE` near the top of the file from 0 to 1.
 
 **Warning:** this removes all security against a possible active attacker, so use at your own risk or for debugging only!
-

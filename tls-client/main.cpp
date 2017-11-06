@@ -1,7 +1,7 @@
 /*
  *  Hello world example of a TLS client: fetch an HTTPS page
  *
- *  Copyright (C) 2006-2016, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2016, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *  This file is part of mbed TLS (https://tls.mbed.org)
+ *  This file is part of Mbed TLS (https://tls.mbed.org)
  */
 
 /** \file main.cpp
@@ -220,13 +220,13 @@ public:
         }
 
         /* Fill the request buffer */
-        _bpos = snprintf(_buffer, sizeof(_buffer) - 1, 
+        _bpos = snprintf(_buffer, sizeof(_buffer) - 1,
                          "GET %s HTTP/1.1\nHost: %s\n\n", path, HTTPS_SERVER_NAME);
 
         int offset = 0;
         do {
-            ret = mbedtls_ssl_write(&_ssl, 
-                                    (const unsigned char *) _buffer + offset, 
+            ret = mbedtls_ssl_write(&_ssl,
+                                    (const unsigned char *) _buffer + offset,
                                     _bpos - offset);
             if (ret > 0)
               offset += ret;
@@ -307,7 +307,7 @@ protected:
 
 #if DEBUG_LEVEL > 0
     /**
-     * Debug callback for mbed TLS
+     * Debug callback for Mbed TLS
      * Just prints on the USB serial port
      */
     static void my_debug(void *ctx, int level, const char *file, int line,
@@ -327,7 +327,7 @@ protected:
     }
 
     /**
-     * Certificate verification callback for mbed TLS
+     * Certificate verification callback for Mbed TLS
      * Here we only use it to display information on each cert in the chain
      */
     static int my_verify(void *data, mbedtls_x509_crt *crt, int depth, uint32_t *flags)
@@ -354,7 +354,7 @@ protected:
 #endif
 
     /**
-     * Receive callback for mbed TLS
+     * Receive callback for Mbed TLS
      */
     static int ssl_recv(void *ctx, unsigned char *buf, size_t len) {
         int recv = -1;
@@ -372,7 +372,7 @@ protected:
    }
 
     /**
-     * Send callback for mbed TLS
+     * Send callback for Mbed TLS
      */
     static int ssl_send(void *ctx, const unsigned char *buf, size_t len) {
        int size = -1;
