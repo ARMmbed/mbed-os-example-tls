@@ -1,6 +1,6 @@
-# mbed TLS Examples on mbedOS
+# Mbed TLS Examples on Mbed OS
 
-This repository contains a collection of mbed TLS example applications based on mbed OS. Each subdirectory contains a separate example meant for building as an executable.
+This repository contains a collection of Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable.
 
 # Getting started
 
@@ -10,17 +10,17 @@ This repository contains a collection of mbed TLS example applications based on 
 
 ### Other hardware
 
-Although the only board supported by these examples is K64F, they should work on any mbed enabled hardware, if it has a hardware entropy source, and this entropy source is integrated with mbed TLS. The single example that does not need an entropy source is `hashing`.
+Although the only board supported by these examples is K64F, they should work on any Mbed enabled hardware, if it has a hardware entropy source, and this entropy source is integrated with Mbed TLS. The single example that does not need an entropy source is `hashing`.
 
-If your board has no hardware entropy source or its entropy source is not integrated with mbed TLS, but you want to try these examples anyway, then you may want to consider compiling mbed TLS without real entropy sources.
+If your board has no hardware entropy source or its entropy source is not integrated with Mbed TLS, but you want to try these examples anyway, then you may want to consider compiling Mbed TLS without real entropy sources.
 
-*Warning!* Without entropy sources mbed TLS does not provide any security whatsoever. If you still want to compile mbed TLS without entropy sources, then consult the section "How to test without entropy sources" in the mbed TLS Porting Guide.
+*Warning!* Without entropy sources Mbed TLS does not provide any security whatsoever. If you still want to compile Mbed TLS without entropy sources, then consult the section "How to test without entropy sources" in the Mbed TLS Porting Guide.
 
 ## Required software
-* [mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build mbed OS applications with mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
+* [Mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build Mbed OS applications with Mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
 * [Serial port monitor](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications).
 
-An alternative to mbed CLI is to use the [mbed Online Compiler](https://os.mbed.com/compiler/). In this case, you need to import the example projects from [mbed developer](https://os.mbed.com/) to your mbed Online Compiler session using the links below:
+An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.com/compiler/). In this case, you need to import the example projects from [Mbed developer](https://os.mbed.com/) to your Mbed Online Compiler session using the links below:
 * [authcrypt](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt)
 * [benchmark](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-benchmark)
 * [hashing](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
@@ -51,7 +51,7 @@ An alternative to mbed CLI is to use the [mbed Online Compiler](https://os.mbed.
 
 Please browse the subdirectories for specific documentation.
 * [authcrypt](./authcrypt/README.md): performs authenticated encryption and authenticated decryption of a buffer.
-* [benchmark](./benchmark/README.md): benchmarks the various cryptographic primitives offered by mbed TLS.
+* [benchmark](./benchmark/README.md): benchmarks the various cryptographic primitives offered by Mbed TLS.
 * [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
 * [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
@@ -63,6 +63,6 @@ The application prints debug messages over the serial port, so you can monitor i
 
 After pressing the **RESET** button on the board, you should be able to observe the application's output.
 
-## Debugging mbed TLS
+## Debugging Mbed TLS
 
 To optionally print out more debug information, edit the `main.cpp` for the sample and change the definition of `DEBUG_LEVEL` (near the top of the file) from 0 to a positive number between 1 and 4.
