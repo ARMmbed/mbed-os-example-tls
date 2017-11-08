@@ -1,7 +1,7 @@
 /*
  *  Hello world example of a TLS client: fetch an HTTPS page
  *
- *  Copyright (C) 2006-2017, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2017, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *  This file is part of mbed TLS (https://tls.mbed.org)
+ *  This file is part of Mbed TLS (https://tls.mbed.org)
  */
 
 #ifndef _HELLOHTTPSCLIENT_H_
@@ -82,13 +82,13 @@ private:
     int configureTCPSocket();
 
     /**
-     * Configure the mbed TLS structures required to establish a TLS connection
+     * Configure the Mbed TLS structures required to establish a TLS connection
      * with the server
      */
     int configureTlsContexts();
 
     /**
-     * Wrapper function around TCPSocket that gets called by mbed TLS whenever
+     * Wrapper function around TCPSocket that gets called by Mbed TLS whenever
      * we call mbedtls_ssl_read()
      *
      * \param[in]   ctx
@@ -104,7 +104,7 @@ private:
     static int sslRecv(void *ctx, unsigned char *buf, size_t len);
 
     /**
-     * Wrapper function around TCPSocket that gets called by mbed TLS whenever
+     * Wrapper function around TCPSocket that gets called by Mbed TLS whenever
      * we call mbedtls_ssl_write()
      *
      * \param[in]   ctx
@@ -160,7 +160,7 @@ private:
     static const char *DRBG_PERSONALIZED_STR;
 
     /**
-     *  Length of error string buffer for logging failures related to mbed TLS
+     *  Length of error string buffer for logging failures related to Mbed TLS
      */
     static const size_t ERROR_LOG_BUFFER_LENGTH;
 

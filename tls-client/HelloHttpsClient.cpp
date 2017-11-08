@@ -1,7 +1,7 @@
 /*
  *  Hello world example of a TLS client: fetch an HTTPS page
  *
- *  Copyright (C) 2006-2017, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2017, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -16,7 +16,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *  This file is part of mbed TLS (https://tls.mbed.org)
+ *  This file is part of Mbed TLS (https://tls.mbed.org)
  */
 
 #include "HelloHttpsClient.h"
@@ -35,7 +35,7 @@
 #include <string.h>
 
 const char *HelloHttpsClient::DRBG_PERSONALIZED_STR =
-                                                "mbed TLS helloword client";
+                                                "Mbed TLS helloword client";
 
 const size_t HelloHttpsClient::ERROR_LOG_BUFFER_LENGTH = 128;
 
@@ -104,7 +104,7 @@ int HelloHttpsClient::run()
     if ((ret = configureTCPSocket()) != 0)
         return ret;
 
-    /* Configure already initialized mbed TLS structures */
+    /* Configure already initialized Mbed TLS structures */
     if ((ret = configureTlsContexts()) != 0)
         return ret;
 
