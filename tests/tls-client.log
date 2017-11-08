@@ -1,7 +1,5 @@
 Starting mbed-os-example-tls/tls-client
 Using Mbed OS
-[EasyConnect] Connected to Network successfully
-[EasyConnect] IP address
 Successfully connected to os.mbed.com at port 443
 Starting the TLS handshake...
 Successfully completed the TLS handshake
