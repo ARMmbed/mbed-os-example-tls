@@ -1,7 +1,7 @@
 /*
- *  Hello world example of using the hashing functions of mbed TLS
+ *  Hello world example of using the hashing functions of Mbed TLS
  *
- *  Copyright (C) 2016, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2016, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
