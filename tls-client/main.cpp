@@ -220,13 +220,13 @@ public:
         }
 
         /* Fill the request buffer */
-        _bpos = snprintf(_buffer, sizeof(_buffer) - 1, 
+        _bpos = snprintf(_buffer, sizeof(_buffer) - 1,
                          "GET %s HTTP/1.1\nHost: %s\n\n", path, HTTPS_SERVER_NAME);
 
         int offset = 0;
         do {
-            ret = mbedtls_ssl_write(&_ssl, 
-                                    (const unsigned char *) _buffer + offset, 
+            ret = mbedtls_ssl_write(&_ssl,
+                                    (const unsigned char *) _buffer + offset,
                                     _bpos - offset);
             if (ret > 0)
               offset += ret;
