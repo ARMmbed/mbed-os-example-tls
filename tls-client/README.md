@@ -8,10 +8,10 @@ Set up your environment if you have not done so already. For instructions, refer
 
 You can also compile this example with the [Mbed Online Compiler](https://os.mbed.com/compiler/) by using [this project](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client).
 
-## Required hardware
+## Requirements
 
-This example also requires an Ethernet cable and connection to the internet additional to the hardware requirements in the [main readme](../README.md).
-Please read different networking setups instructions from [Easy Connect](https://github.com/ARMmbed/easy-connect/blob/master/README.md).
+This example uses by default an Ethernet connection to the internet.
+It's possible to switch to another network interface by using [Easy Connect](https://github.com/ARMmbed/easy-connect/blob/master/README.md). The [Mbed OS Example Client](https://github.com/ARMmbed/mbed-os-example-client#application-setup) application shows an example of how to configure other network interfaces.
 
 The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
 
@@ -92,3 +92,6 @@ Another possible reason for this error is a proxy providing a different certific
 
 **Warning:** this removes all security against a possible active attacker, so use at your own risk or for debugging only!
 
+## Troubleshooting
+
+If you have problems, you can review the [documentation](https://os.mbed.com/docs/latest/tutorials/debugging.html) for suggestions on what could be wrong and how to fix it.
