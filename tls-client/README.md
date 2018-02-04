@@ -92,6 +92,33 @@ Another possible reason for this error is a proxy providing a different certific
 
 **Warning:** this removes all security against a possible active attacker, so use at your own risk or for debugging only!
 
+## Heap statistics
+
+If you compile the application with `DHEAP_STATS_ENABLED=1` option will enable the heap statistics printouts. 
+
+Mbed OS feature a heap statistics monitoring feature and you can measure the heap memory consumption (current and maximum). You can then clearly see from the printouts how much heap memory is consumed by the operations.
+
+Example printout looks like this:
+
+```
+Starting mbed-os-example-tls/tls-client
+**** heap_stats at Starting
+**** current_size: 1024
+**** max_size : 1024
+```
+
+at startup we consume 1 kilobyte of heap. 
+
+```
+**** heap_stats at Finished
+**** current_size: 2960
+**** max_size : 53131
+```
+
+However, at the end we can see our peak heap consumption was over 53 kilobytes.
+
+More information on Mbed OS memory statistics available in [documentation](https://docs.mbed.com/docs/mbed-os-handbook/en/5.2/advanced/runtime_stats/).
+
 ## Troubleshooting
 
 If you have problems, you can review the [documentation](https://os.mbed.com/docs/latest/tutorials/debugging.html) for suggestions on what could be wrong and how to fix it.
