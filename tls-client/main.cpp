@@ -1,7 +1,7 @@
 /*
  *  Hello world example of a TLS client: fetch an HTTPS page
  *
- *  Copyright (C) 2006-2017, Arm Limited, All Rights Reserved
+ *  Copyright (C) 2006-2018, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
