@@ -1,9 +1,9 @@
 # TLS Client with Opaque keys
-This sample demonstrates a TLS client sample application that uses a HW Crypto engine with Opaque keys feature. In this first version this sample is tied to specific device [ATCAECC508A](https://www.microchip.com/wwwproducts/en/ATECC508A). It's driver is developed inside [mbed-os](https://github.com/ARMmbed/mbed-os/pull/6104).
-In future the Opaque keys interface will be generic to interface any Crypto engine with this sample.
+This sample demonstrates a TLS client sample application that performs client authentication. It uses a hardware cryptographic engine with the opaque keys feature for ECDSA signing and verification. In this first version this sample is tied to specific device [ATCAECC508A](https://www.microchip.com/wwwproducts/en/ATECC508A). The driver is developed inside [mbed-os](https://github.com/ARMmbed/mbed-os/pull/6104).
+In future the opaque keys interface will be made generic to interface any cryptographic engine with this sample.
 
 ## Execution environment
-This sample demonstrates use of HW Crypto engines that can not have same hard coded private key for testing. Hence for executing this sample new set of keys, certificates and host setup is required. Since ATCAECC508A only supports ECDSA and SHA256, this sample runs against an SSL server configured with ECDSA and SHA256 cipher suite. Following things are required for the test setup:
+This sample demonstrates use of hardware cryptographic engines that cannot have same hard-coded private key for testing. Hence for executing this sample new set of keys, certificates and host setup is required. Since ATCAECC508A only supports ECDSA and SHA-256, this sample runs against an SSL server configured with ECDSA and SHA-256 ciphersuites. The following things are required for the test setup:
 
 - Client certificate
 - Server CA cert.
@@ -55,7 +55,7 @@ private_key     = $dir/private/cakey.pem# The private key
 ```
 openssl ecparam -name prime256v1 -genkey -out private/cakey.pem
 ```
-Remember that this setup is for demonstrating ATCAECC508A that only do ECDSA with ECC NIST P256 curve. For this reason the CA key should also be of type ECC NIST P256 curve.
+Remember that this setup is for demonstrating ATCAECC508A that only does ECDSA with ECC NIST P256 curve. For this reason the CA key should also be of type ECC NIST P256 curve.
 
 #### Generate CA certificate:
 ```
@@ -63,7 +63,7 @@ openssl req -new -x509 -key ./private/cakey.pem -out cacert.pem -days 3650 -set_
 ```
 Answer appropriately to openssl prompts.
 
-#### Generate a server key(again an ECC NIST P256 curve):
+#### Generate a server key (again an ECC NIST P256 curve):
 ```
 openssl ecparam -name prime256v1 -genkey -out foreign_keys/server_prime256v1_priv.pem
 ```
