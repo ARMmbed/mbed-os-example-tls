@@ -1,7 +1,7 @@
 /*
  *  Public key-based signature creation program
  *
- *  Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+ *  Copyright (C) 2006-2018, ARM Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -57,7 +57,6 @@ int main( void )
 #include <stdio.h>
 #include <string.h>
 
-static int ret = 1;
 static mbedtls_pk_context pk, verify_pk;
 static mbedtls_entropy_context entropy;
 static mbedtls_ctr_drbg_context ctr_drbg;
@@ -65,10 +64,12 @@ static unsigned char message[] = "Hello World!";
 static unsigned char hash[32];
 static unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
 static const char *pers = "mbedtls_pk_sign";
-static size_t olen = 0;
 
 int main( )
 {
+    static int ret = 1;
+    static size_t olen = 0;
+
     mbedtls_printf( "\r\nPK Sign sample\r\n" );
     mbedtls_entropy_init( &entropy );
     mbedtls_ctr_drbg_init( &ctr_drbg );
@@ -82,14 +83,16 @@ int main( )
                                (const unsigned char *) pers,
                                strlen( pers ) ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_ctr_drbg_seed returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
     ret = mbedtls_atca_pk_setup( &pk, ATCA_ECC_KEY_ID_0 );
     if( ret < 0 )
     {
-        mbedtls_printf( " failed\r\n  !  mbedtls_atca_pk_setup returned error!\r\n\r\n" );
+        mbedtls_printf( " failed\r\n"
+                "  !  mbedtls_atca_pk_setup returned error -0x%04x\r\n", -ret );
         goto exit;
     }
 
@@ -104,32 +107,39 @@ int main( )
                     mbedtls_md_info_from_type( MBEDTLS_MD_SHA256 ),
                     message, sizeof(message), hash ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_md returned -0x%04x\r\n\r\n", ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_md returned -0x%04x\r\n\r\n", ret );
         goto exit;
     }
 
     if( ( ret = mbedtls_pk_sign( &pk, MBEDTLS_MD_SHA256, hash, 0, buf, &olen,
                          mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_pk_sign returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_pk_sign returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
     /*
      * Verify the HW PK generated signature using SW implementation of verify.
      */
-    if( ( ret = mbedtls_atca_transparent_pk_setup( &verify_pk, ATCA_ECC_KEY_ID_0 )) != 0 )
+    if( ( ret = mbedtls_atca_transparent_pk_setup( &verify_pk,
+                    ATCA_ECC_KEY_ID_0 )) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_atca_transparent_pk_setup returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_atca_transparent_pk_setup returned -0x%04x\r\n",
+                -ret );
         goto exit;
     }
-    if( ( ret = mbedtls_pk_verify( &verify_pk, MBEDTLS_MD_SHA256, hash, sizeof(hash), buf, olen )) != 0 )
+    if( ( ret = mbedtls_pk_verify( &verify_pk, MBEDTLS_MD_SHA256, hash,
+                    sizeof(hash), buf, olen )) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_pk_verify returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_pk_verify returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
-    mbedtls_printf( "Signature successfully verified!!!\r\n" );
+    mbedtls_printf( "Signature successfully verified!\r\n" );
 
 exit:
     mbedtls_pk_free( &pk );
