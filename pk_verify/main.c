@@ -77,18 +77,20 @@ int main( )
     mbedtls_printf( "\r\n  . Seeding the random number generator..." );
     fflush( stdout );
 
-    if( ( ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func, &entropy,
-                               (const unsigned char *) pers,
-                               strlen( pers ) ) ) != 0 )
+    if( ( ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                    &entropy, (const unsigned char *) pers,
+                    strlen( pers ) ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_ctr_drbg_seed returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
     ret = mbedtls_atca_pk_setup( &pk, ATCA_ECC_KEY_ID_0 );
     if( ret < 0 )
     {
-        mbedtls_printf( " failed\r\n  !  mbedtls_atca_pk_setup returned error!\r\n\r\n" );
+        mbedtls_printf( " failed\r\n"
+                "  !  mbedtls_atca_pk_setup returned error!\r\n\r\n" );
         goto exit;
     }
 
@@ -103,25 +105,29 @@ int main( )
                     mbedtls_md_info_from_type( MBEDTLS_MD_SHA256 ),
                     message, sizeof(message), hash ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_md returned -0x%04x\r\n\r\n", ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_md returned -0x%04x\r\n\r\n", ret );
         goto exit;
     }
 
     if( ( ret = mbedtls_pk_sign( &pk, MBEDTLS_MD_SHA256, hash, 0, buf, &olen,
                          mbedtls_ctr_drbg_random, &ctr_drbg ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_pk_sign returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_pk_sign returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
     mbedtls_printf( "\r\n  . Verifying the SHA-256 signature" );
-    if( ( ret = mbedtls_pk_verify( &pk, MBEDTLS_MD_SHA256, hash, sizeof(hash), buf, olen )) != 0 )
+    if( ( ret = mbedtls_pk_verify( &pk, MBEDTLS_MD_SHA256, hash,
+                    sizeof(hash), buf, olen ) ) != 0 )
     {
-        mbedtls_printf( " failed\r\n  ! mbedtls_pk_verify returned -0x%04x\r\n", -ret );
+        mbedtls_printf( " failed\r\n"
+                "  ! mbedtls_pk_verify returned -0x%04x\r\n", -ret );
         goto exit;
     }
 
-    mbedtls_printf( "\r\nSignature successfully verified!!!\r\n" );
+    mbedtls_printf( "\r\nSignature verified successfully!\r\n" );
 
 exit:
     mbedtls_pk_free( &pk );
