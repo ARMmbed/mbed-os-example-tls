@@ -58,10 +58,7 @@ const int RECV_BUFFER_SIZE = 600;
 /* personalization string for the drbg */
 const char *DRBG_PERS = "ssl_client";
 
-/* List of trusted root CA certificates
- * currently only GlobalSign, the CA for os.mbed.com
- *
- * To add more than one root, just concatenate them.
+/* Server's root CA certificate
  */
 const char SSL_CA_PEM[] =
 "-----BEGIN CERTIFICATE-----\r\n"

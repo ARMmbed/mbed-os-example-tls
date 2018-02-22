@@ -24,7 +24,7 @@ Above command on success generates a certificate in ```cert.pem``` file. This ce
 openssl x509 -in cert.pem -noout -text
 ```
 
-Modified ```cert_write.exe``` takes parameters ```subject_key``` and ```issuer_key``` formatted in a special way to identify HW keys. 
+Modified ```cert_write.exe``` takes parameters ```subject_key``` and ```issuer_key``` formatted in a special way to identify hardware keys. 
 The format is ```remote0COM18```. Here:
 - ```remote``` indiates a keys accessible via serial interface.
 - ```0``` indicates the key Id. It can be any key identifier supported by the device.
