@@ -2,3 +2,5 @@
 .mbed
 mbed_settings.py
 mbed_settings.pyc
+mbed-os
+easy-connect
