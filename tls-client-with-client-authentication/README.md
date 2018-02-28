@@ -1,14 +1,19 @@
 # TLS Client with Opaque keys
-This sample demonstrates a TLS client sample application that performs client authentication. It uses a hardware cryptographic engine with the opaque keys feature for ECDSA signing and verification. In this first version this sample is tied to specific device [ATCAECC508A](https://www.microchip.com/wwwproducts/en/ATECC508A). The driver is developed inside [mbed-os](https://github.com/ARMmbed/mbed-os/pull/6104).
+This sample demonstrates a TLS client sample application that performs client authentication. It uses a hardware cryptographic engine with the opaque keys feature for ECDSA signing and verification. In this first version this sample is tied to specific device [ATCAECC508A](https://www.microchip.com/wwwproducts/en/ATECC508A). The driver is developed inside [mbed-os](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth).
 In future the opaque keys interface will be made generic to interface any cryptographic engine with this sample.
 
 ## Execution environment
 This sample demonstrates use of hardware cryptographic engines that cannot have same hard-coded private key for testing. Hence for executing this sample new set of keys, certificates and host setup is required. Since ATCAECC508A only supports ECDSA and SHA-256, this sample runs against an SSL server configured with ECDSA and SHA-256 ciphersuites. The following things are required for the test setup:
 
+- Commission ATCAECC508A
 - Client certificate
 - Server CA cert.
 - Server certificate signed by CA.
 - Server certificate private key.
+
+## Commission ATCAECC508A
+For this example an ATCAECC508A device must be commissioned and connected to the Mbed target on I2C interface. Please see documentation [here](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth#commissioning-application) about it. 
+**Note:** The error reporting is not propoer in case of the device not connected or not commissioned. Example may report a memory allocation failure in these situations. Also, the Atmel Crypto Auth Pro device that comes with ATCAECC508A needs a jumper change before use.
 
 ## Client certificate
 A self signed certificate can be generated using [modified](https://github.com/ARMmbed/mbedtls/pull/1360) ```cert_write.exe``` application. Steps are as follows:
