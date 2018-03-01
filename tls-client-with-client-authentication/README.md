@@ -5,11 +5,15 @@ In future the opaque keys interface will be made generic to interface any crypto
 ## Execution environment
 This sample demonstrates use of hardware cryptographic engines that cannot have same hard-coded private key for testing. Hence for executing this sample new set of keys, certificates and host setup is required. Since ATCAECC508A only supports ECDSA and SHA-256, this sample runs against an SSL server configured with ECDSA and SHA-256 ciphersuites. The following things are required for the test setup:
 
+- Building mbed-os application
 - Commission ATCAECC508A
 - Client certificate
 - Server CA cert.
 - Server certificate signed by CA.
 - Server certificate private key.
+
+## Building mbed-os application
+ATECC508A requires I2C interface. It is present in most of the Mbed Platforms. However, not all platforms define I2C_SDA and I2C_SCL pins uniformaly. Hence, code in [mbed-os/features/atcryptoauth/ATCAFactory.cpp](https://github.com/ARMmbed/mbed-os/blob/feature-opaque-keys/features/atcryptoauth/ATCAFactory.cpp#L23) limits the feature to platform K64F. In order to build for any other target please enable it in the code and provide target specific I2C_SDA and I2C_SCL pin names.
 
 ## Commission ATCAECC508A
 For this example an ATCAECC508A device must be commissioned and connected to the Mbed target on I2C interface. Please see documentation [here](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth#commissioning-application) about it. 
