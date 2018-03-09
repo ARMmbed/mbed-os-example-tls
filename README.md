@@ -1,16 +1,16 @@
 # Mbed TLS Examples on Mbed OS
 
-This repository contains following Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable. Please browse to the subdirectories for specific documentation.
+This repository contains a collection Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable. Please browse to the subdirectories for specific documentation.
 
 * [authcrypt](./authcrypt/README.md): performs authenticated encryption and authenticated decryption of a buffer.
 * [benchmark](./benchmark/README.md): benchmarks the various cryptographic primitives offered by Mbed TLS.
 * [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
 * [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
-In addition following examples demonstrate the Mbed TLS opaque keys feature using hardware crypto engine [ATECC508A](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth/README.md).
-* [pk_sign](./pk_sign/README.md): create signature using opaque keys and verify in software.
-* [pk_verify](./pk_verify/README.md): create and verify signature using opaque keys.
-* [tls-client-with-client-authentication](./tls-client-with-client-authentication/README.md): downloads a file from an HTTPS server with client authentication. The client authentication key can be an opaque key.
+In addition following examples demonstrate the use of Mbed TLS using a Secure IC and off-chip cryptographic accelerator [ATECC508A](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth/README.md).
+* [pk_sign](./pk_sign/README.md): create signature using external Security IC and verify in software.
+* [pk_verify](./pk_verify/README.md): create and verify signature using external Security IC.
+* [tls-client-with-client-authentication](./tls-client-with-client-authentication/README.md): downloads a file from an HTTPS server with client authentication, using keys secured in an external Security IC.
 
 # Getting started
 
@@ -36,7 +36,7 @@ An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.
 * [hashing](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
 * [tls-client](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
 
-Note: examples pk_sign, pk_verify and tls-client-with-client-authentication are not available on the online IDE. They will be provided as part of enhancement [155](https://github.com/ARMmbed/mbed-os-example-tls/issues/155).
+Note: examples pk_sign, pk_verify and tls-client-with-client-authentication are not yet available on the online IDE. They will be provided as part of enhancement [155](https://github.com/ARMmbed/mbed-os-example-tls/issues/155).
 
 ## Building and running the examples
 
