@@ -10,7 +10,7 @@ This repository contains following Mbed TLS example applications based on Mbed O
 In addition following examples demonstrate the Mbed TLS opaque keys feature using hardware crypto engine [ATECC508A](https://github.com/ARMmbed/mbed-os/tree/feature-opaque-keys/features/atcryptoauth/README.md).
 * [pk_sign](./pk_sign/README.md): create signature using opaque keys and verify in software.
 * [pk_verify](./pk_verify/README.md): create and verify signature using opaque keys.
-* [tls-client-with-client-authentication](./tls-client-with-client-authentication/README.md): similar to the tls-client example. Except it demonstrates client authentication and opaque keys. 
+* [tls-client-with-client-authentication](./tls-client-with-client-authentication/README.md): downloads a file from an HTTPS server with client authentication. The client authentication key can be an opaque key.
 
 # Getting started
 
@@ -36,7 +36,7 @@ An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.
 * [hashing](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
 * [tls-client](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
 
-Note: examples pk_sign, pk_verify and tls-client-with-client-authentication are not available on the online IDE.
+Note: examples pk_sign, pk_verify and tls-client-with-client-authentication are not available on the online IDE. They will be provided as part of enhancement [155](https://github.com/ARMmbed/mbed-os-example-tls/issues/155).
 
 ## Building and running the examples
 
