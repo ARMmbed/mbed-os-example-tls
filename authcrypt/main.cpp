@@ -24,6 +24,11 @@
 #include "mbedtls/platform.h"
 
 int main() {
+    mbedtls_platform_context platform_ctx;
+    if(mbedtls_platform_setup(&platform_ctx)) {
+        return -1;
+    }
+
     int exit_code = MBEDTLS_EXIT_SUCCESS;
     Authcrypt *authcrypt = new Authcrypt();
 
@@ -34,5 +39,6 @@ int main() {
 
     delete authcrypt;
 
+    mbedtls_platform_teardown(&platform_ctx);
     return exit_code;
 }

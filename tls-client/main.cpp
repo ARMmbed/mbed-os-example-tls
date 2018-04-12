@@ -49,6 +49,10 @@ const int SERVER_PORT = 443;
  */
 int main()
 {
+    mbedtls_platform_context platform_ctx;
+    if( mbedtls_platform_setup(&platform_ctx)) {
+        return -1;
+    }
     /*
      * The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out.
@@ -71,6 +75,7 @@ int main()
     if (client == NULL) {
         mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
                        "\nFAIL\n");
+        mbedtls_platform_teardown(&platform_ctx);
         return exit_code;
     }
 
@@ -84,5 +89,6 @@ int main()
 
     delete client;
 
+    mbedtls_platform_teardown(&platform_ctx);
     return exit_code;
 }
