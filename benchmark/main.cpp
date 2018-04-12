@@ -961,8 +961,14 @@ static int benchmark( int argc, char *argv[] )
 }
 
 int main(void) {
+    mbedtls_platform_context platform_ctx;
+    if(mbedtls_platform_setup(&platform_ctx)) {
+        return -1;
+    }
+
     int ret = benchmark(0, NULL);
     if (ret != 0) {
         mbedtls_printf("Benchmark failed with error %d\r\n", ret);
     }
+    mbedtls_platform_teardown(&platform_ctx);
 }

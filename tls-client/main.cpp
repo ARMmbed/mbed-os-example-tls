@@ -412,6 +412,10 @@ protected:
  * The main loop of the HTTPS Hello World test
  */
 int main() {
+    mbedtls_platform_context platform_ctx;
+    if( mbedtls_platform_setup(&platform_ctx)) {
+        return -1;
+    }
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
@@ -432,10 +436,13 @@ int main() {
 #endif /* DEBUG_LEVEL > 0 */
     if (NULL == network) {
         printf("Connecting to the network failed... See serial output.\n");
+        mbedtls_platform_teardown(&platform_ctx);
         return 1;
     }
 
     HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network);
     hello->startTest(HTTPS_PATH);
     delete hello;
+    
+    mbedtls_platform_teardown(&platform_ctx);
 }

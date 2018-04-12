@@ -152,8 +152,14 @@ static int example(void)
 }
 
 int main() {
+    mbedtls_platform_context platform_ctx;
+    if( mbedtls_platform_setup(&platform_ctx)) {
+        return -1;
+    }
+
     int ret = example();
     if (ret != 0) {
         mbedtls_printf("Example failed with error %d\r\n", ret);
     }
+    mbedtls_platform_teardown(&platform_ctx);
 }
