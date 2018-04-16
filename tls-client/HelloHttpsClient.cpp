@@ -70,10 +70,12 @@ const char *HelloHttpsClient::HTTP_HELLO_STR = "Hello world!";
 const char *HelloHttpsClient::HTTP_OK_STR = "200 OK";
 
 HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
-                                   const uint16_t in_server_port) :
+                                   const uint16_t in_server_port,
+                                   mbedtls_platform_context* in_platform_ctx) :
     socket(),
     server_name(in_server_name),
-    server_port(in_server_port)
+    server_port(in_server_port),
+    platform_ctx(in_platform_ctx)
 {
     mbedtls_entropy_init(&entropy);
     mbedtls_ctr_drbg_init(&ctr_drbg);

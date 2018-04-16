@@ -47,8 +47,12 @@ static const char hello_str[] = "Hello, world!";
 static const unsigned char *hello_buffer = (const unsigned char *) hello_str;
 static const size_t hello_len = strlen(hello_str);
 
-static int example(void)
+static int example(mbedtls_platform_context* ctx)
 {
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    (void)ctx;
+
     mbedtls_printf("\r\n\r\n");
 
     /*
@@ -157,7 +161,7 @@ int main() {
         return -1;
     }
 
-    int ret = example();
+    int ret = example(&platform_ctx);
     if (ret != 0) {
         mbedtls_printf("Example failed with error %d\r\n", ret);
     }

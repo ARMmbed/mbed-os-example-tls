@@ -71,7 +71,8 @@ int main()
 #endif /* MBEDTLS_MAJOR_VERSION */
 
     /* Allocate a HTTPS client */
-    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT);
+    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT,
+                                                 &platform_ctx);
     if (client == NULL) {
         mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
                        "\nFAIL\n");
