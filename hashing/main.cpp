@@ -153,7 +153,7 @@ static int example(void)
 
 int main() {
     mbedtls_platform_context platform_ctx;
-    if( mbedtls_platform_setup(&platform_ctx)) {
+    if(mbedtls_platform_setup(&platform_ctx) != 0) {
         return -1;
     }
 
