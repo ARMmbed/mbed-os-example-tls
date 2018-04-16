@@ -30,7 +30,7 @@ int main() {
     }
 
     int exit_code = MBEDTLS_EXIT_SUCCESS;
-    Authcrypt *authcrypt = new Authcrypt();
+    Authcrypt *authcrypt = new Authcrypt(&platform_ctx);
 
     if (authcrypt->run() != 0) {
         exit_code = MBEDTLS_EXIT_FAILURE;

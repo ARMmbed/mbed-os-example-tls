@@ -23,6 +23,7 @@
 #include "mbedtls/cipher.h"
 #include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
+#include "mbedtls/platform.h"
 
 /**
  * This class implements the logic to demonstrate authenticated encryption using
@@ -34,7 +35,7 @@ public:
     /**
      * Construct an Authcrypt instance
      */
-    Authcrypt();
+    Authcrypt(mbedtls_platform_context* platform_ctx);
 
     /**
      * Free any allocated resources
@@ -103,6 +104,11 @@ private:
      * The block cipher configuration
      */
     mbedtls_cipher_context_t cipher;
+    
+    /**
+     * The platform context
+     */
+    mbedtls_platform_context* _platform_ctx;
 };
 
 #endif /* _AUTHCRYPT_H_ */

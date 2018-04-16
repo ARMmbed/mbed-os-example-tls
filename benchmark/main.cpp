@@ -300,7 +300,7 @@ typedef struct {
          rsa, dhm, ecdsa, ecdh;
 } todo_list;
 
-static int benchmark( int argc, char *argv[] )
+static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 {
     int i;
     unsigned char tmp[200];
@@ -309,7 +309,9 @@ static int benchmark( int argc, char *argv[] )
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
     unsigned char malloc_buf[HEAP_SIZE] = { 0 };
 #endif
-
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    (void)ctx;
     if( argc <= 1 )
     {
         memset( &todo, 1, sizeof( todo ) );
@@ -966,7 +968,7 @@ int main(void) {
         return -1;
     }
 
-    int ret = benchmark(0, NULL);
+    int ret = benchmark(0, NULL, &platform_ctx);
     if (ret != 0) {
         mbedtls_printf("Benchmark failed with error %d\r\n", ret);
     }

@@ -102,10 +102,12 @@ public:
      * @param[in] domain The domain name to fetch from
      * @param[in] port The port of the HTTPS server
      */
-    HelloHTTPS(const char * domain, const uint16_t port, NetworkInterface *net_iface) :
+    HelloHTTPS(const char * domain, const uint16_t port, NetworkInterface *net_iface,
+                mbedtls_platform_context* platform_ctx) :
             _domain(domain), _port(port)
     {
 
+        _platform_ctx = platform_ctx;
         _gothello = false;
         _got200 = false;
         _bpos = 0;
@@ -406,6 +408,7 @@ protected:
     mbedtls_x509_crt _cacert;
     mbedtls_ssl_context _ssl;
     mbedtls_ssl_config _ssl_conf;
+    mbedtls_platform_context* _platform_ctx;
 };
 
 /**
@@ -440,7 +443,7 @@ int main() {
         return 1;
     }
 
-    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network);
+    HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network, &platform_ctx);
     hello->startTest(HTTPS_PATH);
     delete hello;
     
