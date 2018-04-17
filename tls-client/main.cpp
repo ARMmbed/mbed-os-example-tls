@@ -70,7 +70,11 @@ int main()
     printf("Using Mbed OS from master.\n");
 #endif /* MBEDTLS_MAJOR_VERSION */
 
-    /* Allocate a HTTPS client */
+    /* Allocate a HTTPS client
+     *
+     * The platform context is passed just in case any crypto calls need it.
+     * Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more
+     * information. */
     client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT,
                                                  &platform_ctx);
     if (client == NULL) {
