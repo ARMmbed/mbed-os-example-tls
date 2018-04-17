@@ -51,6 +51,7 @@ static int example(mbedtls_platform_context* ctx)
 {
     // The call below is used to avoid the "unused parameter" warning.
     // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
     (void)ctx;
 
     mbedtls_printf("\r\n\r\n");

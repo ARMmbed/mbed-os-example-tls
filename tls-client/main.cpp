@@ -443,6 +443,8 @@ int main() {
         return 1;
     }
 
+    // The platform context is passed just in case any crypto calls need it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
     HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network, &platform_ctx);
     hello->startTest(HTTPS_PATH);
     delete hello;
