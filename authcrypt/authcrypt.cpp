@@ -41,6 +41,8 @@ const char Authcrypt::metadata[] = "eg sequence number, routing info";
 
 Authcrypt::Authcrypt(mbedtls_platform_context* platform_ctx)
 {
+    // The platform context can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
     _platform_ctx = platform_ctx;
     memset(ciphertext, 0, sizeof(ciphertext));
     memset(decrypted, 0, sizeof(decrypted));

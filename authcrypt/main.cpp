@@ -30,8 +30,6 @@ int main() {
     }
 
     int exit_code = MBEDTLS_EXIT_SUCCESS;
-    // The platform context is passed just in case any crypto calls need it.
-    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
     Authcrypt *authcrypt = new Authcrypt(&platform_ctx);
 
     if (authcrypt->run() != 0) {

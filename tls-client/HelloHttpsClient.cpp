@@ -75,6 +75,9 @@ HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
     socket(),
     server_name(in_server_name),
     server_port(in_server_port),
+    /* The platform context is passed just in case any crypto calls need it.
+     * Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more
+     * information. */
     platform_ctx(in_platform_ctx)
 {
     mbedtls_entropy_init(&entropy);
