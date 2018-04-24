@@ -32,7 +32,9 @@
 /* Change to a number between 1 and 4 to debug the TLS connection */
 #define DEBUG_LEVEL 0
 
+#include <inttypes.h>
 #include "mbed.h"
+#include "mbed_stats.h"
 #include "easy-connect.h"
 
 #include "mbedtls/platform.h"
@@ -409,13 +411,32 @@ protected:
 };
 
 /**
+ * Print current heap statistics
+ * NOTE! If -DMBED_HEAP_STATS_ENABLED was not given as compilation parameter, this function is void.
+ * IN: event - char ptr to a describing event.
+ */
+void heap_stats(char *event)
+{
+#ifdef MBED_HEAP_STATS_ENABLED
+    printf("**** heap_stats at %s\n", event);
+    mbed_stats_heap_t stats;
+    mbed_stats_heap_get(&stats);
+    printf("**** current_size: %" PRIu32 "\n", stats.current_size);
+    printf("**** max_size    : %" PRIu32 "\n", stats.max_size);
+#endif // MBED_HEAP_STATS_ENABLED
+}
+
+
+/**
  * The main loop of the HTTPS Hello World test
  */
 int main() {
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
 
+
     printf("\nStarting mbed-os-example-tls/tls-client\n");
+    heap_stats("Starting");
 #if defined(MBED_MAJOR_VERSION)
     printf("Using Mbed OS %d.%d.%d\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
 #else
@@ -434,8 +455,15 @@ int main() {
         printf("Connecting to the network failed... See serial output.\n");
         return 1;
     }
+    heap_stats("Network up");
 
     HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network);
+    heap_stats("HelloHTTPS class created");
     hello->startTest(HTTPS_PATH);
+    heap_stats("HelloHTTPS run");
     delete hello;
+
+    printf("\nAll done.\n");
+    heap_stats("Finished");
 }
+
