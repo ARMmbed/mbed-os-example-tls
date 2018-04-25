@@ -417,8 +417,11 @@ protected:
  */
 int main() {
     mbedtls_platform_context platform_ctx;
-    if(mbedtls_platform_setup(&platform_ctx) != 0) {
-        return -1;
+    int ret = MBEDTLS_EXIT_FAILURE;
+
+    if((ret = mbedtls_platform_setup(&platform_ctx)) != 0) {
+        printf("Platform initialization failed with error %d\r\n", ret);
+        return MBEDTLS_EXIT_FAILURE;
     }
     /* The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out. */
@@ -441,12 +444,13 @@ int main() {
     if (NULL == network) {
         printf("Connecting to the network failed... See serial output.\n");
         mbedtls_platform_teardown(&platform_ctx);
-        return 1;
+        return MBEDTLS_EXIT_FAILURE;
     }
 
     HelloHTTPS *hello = new HelloHTTPS(HTTPS_SERVER_NAME, HTTPS_SERVER_PORT, network, &platform_ctx);
     hello->startTest(HTTPS_PATH);
     delete hello;
-    
+
     mbedtls_platform_teardown(&platform_ctx);
+    return MBEDTLS_EXIT_SUCCESS;
 }
