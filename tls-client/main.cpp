@@ -50,8 +50,11 @@ const int SERVER_PORT = 443;
 int main()
 {
     mbedtls_platform_context platform_ctx;
-    if(mbedtls_platform_setup(&platform_ctx) != 0) {
-        return -1;
+    int exit_code = MBEDTLS_EXIT_FAILURE;
+
+    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+        printf("Platform initialization failed with error %d\r\n", exit_code);
+        return MBEDTLS_EXIT_FAILURE;
     }
     /*
      * The default 9600 bps is too slow to print full TLS debug info and could
@@ -59,7 +62,6 @@ int main()
      */
 
     HelloHttpsClient *client;
-    int exit_code = MBEDTLS_EXIT_FAILURE;
 
     mbedtls_printf("Starting mbed-os-example-tls/tls-client\n");
 
