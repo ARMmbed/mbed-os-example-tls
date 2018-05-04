@@ -1,6 +1,13 @@
+Starting mbed-os-example-tls/tls-client
+Using Mbed OS
+Successfully connected to os.mbed.com at port 443
 Starting the TLS handshake...
+Successfully completed the TLS handshake
 Server certificate:
 Certificate verification passed
-HTTPS: Received 'Hello world!' status ... [OK]
-HTTPS: Received message:
+Established TLS connection to os.mbed.com
+HTTP: Received [0-9]+ chars from server
+HTTP: Received '200 OK' status ... OK
+HTTP: Received message:
 Hello world!
+DONE

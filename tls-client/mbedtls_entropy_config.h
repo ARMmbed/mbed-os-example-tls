@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2016, Arm Limited, All Rights Reserved
+ *  Copyright (C) 2006-2018, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -36,7 +36,3 @@
 #define MBEDTLS_MPI_MAX_SIZE        256
 
 #define MBEDTLS_MPI_WINDOW_SIZE     1
-
-#if defined(TARGET_STM32F439xI) && defined(MBEDTLS_CONFIG_HW_SUPPORT)
-#undef MBEDTLS_AES_ALT
-#endif /* TARGET_STM32F439xI && MBEDTLS_CONFIG_HW_SUPPORT */

@@ -25,47 +25,46 @@ The output in the terminal window should be similar to this:
 
 ```
 Starting mbed-os-example-tls/tls-client
-Using Mbed OS 5.X.Y
-[EasyConnect] Connected to Network successfully
-[EasyConnect] MAC address ae:41:46:27:31:e7
-[EasyConnect] IP address 192.168.64.255
-Connecting with os.mbed.com
+Using Mbed OS 5.6.3
+[EasyConnect] IPv4 mode
+Successfully connected to os.mbed.com at port 443
 Starting the TLS handshake...
-TLS connection to os.mbed.com established
+Successfully completed the TLS handshake
 Server certificate:
-    cert. version     : 3
-    serial number     : 65:7B:6D:8D:15:A5:B6:86:87:6B:5E:BC
-    issuer name       : C=BE, O=GlobalSign nv-sa, CN=GlobalSign Organization Validation CA - SHA256 - G2
-    subject name      : C=GB, ST=Cambridgeshire, L=Cambridge, O=ARM Ltd, CN=*.mbed.com
-    issued  on        : 2017-04-03 13:54:02
-    expires on        : 2018-05-06 10:31:02
-    signed using      : RSA with SHA-256
-    RSA key size      : 2048 bits
-    basic constraints : CA=false
-    subject alt name  : *.mbed.com, mbed.org, *.mbed.org, mbed.com
-    key usage         : Digital Signature, Key Encipherment
-    ext key usage     : TLS Web Server Authentication, TLS Web Client Authentication
+  cert. version     : 3
+  serial number     : 65:7B:6D:8D:15:A5:B6:86:87:6B:5E:BC
+  issuer name       : C=BE, O=GlobalSign nv-sa, CN=GlobalSign Organization Validation CA - SHA256 - G2
+  subject name      : C=GB, ST=Cambridgeshire, L=Cambridge, O=ARM Ltd, CN=*.mbed.com
+  issued  on        : 2017-04-03 13:54:02
+  expires on        : 2018-05-06 10:31:02
+  signed using      : RSA with SHA-256
+  RSA key size      : 2048 bits
+  basic constraints : CA=false
+  subject alt name  : *.mbed.com, mbed.org, *.mbed.org, mbed.com
+  key usage         : Digital Signature, Key Encipherment
+  ext key usage     : TLS Web Server Authentication, TLS Web Client Authentication
+
 Certificate verification passed
-
-HTTPS: Received 200 OK status ... [OK]
-HTTPS: Received 'Hello world!' status ... [OK]
-HTTPS: Received message:
-
+Established TLS connection to os.mbed.com
+HTTP: Received 365 chars from server
+HTTP: Received '200 OK' status ... OK
+HTTP: Received message:
 HTTP/1.1 200 OK
-Server: nginx/1.11.12
-Date: Mon, 18 Sep 2017 12:54:59 GMT
+Server: nginx/1.11.10
+Date: Wed, 08 Nov 2017 09:07:59 GMT
 Content-Type: text/plain
 Content-Length: 14
 Connection: keep-alive
 Last-Modified: Fri, 27 Jul 2012 13:30:34 GMT
 Accept-Ranges: bytes
 Cache-Control: max-age=36000
-Expires: Mon, 18 Sep 2017 22:54:59 GMT
-X-Upstream-L3: 172.17.0.4:80
-X-Upstream-L2: developer-sjc-cyan-1-nginx
+Expires: Wed, 08 Nov 2017 19:07:59 GMT
 Strict-Transport-Security: max-age=31536000; includeSubdomains
 
 Hello world!
+
+
+DONE
 ```
 
 ## Debugging the TLS connection
