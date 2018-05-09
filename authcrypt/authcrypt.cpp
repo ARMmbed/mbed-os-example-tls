@@ -28,8 +28,6 @@
 #include "mbedtls/debug.h"
 #endif
 
-#include "mbedtls/platform.h"
-
 #include <string.h>
 
 const unsigned char Authcrypt::secret_key[16] = {
@@ -41,8 +39,11 @@ const char Authcrypt::message[] = "Some things are better left unread";
 
 const char Authcrypt::metadata[] = "eg sequence number, routing info";
 
-Authcrypt::Authcrypt()
+Authcrypt::Authcrypt(mbedtls_platform_context* platform_ctx)
 {
+    // The platform context can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    _platform_ctx = platform_ctx;
     memset(ciphertext, 0, sizeof(ciphertext));
     memset(decrypted, 0, sizeof(decrypted));
 

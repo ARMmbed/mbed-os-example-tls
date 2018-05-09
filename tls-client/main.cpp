@@ -49,13 +49,19 @@ const int SERVER_PORT = 443;
  */
 int main()
 {
+    mbedtls_platform_context platform_ctx;
+    int exit_code = MBEDTLS_EXIT_FAILURE;
+
+    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+        printf("Platform initialization failed with error %d\r\n", exit_code);
+        return MBEDTLS_EXIT_FAILURE;
+    }
     /*
      * The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out.
      */
 
     HelloHttpsClient *client;
-    int exit_code = MBEDTLS_EXIT_FAILURE;
 
     mbedtls_printf("Starting mbed-os-example-tls/tls-client\n");
 
@@ -67,10 +73,12 @@ int main()
 #endif /* MBEDTLS_MAJOR_VERSION */
 
     /* Allocate a HTTPS client */
-    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT);
+    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT,
+                                                 &platform_ctx);
     if (client == NULL) {
         mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
                        "\nFAIL\n");
+        mbedtls_platform_teardown(&platform_ctx);
         return exit_code;
     }
 
@@ -84,5 +92,6 @@ int main()
 
     delete client;
 
+    mbedtls_platform_teardown(&platform_ctx);
     return exit_code;
 }

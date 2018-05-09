@@ -70,10 +70,15 @@ const char *HelloHttpsClient::HTTP_HELLO_STR = "Hello world!";
 const char *HelloHttpsClient::HTTP_OK_STR = "200 OK";
 
 HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
-                                   const uint16_t in_server_port) :
+                                   const uint16_t in_server_port,
+                                   mbedtls_platform_context* in_platform_ctx) :
     socket(),
     server_name(in_server_name),
-    server_port(in_server_port)
+    server_port(in_server_port),
+    /* The platform context is passed just in case any crypto calls need it.
+     * Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more
+     * information. */
+    platform_ctx(in_platform_ctx)
 {
     mbedtls_entropy_init(&entropy);
     mbedtls_ctr_drbg_init(&ctr_drbg);

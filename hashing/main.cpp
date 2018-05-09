@@ -47,8 +47,13 @@ static const char hello_str[] = "Hello, world!";
 static const unsigned char *hello_buffer = (const unsigned char *) hello_str;
 static const size_t hello_len = strlen(hello_str);
 
-static int example(void)
+static int example(mbedtls_platform_context* ctx)
 {
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    (void)ctx;
+
     mbedtls_printf("\r\n\r\n");
 
     /*
@@ -152,8 +157,20 @@ static int example(void)
 }
 
 int main() {
-    int ret = example();
-    if (ret != 0) {
-        mbedtls_printf("Example failed with error %d\r\n", ret);
+    mbedtls_platform_context platform_ctx;
+    int exit_code = MBEDTLS_EXIT_FAILURE;
+
+    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+        printf("Platform initialization failed with error %d\r\n", exit_code);
+        return MBEDTLS_EXIT_FAILURE;
     }
+
+    exit_code = example(&platform_ctx);
+    if (exit_code != 0) {
+        mbedtls_printf("Example failed with error %d\r\n", exit_code);
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+
+    mbedtls_platform_teardown(&platform_ctx);
+    return exit_code;
 }
