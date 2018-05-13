@@ -300,9 +300,13 @@ typedef struct {
          rsa, dhm, ecdsa, ecdh;
 } todo_list;
 
-static void test_md( const todo_list * todo )
+static void test_md( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    (void)ctx;
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_MD4_C)
@@ -336,10 +340,14 @@ static void test_md( const todo_list * todo )
 #endif
 }
 
-static void test_crypt( const todo_list * todo )
+static void test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    (void)ctx;
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_ARC4_C)
@@ -563,9 +571,13 @@ static void test_crypt( const todo_list * todo )
 
 }
 
-static void test_rng( const todo_list * todo )
+static void test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    (void)ctx;
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_HAVEGE_C)
@@ -654,10 +666,14 @@ static void test_rng( const todo_list * todo )
 #endif
 }
 
-static void test_pk( const todo_list * todo )
+static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
+    // The call below is used to avoid the "unused parameter" warning.
+    // The context itself can be used by cryptographic calls which require it.
+    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
+    (void)ctx;
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_RSA_C) && \
@@ -903,10 +919,7 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
     unsigned char malloc_buf[HEAP_SIZE] = { 0 };
 #endif
-    // The call below is used to avoid the "unused parameter" warning.
-    // The context itself can be used by cryptographic calls which require it.
-    // Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more information.
-    (void)ctx;
+
     if( argc <= 1 )
     {
         memset( &todo, 1, sizeof( todo ) );
@@ -980,10 +993,10 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 #endif
     memset( buf, 0xAA, sizeof( buf ) );
 
-    test_md( & todo );
-    test_crypt( &todo );
-    test_rng( &todo );
-    test_pk( &todo );
+    test_md( &todo, ctx );
+    test_crypt( &todo, ctx );
+    test_rng( &todo, ctx );
+    test_pk( &todo, ctx );
 
     mbedtls_printf("\r\nDONE\r\n");
 
