@@ -1,7 +1,7 @@
 /*
  *  Benchmark demonstration program
  *
- *  Copyright (C) 2006-2016, Arm Limited, All Rights Reserved
+ *  Copyright (C) 2006-2018, Arm Limited, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -145,7 +145,7 @@
 /*
  * Uncomment this line to enable ECDSA benchmark.
  */
-//#define ENABLE_ECDSA
+#define ENABLE_ECDSA
 
 /*
  * For heap usage estimates, we need an estimate of the overhead per allocated
@@ -758,7 +758,7 @@ static void test_pk( const todo_list * todo )
             mbedtls_snprintf( title, sizeof( title ), "ECDSA-%s",
                                               curve_info->name );
             TIME_PUBLIC( title, "sign",
-                    ret = mbedtls_ecdsa_write_signature( &ecdsa, MBEDTLS_MD_SHA256, buf, curve_info->bit_size,
+                    ret = mbedtls_ecdsa_write_signature( &ecdsa, MBEDTLS_MD_SHA256, buf, ( curve_info->bit_size + 7 ) / 8,
                                                 tmp, &sig_len, myrand, NULL ) );
 
             mbedtls_ecdsa_free( &ecdsa );
@@ -771,7 +771,7 @@ static void test_pk( const todo_list * todo )
             mbedtls_ecdsa_init( &ecdsa );
 
             if( mbedtls_ecdsa_genkey( &ecdsa, curve_info->grp_id, myrand, NULL ) != 0 ||
-                mbedtls_ecdsa_write_signature( &ecdsa, MBEDTLS_MD_SHA256, buf, curve_info->bit_size,
+                mbedtls_ecdsa_write_signature( &ecdsa, MBEDTLS_MD_SHA256, buf, ( curve_info->bit_size + 7 ) / 8,
                                                tmp, &sig_len, myrand, NULL ) != 0 )
             {
                 mbedtls_exit( 1 );
@@ -781,7 +781,7 @@ static void test_pk( const todo_list * todo )
             mbedtls_snprintf( title, sizeof( title ), "ECDSA-%s",
                                               curve_info->name );
             TIME_PUBLIC( title, "verify",
-                    ret = mbedtls_ecdsa_read_signature( &ecdsa, buf, curve_info->bit_size,
+                    ret = mbedtls_ecdsa_read_signature( &ecdsa, buf, ( curve_info->bit_size + 7 ) / 8,
                                                 tmp, sig_len ) );
 
             mbedtls_ecdsa_free( &ecdsa );
@@ -899,8 +899,6 @@ static void test_pk( const todo_list * todo )
 static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 {
     int i;
-    unsigned char tmp[200];
-    char title[TITLE_LEN];
     todo_list todo;
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
     unsigned char malloc_buf[HEAP_SIZE] = { 0 };
