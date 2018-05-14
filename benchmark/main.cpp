@@ -300,7 +300,7 @@ typedef struct {
          rsa, dhm, ecdsa, ecdh;
 } todo_list;
 
-static void test_md( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_md( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     // The call below is used to avoid the "unused parameter" warning.
@@ -338,9 +338,10 @@ static void test_md( const todo_list * todo, mbedtls_platform_context* ctx )
     if( todo->sha512 )
         TIME_AND_TSC( "SHA-512", mbedtls_sha512( buf, BUFSIZE, tmp, 0 ) );
 #endif
+    return ( 0 );
 }
 
-static void test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
@@ -569,9 +570,10 @@ static void test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
     }
 #endif
 
+    return ( 0 );
 }
 
-static void test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     // The call below is used to avoid the "unused parameter" warning.
@@ -598,17 +600,17 @@ static void test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         mbedtls_ctr_drbg_init( &ctr_drbg );
 
         if( mbedtls_ctr_drbg_seed( &ctr_drbg, myrand, NULL, NULL, 0 ) != 0 )
-            mbedtls_exit(1);
+            return(1);
         TIME_AND_TSC( "CTR_DRBG (NOPR)",
                 if( mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
 
         if( mbedtls_ctr_drbg_seed( &ctr_drbg, myrand, NULL, NULL, 0 ) != 0 )
-            mbedtls_exit(1);
+            return(1);
         mbedtls_ctr_drbg_set_prediction_resistance( &ctr_drbg, MBEDTLS_CTR_DRBG_PR_ON );
         TIME_AND_TSC( "CTR_DRBG (PR)",
                 if( mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
         mbedtls_ctr_drbg_free( &ctr_drbg );
     }
 #endif
@@ -623,50 +625,51 @@ static void test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
 
 #if defined(MBEDTLS_SHA1_C)
         if( ( md_info = mbedtls_md_info_from_type( MBEDTLS_MD_SHA1 ) ) == NULL )
-            mbedtls_exit(1);
+            return(1);
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
             return(1);
         TIME_AND_TSC( "HMAC_DRBG SHA-1 (NOPR)",
                 if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
-            mbedtls_exit(1);
+            return(1);
         mbedtls_hmac_drbg_set_prediction_resistance( &hmac_drbg,
                                              MBEDTLS_HMAC_DRBG_PR_ON );
         TIME_AND_TSC( "HMAC_DRBG SHA-1 (PR)",
                 if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 #endif
 
 #if defined(MBEDTLS_SHA256_C)
         if( ( md_info = mbedtls_md_info_from_type( MBEDTLS_MD_SHA256 ) ) == NULL )
-            mbedtls_exit(1);
+            return(1);
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
-            mbedtls_exit(1);
+            return(1);
         TIME_AND_TSC( "HMAC_DRBG SHA-256 (NOPR)",
                 if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
-            mbedtls_exit(1);
+            return(1);
         mbedtls_hmac_drbg_set_prediction_resistance( &hmac_drbg,
                                              MBEDTLS_HMAC_DRBG_PR_ON );
         TIME_AND_TSC( "HMAC_DRBG SHA-256 (PR)",
                 if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    mbedtls_exit(1) );
+                    return(1) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 #endif
     }
 #endif
+    return (0 );
 }
 
-static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
@@ -729,13 +732,13 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
             if( mbedtls_mpi_read_string( &dhm.P, 16, dhm_P[i] ) != 0 ||
                 mbedtls_mpi_read_string( &dhm.G, 16, dhm_G[i] ) != 0 )
             {
-                mbedtls_exit( 1 );
+                return( 1 );
             }
 
             dhm.len = mbedtls_mpi_size( &dhm.P );
             mbedtls_dhm_make_public( &dhm, (int) dhm.len, buf, dhm.len, myrand, NULL );
             if( mbedtls_mpi_copy( &dhm.GY, &dhm.GX ) != 0 )
-                mbedtls_exit( 1 );
+                return( 1 );
 
             mbedtls_snprintf( title, sizeof( title ), "DHE-%d", dhm_sizes[i] );
             TIME_PUBLIC( title, "handshake",
@@ -768,7 +771,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
             mbedtls_ecdsa_init( &ecdsa );
 
             if( mbedtls_ecdsa_genkey( &ecdsa, curve_info->grp_id, myrand, NULL ) != 0 )
-                mbedtls_exit( 1 );
+                return( 1 );
             ecp_clear_precomputed( &ecdsa.grp );
 
             mbedtls_snprintf( title, sizeof( title ), "ECDSA-%s",
@@ -790,7 +793,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
                 mbedtls_ecdsa_write_signature( &ecdsa, MBEDTLS_MD_SHA256, buf, ( curve_info->bit_size + 7 ) / 8,
                                                tmp, &sig_len, myrand, NULL ) != 0 )
             {
-                mbedtls_exit( 1 );
+                return( 1 );
             }
             ecp_clear_precomputed( &ecdsa.grp );
 
@@ -826,7 +829,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
                                   myrand, NULL ) != 0 ||
                 mbedtls_ecp_copy( &ecdh.Qp, &ecdh.Q ) != 0 )
             {
-                mbedtls_exit( 1 );
+                return( 1 );
             }
             ecp_clear_precomputed( &ecdh.grp );
 
@@ -848,7 +851,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
         if( mbedtls_ecp_group_load( &ecdh.grp, MBEDTLS_ECP_DP_CURVE25519 ) != 0 ||
             mbedtls_ecdh_gen_public( &ecdh.grp, &ecdh.d, &ecdh.Qp, myrand, NULL ) != 0 )
         {
-            mbedtls_exit( 1 );
+            return( 1 );
         }
 
         TIME_PUBLIC(  "ECDHE-Curve25519", "handshake",
@@ -874,7 +877,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
                 mbedtls_ecdh_make_public( &ecdh, &olen, buf, sizeof( buf ),
                                   myrand, NULL ) != 0 )
             {
-                mbedtls_exit( 1 );
+                return( 1 );
             }
             ecp_clear_precomputed( &ecdh.grp );
 
@@ -896,7 +899,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
                              myrand, NULL ) != 0 ||
             mbedtls_ecdh_gen_public( &ecdh.grp, &ecdh.d, &ecdh.Q, myrand, NULL ) != 0 )
         {
-            mbedtls_exit( 1 );
+            return( 1 );
         }
 
         TIME_PUBLIC(  "ECDH-Curve25519", "handshake",
@@ -908,7 +911,7 @@ static void test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
     }
 #endif
-
+    return ( 0 );
 
 }
 
@@ -993,10 +996,14 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 #endif
     memset( buf, 0xAA, sizeof( buf ) );
 
-    test_md( &todo, ctx );
-    test_crypt( &todo, ctx );
-    test_rng( &todo, ctx );
-    test_pk( &todo, ctx );
+    if( test_md( &todo, ctx ) != 0)
+        return ( 1 );
+    if( test_crypt( &todo, ctx ) != 0)
+        return ( 1 );
+    if( test_rng( &todo, ctx ) != 0)
+        return ( 1 );
+    if( test_pk( &todo, ctx ) != 0)
+        return ( 1 );
 
     mbedtls_printf("\r\nDONE\r\n");
 
