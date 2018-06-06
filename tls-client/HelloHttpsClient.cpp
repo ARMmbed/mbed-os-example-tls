@@ -81,7 +81,6 @@ HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
      * Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more
      * information. */
     platform_ctx(in_platform_ctx)
-
 {
     mbedtls_entropy_init(&entropy);
     mbedtls_ctr_drbg_init(&ctr_drbg);
