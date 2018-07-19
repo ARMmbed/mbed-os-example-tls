@@ -56,11 +56,14 @@ public:
      * Construct an HelloHttpsClient instance
      *
      * \param[in]   in_server_name
+     *              The server host name
+     * \param[in]   in_server_addr
      *              The server domain/IP address
      * \param[in]   in_server_port
      *              The server port
      */
     HelloHttpsClient(const char *in_server_name,
+                     const char *in_server_addr,
                      const uint16_t in_server_port,
                      mbedtls_platform_context* in_platform_ctx);
 
@@ -192,9 +195,14 @@ private:
     TCPSocket socket;
 
     /**
-     * The domain/IP address of the server to contact
+     * The server host name to contact
      */
     const char *server_name;
+
+    /**
+     * The domain/IP address of the server to contact
+     */
+    const char *server_addr;
     /**
      * The port number to use in the connection
      */

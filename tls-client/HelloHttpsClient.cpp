@@ -70,10 +70,12 @@ const char *HelloHttpsClient::HTTP_HELLO_STR = "Hello world!";
 const char *HelloHttpsClient::HTTP_OK_STR = "200 OK";
 
 HelloHttpsClient::HelloHttpsClient(const char *in_server_name,
+                                   const char *in_server_addr,
                                    const uint16_t in_server_port,
                                    mbedtls_platform_context* in_platform_ctx) :
     socket(),
     server_name(in_server_name),
+    server_addr(in_server_addr),
     server_port(in_server_port),
     /* The platform context is passed just in case any crypto calls need it.
      * Please refer to https://github.com/ARMmbed/mbedtls/issues/1200 for more
@@ -114,12 +116,12 @@ int HelloHttpsClient::run()
         return ret;
 
     /* Start a connection to the server */
-    if ((ret = socket.connect(server_name, server_port)) != NSAPI_ERROR_OK) {
+    if ((ret = socket.connect(server_addr, server_port)) != NSAPI_ERROR_OK) {
         mbedtls_printf("socket.connect() returned %d\n", ret);
         return ret;
     }
     mbedtls_printf("Successfully connected to %s at port %u\n",
-                   server_name, server_port);
+                   server_addr, server_port);
 
     /* Start the TLS handshake */
     mbedtls_printf("Starting the TLS handshake...\n");

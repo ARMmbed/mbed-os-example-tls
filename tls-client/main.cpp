@@ -40,6 +40,7 @@
 
 /* Domain/IP address of the server to contact */
 const char SERVER_NAME[] = "os.mbed.com";
+const char SERVER_ADDR[] = "os.mbed.com";
 
 /* Port used to connect to the server */
 const int SERVER_PORT = 443;
@@ -73,8 +74,9 @@ int main()
 #endif /* MBEDTLS_MAJOR_VERSION */
 
     /* Allocate a HTTPS client */
-    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_PORT,
+    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_ADDR, SERVER_PORT,
                                                  &platform_ctx);
+
     if (client == NULL) {
         mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
                        "\nFAIL\n");
