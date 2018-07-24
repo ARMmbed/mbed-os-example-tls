@@ -1,3 +1,8 @@
 {
-    "macros": ["OS_MAINSTKSIZE=2048"]
+    "macros": ["OS_MAINSTKSIZE=2048"],
+    "target_overrides": {
+        "*": {
+             "platform.stdio-convert-newlines": true
+        }
+    }
 }
