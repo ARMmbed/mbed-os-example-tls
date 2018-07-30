@@ -1019,7 +1019,7 @@ int main(void) {
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
     if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
-        printf("Platform initialization failed with error %d\r\n", exit_code);
+        mbedtls_printf("Platform initialization failed with error %d\r\n", exit_code);
         return MBEDTLS_EXIT_FAILURE;
     }
 
