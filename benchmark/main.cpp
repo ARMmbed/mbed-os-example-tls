@@ -292,15 +292,7 @@ void ecp_clear_precomputed( mbedtls_ecp_group *grp )
 
 unsigned char buf[BUFSIZE];
 
-typedef struct {
-    char md4, md5, ripemd160, sha1, sha256, sha512,
-         arc4, des3, des, aes_cbc, aes_ctr, aes_gcm, aes_ccm,
-         aes_cmac, des3_cmac, camellia, blowfish,
-         havege, ctr_drbg, hmac_drbg,
-         rsa, dhm, ecdsa, ecdh;
-} todo_list;
-
-static int test_md( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_md( mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     // The call below is used to avoid the "unused parameter" warning.
@@ -310,38 +302,32 @@ static int test_md( const todo_list * todo, mbedtls_platform_context* ctx )
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_MD4_C)
-    if( todo->md4 )
-        TIME_AND_TSC( "MD4", mbedtls_md4( buf, BUFSIZE, tmp ) );
+    TIME_AND_TSC( "MD4", mbedtls_md4( buf, BUFSIZE, tmp ) );
 #endif
 
 #if defined(MBEDTLS_MD5_C)
-    if( todo->md5 )
-        TIME_AND_TSC( "MD5", mbedtls_md5( buf, BUFSIZE, tmp ) );
+    TIME_AND_TSC( "MD5", mbedtls_md5( buf, BUFSIZE, tmp ) );
 #endif
 
 #if defined(MBEDTLS_RIPEMD160_C)
-    if( todo->ripemd160 )
-        TIME_AND_TSC( "RIPEMD160", mbedtls_ripemd160( buf, BUFSIZE, tmp ) );
+    TIME_AND_TSC( "RIPEMD160", mbedtls_ripemd160( buf, BUFSIZE, tmp ) );
 #endif
 
 #if defined(MBEDTLS_SHA1_C)
-    if( todo->sha1 )
-        TIME_AND_TSC( "SHA-1", mbedtls_sha1( buf, BUFSIZE, tmp ) );
+    TIME_AND_TSC( "SHA-1", mbedtls_sha1( buf, BUFSIZE, tmp ) );
 #endif
 
 #if defined(MBEDTLS_SHA256_C)
-    if( todo->sha256 )
-        TIME_AND_TSC( "SHA-256", mbedtls_sha256( buf, BUFSIZE, tmp, 0 ) );
+    TIME_AND_TSC( "SHA-256", mbedtls_sha256( buf, BUFSIZE, tmp, 0 ) );
 #endif
 
 #if defined(MBEDTLS_SHA512_C)
-    if( todo->sha512 )
-        TIME_AND_TSC( "SHA-512", mbedtls_sha512( buf, BUFSIZE, tmp, 0 ) );
+    TIME_AND_TSC( "SHA-512", mbedtls_sha512( buf, BUFSIZE, tmp, 0 ) );
 #endif
     return ( 0 );
 }
 
-static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_crypt( mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
@@ -352,7 +338,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_ARC4_C)
-    if( todo->arc4 )
     {
         mbedtls_arc4_context arc4;
         mbedtls_arc4_init( &arc4 );
@@ -363,19 +348,16 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-    if( todo->des3 )
     {
         mbedtls_des3_context des3;
+        mbedtls_des_context des;
+
         mbedtls_des3_init( &des3 );
         mbedtls_des3_set3key_enc( &des3, tmp );
         TIME_AND_TSC( "3DES",
                 mbedtls_des3_crypt_cbc( &des3, MBEDTLS_DES_ENCRYPT, BUFSIZE, tmp, buf, buf ) );
         mbedtls_des3_free( &des3 );
-    }
 
-    if( todo->des )
-    {
-        mbedtls_des_context des;
         mbedtls_des_init( &des );
         mbedtls_des_setkey_enc( &des, tmp );
         TIME_AND_TSC( "DES",
@@ -383,7 +365,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
         mbedtls_des_free( &des );
     }
 #if defined(MBEDTLS_CMAC_C)
-    if( todo->des3_cmac )
     {
         unsigned char output[8];
         const mbedtls_cipher_info_t *cipher_info;
@@ -402,7 +383,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 
 #if defined(MBEDTLS_AES_C)
 #if defined(MBEDTLS_CIPHER_MODE_CBC)
-    if( todo->aes_cbc )
     {
         int keysize;
         mbedtls_aes_context aes;
@@ -423,7 +403,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_CIPHER_MODE_CTR)
-    if( todo->aes_ctr )
     {
         int keysize;
         size_t nc_offset = 0;
@@ -446,7 +425,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_GCM_C)
-    if( todo->aes_gcm )
     {
         int keysize;
         mbedtls_gcm_context gcm;
@@ -469,7 +447,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
     }
 #endif
 #if defined(MBEDTLS_CCM_C)
-    if( todo->aes_ccm )
     {
         int keysize;
         mbedtls_ccm_context ccm;
@@ -492,7 +469,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
     }
 #endif
 #if defined(MBEDTLS_CMAC_C)
-    if( todo->aes_cmac )
     {
         unsigned char output[16];
         const mbedtls_cipher_info_t *cipher_info;
@@ -525,7 +501,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-    if( todo->camellia )
     {
         int keysize;
         mbedtls_camellia_context camellia;
@@ -547,7 +522,6 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-    if( todo->blowfish )
     {
         int keysize;
         mbedtls_blowfish_context blowfish;
@@ -573,7 +547,7 @@ static int test_crypt( const todo_list * todo, mbedtls_platform_context* ctx )
     return ( 0 );
 }
 
-static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_rng( mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     // The call below is used to avoid the "unused parameter" warning.
@@ -583,7 +557,6 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
     memset( tmp, 0xBB, sizeof( tmp ) );
 
 #if defined(MBEDTLS_HAVEGE_C)
-    if( todo->havege )
     {
         mbedtls_havege_state hs;
         mbedtls_havege_init( &hs );
@@ -593,7 +566,6 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-    if( todo->ctr_drbg )
     {
         mbedtls_ctr_drbg_context ctr_drbg;
 
@@ -616,7 +588,6 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_HMAC_DRBG_C)
-    if( todo->hmac_drbg )
     {
         mbedtls_hmac_drbg_context hmac_drbg;
         const mbedtls_md_info_t *md_info;
@@ -669,7 +640,7 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
     return (0 );
 }
 
-static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
+static int test_pk( mbedtls_platform_context* ctx )
 {
     unsigned char tmp[200];
     char title[TITLE_LEN];
@@ -681,7 +652,6 @@ static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 
 #if defined(MBEDTLS_RSA_C) && \
     defined(MBEDTLS_PEM_PARSE_C) && defined(MBEDTLS_PK_PARSE_C)
-    if( todo->rsa )
     {
         mbedtls_pk_context pk;
         mbedtls_rsa_context *rsa;
@@ -711,7 +681,6 @@ static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_BIGNUM_C)
-    if( todo->dhm )
     {
         int dhm_sizes[] = { 2048, 3072 };
         const char *dhm_P[] = {
@@ -756,7 +725,6 @@ static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C) && defined(ENABLE_ECDSA)
-    if( todo->ecdsa )
     {
         mbedtls_ecdsa_context ecdsa;
         const mbedtls_ecp_curve_info *curve_info;
@@ -809,7 +777,6 @@ static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 #endif
 
 #if defined(MBEDTLS_ECDH_C)
-    if( todo->ecdh )
     {
         mbedtls_ecdh_context ecdh;
 #if defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
@@ -917,77 +884,9 @@ static int test_pk( const todo_list * todo, mbedtls_platform_context* ctx )
 
 static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 {
-    int i;
-    todo_list todo;
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
     unsigned char malloc_buf[HEAP_SIZE] = { 0 };
 #endif
-
-    if( argc <= 1 )
-    {
-        memset( &todo, 1, sizeof( todo ) );
-    }
-    else
-    {
-        memset( &todo, 0, sizeof( todo ) );
-
-        for( i = 1; i < argc; i++ )
-        {
-            if( strcmp( argv[i], "md4" ) == 0 )
-                todo.md4 = 1;
-            else if( strcmp( argv[i], "md5" ) == 0 )
-                todo.md5 = 1;
-            else if( strcmp( argv[i], "ripemd160" ) == 0 )
-                todo.ripemd160 = 1;
-            else if( strcmp( argv[i], "sha1" ) == 0 )
-                todo.sha1 = 1;
-            else if( strcmp( argv[i], "sha256" ) == 0 )
-                todo.sha256 = 1;
-            else if( strcmp( argv[i], "sha512" ) == 0 )
-                todo.sha512 = 1;
-            else if( strcmp( argv[i], "arc4" ) == 0 )
-                todo.arc4 = 1;
-            else if( strcmp( argv[i], "des3" ) == 0 )
-                todo.des3 = 1;
-            else if( strcmp( argv[i], "des" ) == 0 )
-                todo.des = 1;
-            else if( strcmp( argv[i], "aes_cbc" ) == 0 )
-                todo.aes_cbc = 1;
-            else if( strcmp( argv[i], "aes_ctr" ) == 0 )
-                todo.aes_ctr = 1;
-            else if( strcmp( argv[i], "aes_gcm" ) == 0 )
-                todo.aes_gcm = 1;
-            else if( strcmp( argv[i], "aes_ccm" ) == 0 )
-                todo.aes_ccm = 1;
-            else if( strcmp( argv[i], "aes_cmac" ) == 0 )
-                todo.aes_cmac = 1;
-            else if( strcmp( argv[i], "des3_cmac" ) == 0 )
-                todo.des3_cmac = 1;
-            else if( strcmp( argv[i], "camellia" ) == 0 )
-                todo.camellia = 1;
-            else if( strcmp( argv[i], "blowfish" ) == 0 )
-                todo.blowfish = 1;
-            else if( strcmp( argv[i], "havege" ) == 0 )
-                todo.havege = 1;
-            else if( strcmp( argv[i], "ctr_drbg" ) == 0 )
-                todo.ctr_drbg = 1;
-            else if( strcmp( argv[i], "hmac_drbg" ) == 0 )
-                todo.hmac_drbg = 1;
-            else if( strcmp( argv[i], "rsa" ) == 0 )
-                todo.rsa = 1;
-            else if( strcmp( argv[i], "dhm" ) == 0 )
-                todo.dhm = 1;
-            else if( strcmp( argv[i], "ecdsa" ) == 0 )
-                todo.ecdsa = 1;
-            else if( strcmp( argv[i], "ecdh" ) == 0 )
-                todo.ecdh = 1;
-            else
-            {
-                mbedtls_printf( "Unrecognized option: %s\r\n", argv[i] );
-                mbedtls_printf( "Available options: " OPTIONS );
-            }
-        }
-    }
 
     mbedtls_printf( "\r\n\r\n" );
 
@@ -996,13 +895,13 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 #endif
     memset( buf, 0xAA, sizeof( buf ) );
 
-    if( test_md( &todo, ctx ) != 0)
+    if( test_md( ctx ) != 0)
         return ( 1 );
-    if( test_crypt( &todo, ctx ) != 0)
+    if( test_crypt( ctx ) != 0)
         return ( 1 );
-    if( test_rng( &todo, ctx ) != 0)
+    if( test_rng( ctx ) != 0)
         return ( 1 );
-    if( test_pk( &todo, ctx ) != 0)
+    if( test_pk( ctx ) != 0)
         return ( 1 );
 
     mbedtls_printf("\r\nDONE\r\n");
