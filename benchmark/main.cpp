@@ -56,10 +56,6 @@
 #include "mbedtls/ecdh.h"
 #include "mbedtls/error.h"
 
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-#include "mbedtls/memory_buffer_alloc.h"
-#endif
-
 #define RSA_PRIVATE_KEY_2048                                            \
 "-----BEGIN RSA PRIVATE KEY-----\r\n"                                   \
 "MIIEogIBAAKCAQEA2dwVr+IMGEtA2/MCP6fA5eb/6B18Bq6e7gw8brNPkm3E6LyR\r\n"  \
@@ -147,18 +143,6 @@
  */
 #define ENABLE_ECDSA
 
-/*
- * For heap usage estimates, we need an estimate of the overhead per allocated
- * block. ptmalloc2/3 (used in gnu libc for instance) uses 2 size_t per block,
- * so use that as our baseline.
- */
-#define MEM_BLOCK_OVERHEAD  ( 2 * sizeof( size_t ) )
-
-/*
- * Size to use for the malloc buffer if MEMORY_BUFFER_ALLOC_C is defined.
- */
-#define HEAP_SIZE       (1u << 16)  // 64k
-
 #define BUFSIZE         1024
 #define HEADER_FORMAT   "  %-24s :  "
 #define TITLE_LEN       25
@@ -199,33 +183,11 @@ do {                                                                           \
                      i * BUFSIZE / 1024 );                                     \
 } while( 0 )
 
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C) && defined(MBEDTLS_MEMORY_DEBUG)
-
-#define MEMORY_MEASURE_INIT                                        \
-    size_t max_used, max_blocks, max_bytes;                        \
-    size_t prv_used, prv_blocks;                                   \
-    mbedtls_memory_buffer_alloc_cur_get( &prv_used, &prv_blocks ); \
-    mbedtls_memory_buffer_alloc_max_reset( );
-
-#define MEMORY_MEASURE_PRINT( title_len )                          \
-    mbedtls_memory_buffer_alloc_max_get( &max_used, &max_blocks ); \
-    for( i = 12 - title_len; i != 0; i-- ) mbedtls_printf( " " );  \
-    max_used -= prv_used;                                          \
-    max_blocks -= prv_blocks;                                      \
-    max_bytes = max_used + MEM_BLOCK_OVERHEAD * max_blocks;        \
-    mbedtls_printf( "%6u heap bytes", (unsigned) max_bytes );
-
-#else
-#define MEMORY_MEASURE_INIT
-#define MEMORY_MEASURE_PRINT( title_len )
-#endif
-
 #define TIME_PUBLIC( TITLE, TYPE, CODE )            \
 do {                                                \
     unsigned long ms;                               \
     int ret = 0;                                    \
     Timer t;                                        \
-    MEMORY_MEASURE_INIT;                            \
                                                     \
     mbedtls_printf( HEADER_FORMAT, TITLE );         \
     fflush( stdout );                               \
@@ -242,7 +204,6 @@ do {                                                \
     else                                            \
     {                                               \
         mbedtls_printf( "%6lu ms/" TYPE, ms );      \
-        MEMORY_MEASURE_PRINT( sizeof( TYPE ) + 1 ); \
         mbedtls_printf( "\r\n" );                   \
     }                                               \
 } while( 0 )
@@ -919,9 +880,6 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 {
     int i;
     todo_list todo;
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-    unsigned char malloc_buf[HEAP_SIZE] = { 0 };
-#endif
 
     if( argc <= 1 )
     {
@@ -991,9 +949,6 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
 
     mbedtls_printf( "\r\n\r\n" );
 
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-    mbedtls_memory_buffer_alloc_init( malloc_buf, sizeof( malloc_buf ) );
-#endif
     memset( buf, 0xAA, sizeof( buf ) );
 
     if( test_md( &todo, ctx ) != 0)
@@ -1006,10 +961,6 @@ static int benchmark( int argc, char *argv[], mbedtls_platform_context* ctx )
         return ( 1 );
 
     mbedtls_printf("\r\nDONE\r\n");
-
-#if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)
-    mbedtls_memory_buffer_alloc_free();
-#endif
 
     return( 0 );
 }
