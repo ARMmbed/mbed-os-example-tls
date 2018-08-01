@@ -183,20 +183,28 @@
 static volatile int alarmed;
 static void alarm() { alarmed = 1; }
 
-#define TIME_AND_TSC( TITLE, CODE )                                            \
-do {                                                                           \
-    unsigned long i;                                                           \
-    Timeout t;                                                                 \
-                                                                               \
-    mbedtls_printf( HEADER_FORMAT, TITLE );                                    \
-                                                                               \
-    for( i = 1, alarmed = 0, t.attach( alarm, 1.0 ); !alarmed; i++ )           \
-    {                                                                          \
-        CODE;                                                                  \
-    }                                                                          \
-                                                                               \
-    mbedtls_printf( "%9lu KB/s\r\n",                                           \
-                     i * BUFSIZE / 1024 );                                     \
+#define TIME_AND_TSC( TITLE, CODE )                                             \
+do {                                                                            \
+    unsigned long i;                                                            \
+    int ret = 0;                                                                \
+    Timeout t;                                                                  \
+                                                                                \
+    mbedtls_printf( HEADER_FORMAT, TITLE );                                     \
+                                                                                \
+    for( i = 1, alarmed = 0, t.attach( alarm, 1.0 ); ret == 0 && !alarmed; i++ )\
+    {                                                                           \
+        ret = CODE;                                                             \
+    }                                                                           \
+                                                                                \
+    if( ret != 0 )                                                              \
+    {                                                                           \
+        PRINT_ERROR;                                                            \
+    }                                                                           \
+    else                                                                        \
+    {                                                                           \
+        mbedtls_printf( "%9lu KB/s\r\n",                                        \
+                         i * BUFSIZE / 1024 );                                  \
+    }                                                                           \
 } while( 0 )
 
 #if defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C) && defined(MBEDTLS_MEMORY_DEBUG)
@@ -326,17 +334,17 @@ static int test_md( const todo_list * todo, mbedtls_platform_context* ctx )
 
 #if defined(MBEDTLS_SHA1_C)
     if( todo->sha1 )
-        TIME_AND_TSC( "SHA-1", mbedtls_sha1( buf, BUFSIZE, tmp ) );
+        TIME_AND_TSC( "SHA-1", mbedtls_sha1_ret( buf, BUFSIZE, tmp ) );
 #endif
 
 #if defined(MBEDTLS_SHA256_C)
     if( todo->sha256 )
-        TIME_AND_TSC( "SHA-256", mbedtls_sha256( buf, BUFSIZE, tmp, 0 ) );
+        TIME_AND_TSC( "SHA-256", mbedtls_sha256_ret( buf, BUFSIZE, tmp, 0 ) );
 #endif
 
 #if defined(MBEDTLS_SHA512_C)
     if( todo->sha512 )
-        TIME_AND_TSC( "SHA-512", mbedtls_sha512( buf, BUFSIZE, tmp, 0 ) );
+        TIME_AND_TSC( "SHA-512", mbedtls_sha512_ret( buf, BUFSIZE, tmp, 0 ) );
 #endif
     return ( 0 );
 }
@@ -602,15 +610,13 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         if( mbedtls_ctr_drbg_seed( &ctr_drbg, myrand, NULL, NULL, 0 ) != 0 )
             return(1);
         TIME_AND_TSC( "CTR_DRBG (NOPR)",
-                if( mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) );
 
         if( mbedtls_ctr_drbg_seed( &ctr_drbg, myrand, NULL, NULL, 0 ) != 0 )
             return(1);
         mbedtls_ctr_drbg_set_prediction_resistance( &ctr_drbg, MBEDTLS_CTR_DRBG_PR_ON );
         TIME_AND_TSC( "CTR_DRBG (PR)",
-                if( mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_ctr_drbg_random( &ctr_drbg, buf, BUFSIZE ) );
         mbedtls_ctr_drbg_free( &ctr_drbg );
     }
 #endif
@@ -630,8 +636,7 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
             return(1);
         TIME_AND_TSC( "HMAC_DRBG SHA-1 (NOPR)",
-                if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
@@ -639,8 +644,7 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         mbedtls_hmac_drbg_set_prediction_resistance( &hmac_drbg,
                                              MBEDTLS_HMAC_DRBG_PR_ON );
         TIME_AND_TSC( "HMAC_DRBG SHA-1 (PR)",
-                if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 #endif
 
@@ -651,8 +655,7 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
             return(1);
         TIME_AND_TSC( "HMAC_DRBG SHA-256 (NOPR)",
-                if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 
         if( mbedtls_hmac_drbg_seed( &hmac_drbg, md_info, myrand, NULL, NULL, 0 ) != 0 )
@@ -660,8 +663,7 @@ static int test_rng( const todo_list * todo, mbedtls_platform_context* ctx )
         mbedtls_hmac_drbg_set_prediction_resistance( &hmac_drbg,
                                              MBEDTLS_HMAC_DRBG_PR_ON );
         TIME_AND_TSC( "HMAC_DRBG SHA-256 (PR)",
-                if( mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) != 0 )
-                    return(1) );
+                mbedtls_hmac_drbg_random( &hmac_drbg, buf, BUFSIZE ) );
         mbedtls_hmac_drbg_free( &hmac_drbg );
 #endif
     }
