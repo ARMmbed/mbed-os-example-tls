@@ -143,13 +143,6 @@
  */
 #define ENABLE_ECDSA
 
-/*
- * For heap usage estimates, we need an estimate of the overhead per allocated
- * block. ptmalloc2/3 (used in gnu libc for instance) uses 2 size_t per block,
- * so use that as our baseline.
- */
-#define MEM_BLOCK_OVERHEAD  ( 2 * sizeof( size_t ) )
-
 #define BUFSIZE         1024
 #define HEADER_FORMAT   "  %-24s :  "
 #define TITLE_LEN       25
