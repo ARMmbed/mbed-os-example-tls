@@ -1,26 +1,57 @@
+  MD4                      :\s*\d+ KB/s
+  MD5                      :\s*\d+ KB/s
+  RIPEMD160                :\s*\d+ KB/s
+  SHA-1                    :\s*\d+ KB/s
   SHA-256                  :\s*\d+ KB/s
   SHA-512                  :\s*\d+ KB/s
+  ARC4                     :\s*\d+ KB/s
+  3DES                     :\s*\d+ KB/s
+  DES                      :\s*\d+ KB/s
+  3DES-CMAC                :\s*\d+ KB/s
   AES-CBC-128              :\s*\d+ KB/s
   AES-CBC-192              :\s*\d+ KB/s
   AES-CBC-256              :\s*\d+ KB/s
+  AES-CTR-128              :\s*\d+ KB/s
+  AES-CTR-192              :\s*\d+ KB/s
+  AES-CTR-256              :\s*\d+ KB/s
   AES-GCM-128              :\s*\d+ KB/s
   AES-GCM-192              :\s*\d+ KB/s
   AES-GCM-256              :\s*\d+ KB/s
   AES-CCM-128              :\s*\d+ KB/s
   AES-CCM-192              :\s*\d+ KB/s
   AES-CCM-256              :\s*\d+ KB/s
-  CTR_DRBG \(NOPR\)          :\s*\d+ KB/s
-  CTR_DRBG \(PR\)            :\s*\d+ KB/s
-  HMAC_DRBG SHA-256 \(NOPR\) :\s*\d+ KB/s
-  HMAC_DRBG SHA-256 \(PR\)   :\s*\d+ KB/s
+  AES-CMAC-128             :\s*\d+ KB/s
+  AES-CMAC-192             :\s*\d+ KB/s
+  AES-CMAC-256             :\s*\d+ KB/s
+  AES-CMAC-PRF-128         :\s*\d+ KB/s
+  CAMELLIA-CBC-128         :\s*\d+ KB/s
+  CAMELLIA-CBC-192         :\s*\d+ KB/s
+  CAMELLIA-CBC-256         :\s*\d+ KB/s
+  BLOWFISH-CBC-128         :\s*\d+ KB/s
+  BLOWFISH-CBC-192         :\s*\d+ KB/s
+  BLOWFISH-CBC-256         :\s*\d+ KB/s
+  CTR_DRBG (NOPR)          :\s*\d+ KB/s
+  CTR_DRBG (PR)            :\s*\d+ KB/s
+  HMAC_DRBG SHA-1 (NOPR)   :\s*\d+ KB/s
+  HMAC_DRBG SHA-1 (PR)     :\s*\d+ KB/s
+  HMAC_DRBG SHA-256 (NOPR) :\s*\d+ KB/s
+  HMAC_DRBG SHA-256 (PR)   :\s*\d+ KB/s
   RSA-2048                 :\s*\d+ ms/ public
   RSA-2048                 :\s*\d+ ms/private
   RSA-4096                 :\s*\d+ ms/ public
   RSA-4096                 :\s*\d+ ms/private
+  DHE-2048                 :\s*\d+ ms/handshake
+  DH-2048                  :\s*\d+ ms/handshake
+  DHE-3072                 :\s*\d+ ms/handshake
+  DH-3072                  :\s*\d+ ms/handshake
+  ECDSA-secp384r1          :\s*\d+ ms/sign
+  ECDSA-secp256r1          :\s*\d+ ms/sign
+  ECDSA-secp384r1          :\s*\d+ ms/verify
+  ECDSA-secp256r1          :\s*\d+ ms/verify
   ECDHE-secp384r1          :\s*\d+ ms/handshake
   ECDHE-secp256r1          :\s*\d+ ms/handshake
-  ECDHE-Curve25519         :\s*\d+ ms/handshake
   ECDH-secp384r1           :\s*\d+ ms/handshake
   ECDH-secp256r1           :\s*\d+ ms/handshake
+  ECDHE-Curve25519         :\s*\d+ ms/handshake
   ECDH-Curve25519          :\s*\d+ ms/handshake
 DONE
