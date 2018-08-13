@@ -1,3 +1,10 @@
 {
-    "macros": ["OS_MAINSTKSIZE=2048"]
+    "macros": [
+        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_config.h\""
+    ],
+    "target_overrides": {
+        "*": {
+             "platform.stdio-convert-newlines": true
+        }
+    }
 }
