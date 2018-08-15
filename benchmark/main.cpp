@@ -408,7 +408,10 @@ MBED_NOINLINE static int benchmark_aes_cbc() {
         memset(buf, 0, sizeof(buf));
         memset(tmp, 0, sizeof(tmp));
 
-        if ((ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize)) != 0) {
+        ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
+        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            continue;
+        } else if (ret != 0) {
             mbedtls_printf("mbedtls_aes_setkey_enc() returned -0x%04X\n",
                            -ret);
             goto exit;
@@ -448,7 +451,10 @@ MBED_NOINLINE static int benchmark_aes_ctr() {
         memset(buf, 0, sizeof(buf));
         memset(tmp, 0, sizeof(tmp));
 
-        if ((ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize)) != 0) {
+        ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
+        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            continue;
+        } else if (ret != 0) {
             mbedtls_printf("mbedtls_aes_setkey_enc() returned -0x%04X\n",
                            -ret);
             goto exit;
@@ -487,7 +493,9 @@ MBED_NOINLINE static int benchmark_aes_gcm() {
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_gcm_setkey(&gcm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            continue;
+        } else if (ret != 0) {
             mbedtls_printf("mbedtls_gcm_setkey() returned -0x%04X\n", -ret);
             goto exit;
         }
