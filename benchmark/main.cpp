@@ -136,6 +136,16 @@
 #define HEADER_FORMAT   "  %-24s :  "
 #define TITLE_LEN       25
 
+#if defined(MBEDTLS_ERROR_C)
+#define PRINT_ERROR(RET, CODE)                              \
+    mbedtls_strerror(RET, err_buf, sizeof(err_buf));        \
+    mbedtls_printf("%s returned -0x%04X\n", CODE, -RET);    \
+    mbedtls_printf("  !  %s\n", err_buf);
+#else
+#define PRINT_ERROR(RET, CODE)                              \
+    mbedtls_printf("%s returned -0x%04X\n", CODE, -RET);
+#endif /* MBEDTLS_ERROR_C */
+
 #define BENCHMARK_FUNC_CALL(TITLE, CODE)                                    \
 do {                                                                        \
     unsigned long i;                                                        \
@@ -147,7 +157,7 @@ do {                                                                        \
     for (i = 1, alarmed = 0, t.attach(alarm, 1.0); !alarmed; i++)           \
     {                                                                       \
         if ((ret = (CODE)) != 0) {                                          \
-            mbedtls_printf("%s returned -0x%04X\n", #CODE, -ret);           \
+            PRINT_ERROR(ret, #CODE);                                        \
             goto exit;                                                      \
         }                                                                   \
     }                                                                       \
@@ -171,11 +181,11 @@ do {                                                    \
     ms = t.read_ms();                                   \
                                                         \
     if (ret != 0) {                                     \
-        mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );  \
+        PRINT_ERROR(ret, "Public function");            \
         goto exit;                                      \
     } else {                                            \
         mbedtls_printf("%6lu ms/" TYPE, ms);            \
-        mbedtls_printf("\r\n");                         \
+        mbedtls_printf("\n");                           \
     }                                                   \
 } while(0)
 
@@ -199,6 +209,7 @@ void ecp_clear_precomputed(mbedtls_ecp_group *grp)
 
 static unsigned char buf[BUFSIZE];
 static unsigned char tmp[200];
+static char err_buf[200];
 static char title[TITLE_LEN];
 
 static volatile int alarmed;
@@ -339,7 +350,7 @@ MBED_NOINLINE static int benchmark_des3()
     mbedtls_des3_init(&des3);
 
     if ((ret = mbedtls_des3_set3key_enc(&des3, tmp)) != 0) {
-        mbedtls_printf("mbedtls_des3_set3key_enc() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_des3_set3key_enc()");
         goto exit;
     }
     BENCHMARK_FUNC_CALL("3DES",
@@ -362,7 +373,7 @@ MBED_NOINLINE static int benchmark_des()
     mbedtls_des_init(&des);
 
     if ((ret = mbedtls_des_setkey_enc(&des, tmp)) != 0) {
-        mbedtls_printf("mbedtls_des_setkey_enc() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_des_setkey_enc()");
         goto exit;
     }
     BENCHMARK_FUNC_CALL("DES",
@@ -426,8 +437,7 @@ MBED_NOINLINE static int benchmark_aes_cbc()
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
             continue;
         } else if (ret != 0) {
-            mbedtls_printf("mbedtls_aes_setkey_enc() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
             goto exit;
         }
 
@@ -470,8 +480,7 @@ MBED_NOINLINE static int benchmark_aes_ctr()
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
             continue;
         } else if (ret != 0) {
-            mbedtls_printf("mbedtls_aes_setkey_enc() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
             goto exit;
         }
 
@@ -512,7 +521,7 @@ MBED_NOINLINE static int benchmark_aes_gcm()
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
             continue;
         } else if (ret != 0) {
-            mbedtls_printf("mbedtls_gcm_setkey() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
             goto exit;
         }
 
@@ -552,7 +561,7 @@ MBED_NOINLINE static int benchmark_aes_ccm()
 
         ret = mbedtls_ccm_setkey(&ccm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_gcm_setkey() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
             goto exit;
         }
 
@@ -638,8 +647,7 @@ MBED_NOINLINE static int benchmark_camellia()
 
         ret = mbedtls_camellia_setkey_enc(&camellia, tmp, keysize);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_camellia_setkey_enc() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_camellia_setkey_enc()");
             goto exit;
         }
 
@@ -684,8 +692,7 @@ MBED_NOINLINE static int benchmark_blowfish()
         memset(tmp, 0, sizeof(tmp));
 
         if ((ret = mbedtls_blowfish_setkey(blowfish, tmp, keysize)) != 0) {
-            mbedtls_printf("mbedtls_blowfish_setkey() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_blowfish_setkey()");
             goto exit;
         }
 
@@ -731,7 +738,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
 
@@ -740,7 +747,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
 
@@ -775,7 +782,7 @@ MBED_NOINLINE static int benchmark_hmac_drbg()
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_hmac_drbg_seed()");
         goto exit;
     }
     BENCHMARK_FUNC_CALL("HMAC_DRBG SHA-1 (NOPR)",
@@ -783,7 +790,7 @@ MBED_NOINLINE static int benchmark_hmac_drbg()
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_hmac_drbg_seed()");
         goto exit;
     }
     mbedtls_hmac_drbg_set_prediction_resistance(&hmac_drbg,
@@ -795,13 +802,13 @@ MBED_NOINLINE static int benchmark_hmac_drbg()
 #if defined(MBEDTLS_SHA256_C)
     md_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
     if (md_info == NULL) {
-        mbedtls_printf("mbedtls_md_info_from_type() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_md_info_from_type()");
         goto exit;
     }
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_hmac_drbg_seed()");
         goto exit;
     }
     BENCHMARK_FUNC_CALL("HMAC_DRBG SHA-256 (NOPR)",
@@ -809,7 +816,7 @@ MBED_NOINLINE static int benchmark_hmac_drbg()
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_hmac_drbg_seed()");
         goto exit;
     }
     mbedtls_hmac_drbg_set_prediction_resistance(&hmac_drbg,
@@ -844,7 +851,7 @@ MBED_NOINLINE static int benchmark_rsa()
         ret = mbedtls_pk_parse_key(&pk, (const unsigned char *)rsa_keys[i],
                                    strlen(rsa_keys[i]) + 1, NULL, 0);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_pk_parse_key() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_pk_parse_key()");
             goto exit;
         }
 
@@ -903,14 +910,12 @@ MBED_NOINLINE static int benchmark_dhm()
 
         ret = mbedtls_mpi_read_string(&dhm.P, 16, dhm_P[i]);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_mpi_read_string() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_mpi_read_string()");
             goto exit;
         }
         ret = mbedtls_mpi_read_string(&dhm.G, 16, dhm_G[i]);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_mpi_read_string() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_mpi_read_string()");
             goto exit;
         }
 
@@ -918,14 +923,13 @@ MBED_NOINLINE static int benchmark_dhm()
         ret = mbedtls_dhm_make_public(&dhm, (int) dhm.len, buf, dhm.len,
                                       myrand, NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_dhm_make_public() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_dhm_make_public()");
             goto exit;
         }
 
         ret = mbedtls_mpi_copy(&dhm.GY, &dhm.GX);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_mpi_copy() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_mpi_copy()");
             goto exit;
         }
 
@@ -980,7 +984,7 @@ MBED_NOINLINE static int benchmark_ecdsa()
 
         ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdsa_genkey() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdsa_genkey()");
             goto exit;
         }
 
@@ -1012,7 +1016,7 @@ MBED_NOINLINE static int benchmark_ecdsa()
 
         ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdsa_genkey() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdsa_genkey()");
             goto exit;
         }
 
@@ -1021,8 +1025,7 @@ MBED_NOINLINE static int benchmark_ecdsa()
                                             hash_len, tmp, &sig_len, myrand,
                                             NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdsa_write_signature() returned "
-                           "-0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdsa_write_signature()");
             goto exit;
         }
 
@@ -1064,22 +1067,20 @@ MBED_NOINLINE static int benchmark_ecdh()
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecp_group_load() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf),
                                        myrand, NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdh_make_public() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
             goto exit;
         }
 
         ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecp_copy() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_ecp_copy()");
             goto exit;
         }
 
@@ -1110,30 +1111,27 @@ MBED_NOINLINE static int benchmark_ecdh()
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecp_group_load() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
                                        NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdh_make_public() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
             goto exit;
         }
 
         ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecp_copy() returned -0x%04X\n", -ret);
+            PRINT_ERROR(ret, "mbedtls_ecp_copy()");
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
                                        NULL);
         if (ret != 0) {
-            mbedtls_printf("mbedtls_ecdh_make_public() returned -0x%04X\n",
-                           -ret);
+            PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
             goto exit;
         }
 
@@ -1172,16 +1170,14 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
 
     ret = mbedtls_ecp_group_load(&ecdh.grp, MBEDTLS_ECP_DP_CURVE25519);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ecp_group_load() returned -0x%04X\n",
-                       -ret);
+        PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Qp, myrand,
                                   NULL);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ecdh_gen_public() returned -0x%04X\n",
-                       -ret);
+        PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
 
@@ -1200,19 +1196,19 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
 
     ret = mbedtls_ecp_group_load(&ecdh.grp, MBEDTLS_ECP_DP_CURVE25519);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ecp_group_load() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Qp, myrand, NULL);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ecdh_gen_public() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Q, myrand, NULL);
     if (ret != 0) {
-        mbedtls_printf("mbedtls_ecdh_gen_public() returned -0x%04X\n", -ret);
+        PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
 
