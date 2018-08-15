@@ -181,7 +181,8 @@ do {                                                    \
 
 /* Clear some memory that was used to prepare the context */
 #if defined(MBEDTLS_ECP_C)
-void ecp_clear_precomputed(mbedtls_ecp_group *grp) {
+void ecp_clear_precomputed(mbedtls_ecp_group *grp)
+{
     if (grp->T != NULL) {
         size_t i;
         for (i = 0; i < grp->T_size; i++) {
@@ -202,11 +203,13 @@ static char title[TITLE_LEN];
 
 static volatile int alarmed;
 
-static void alarm() {
+static void alarm()
+{
     alarmed = 1;
 }
 
-static int myrand(void *rng_state, unsigned char *output, size_t len) {
+static int myrand(void *rng_state, unsigned char *output, size_t len)
+{
     size_t use_len;
     int rnd;
 
@@ -216,7 +219,7 @@ static int myrand(void *rng_state, unsigned char *output, size_t len) {
 
     while (len > 0) {
         use_len = len;
-        if(use_len > sizeof(int)) {
+        if (use_len > sizeof(int)) {
             use_len = sizeof(int);
         }
 
@@ -230,7 +233,8 @@ static int myrand(void *rng_state, unsigned char *output, size_t len) {
 }
 
 #if defined(MBEDTLS_MD4_C)
-MBED_NOINLINE static int benchmark_md4() {
+MBED_NOINLINE static int benchmark_md4()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("MD4", mbedtls_md4_ret(buf, BUFSIZE, tmp));
@@ -242,7 +246,8 @@ exit:
 #endif /* MBEDTLS_MD4_C */
 
 #if defined(MBEDTLS_MD5_C)
-MBED_NOINLINE static int benchmark_md5() {
+MBED_NOINLINE static int benchmark_md5()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("MD5", mbedtls_md5_ret(buf, BUFSIZE, tmp));
@@ -254,7 +259,8 @@ exit:
 #endif /* MBEDTLS_MD5_C */
 
 #if defined(MBEDTLS_RIPEMD160_C)
-MBED_NOINLINE static int benchmark_ripemd160() {
+MBED_NOINLINE static int benchmark_ripemd160()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("RIPEMD160", mbedtls_ripemd160_ret(buf, BUFSIZE, tmp));
@@ -266,7 +272,8 @@ exit:
 #endif /* MBEDTLS_RIPEMD160_C */
 
 #if defined(MBEDTLS_SHA1_C)
-MBED_NOINLINE static int benchmark_sha1() {
+MBED_NOINLINE static int benchmark_sha1()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("SHA-1", mbedtls_sha1_ret(buf, BUFSIZE, tmp));
@@ -278,7 +285,8 @@ exit:
 #endif /* MBEDTLS_SHA1_C */
 
 #if defined(MBEDTLS_SHA256_C)
-MBED_NOINLINE static int benchmark_sha256() {
+MBED_NOINLINE static int benchmark_sha256()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("SHA-256", mbedtls_sha256_ret(buf, BUFSIZE, tmp, 0));
@@ -290,7 +298,8 @@ exit:
 #endif /* MBEDTLS_SHA256_C */
 
 #if defined(MBEDTLS_SHA512_C)
-MBED_NOINLINE static int benchmark_sha512() {
+MBED_NOINLINE static int benchmark_sha512()
+{
     int ret;
 
     BENCHMARK_FUNC_CALL("SHA-512", mbedtls_sha512_ret(buf, BUFSIZE, tmp, 0));
@@ -303,7 +312,8 @@ exit:
 
 
 #if defined(MBEDTLS_ARC4_C)
-MBED_NOINLINE static int benchmark_arc4() {
+MBED_NOINLINE static int benchmark_arc4()
+{
     int ret = 0;
     mbedtls_arc4_context arc4;
 
@@ -321,7 +331,8 @@ exit:
 #endif /* MBEDTLS_ARC4_C */
 
 #if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-MBED_NOINLINE static int benchmark_des3() {
+MBED_NOINLINE static int benchmark_des3()
+{
     int ret = 0;
     mbedtls_des3_context des3;
 
@@ -333,7 +344,7 @@ MBED_NOINLINE static int benchmark_des3() {
     }
     BENCHMARK_FUNC_CALL("3DES",
                         mbedtls_des3_crypt_cbc(&des3, MBEDTLS_DES_ENCRYPT,
-                                               BUFSIZE, tmp, buf, buf));
+                                BUFSIZE, tmp, buf, buf));
 
 exit:
     mbedtls_des3_free(&des3);
@@ -343,7 +354,8 @@ exit:
 #endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-MBED_NOINLINE static int benchmark_des() {
+MBED_NOINLINE static int benchmark_des()
+{
     int ret = 0;
     mbedtls_des_context des;
 
@@ -355,7 +367,7 @@ MBED_NOINLINE static int benchmark_des() {
     }
     BENCHMARK_FUNC_CALL("DES",
                         mbedtls_des_crypt_cbc(&des, MBEDTLS_DES_ENCRYPT,
-                                              BUFSIZE, tmp, buf, buf));
+                                BUFSIZE, tmp, buf, buf));
 
 exit:
     mbedtls_des_free(&des);
@@ -366,7 +378,8 @@ exit:
 
 #if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC) && \
     defined(MBEDTLS_CMAC_C)
-MBED_NOINLINE static int benchmark_des3_cmac() {
+MBED_NOINLINE static int benchmark_des3_cmac()
+{
     int ret = 0;
     unsigned char output[8];
     const mbedtls_cipher_info_t *cipher_info;
@@ -390,7 +403,8 @@ exit:
 #endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC && MBEDTLS_CMAC_C */
 
 #if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-MBED_NOINLINE static int benchmark_aes_cbc() {
+MBED_NOINLINE static int benchmark_aes_cbc()
+{
     int ret = 0;
     int keysize;
     mbedtls_aes_context aes;
@@ -419,8 +433,8 @@ MBED_NOINLINE static int benchmark_aes_cbc() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_aes_crypt_cbc(&aes,
-                                                  MBEDTLS_AES_ENCRYPT, BUFSIZE,
-                                                  tmp, buf, buf));
+                                    MBEDTLS_AES_ENCRYPT, BUFSIZE,
+                                    tmp, buf, buf));
     }
 
 exit:
@@ -431,7 +445,8 @@ exit:
 #endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CTR)
-MBED_NOINLINE static int benchmark_aes_ctr() {
+MBED_NOINLINE static int benchmark_aes_ctr()
+{
     int ret = 0;
     int keysize;
     size_t nc_offset = 0;
@@ -440,7 +455,7 @@ MBED_NOINLINE static int benchmark_aes_ctr() {
 
     mbedtls_aes_init(&aes);
 
-    for ( keysize = 128; keysize <= 256; keysize += 64 ) {
+    for (keysize = 128; keysize <= 256; keysize += 64) {
         ret = mbedtls_snprintf(title, sizeof(title), "AES-CTR-%d", keysize);
         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
             mbedtls_printf("Failed to compose title string using "
@@ -462,8 +477,8 @@ MBED_NOINLINE static int benchmark_aes_ctr() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_aes_crypt_ctr(&aes, BUFSIZE, &nc_offset,
-                                                  tmp, stream_block, buf,
-                                                  buf));
+                                    tmp, stream_block, buf,
+                                    buf));
     }
 
 exit:
@@ -474,7 +489,8 @@ exit:
 #endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CTR */
 
 #if defined(MBEDTLS_AES_C) && defined(MBEDTLS_GCM_C)
-MBED_NOINLINE static int benchmark_aes_gcm() {
+MBED_NOINLINE static int benchmark_aes_gcm()
+{
     int ret = 0;
     int keysize;
     mbedtls_gcm_context gcm;
@@ -502,9 +518,9 @@ MBED_NOINLINE static int benchmark_aes_gcm() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_gcm_crypt_and_tag(&gcm,
-                                                      MBEDTLS_GCM_ENCRYPT,
-                                                      BUFSIZE, tmp, 12, NULL,
-                                                      0, buf, buf, 16, tmp));
+                                    MBEDTLS_GCM_ENCRYPT,
+                                    BUFSIZE, tmp, 12, NULL,
+                                    0, buf, buf, 16, tmp));
     }
 
 exit:
@@ -515,7 +531,8 @@ exit:
 #endif /* MBEDTLS_AES_C && MBEDTLS_GCM_C */
 
 #if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CCM_C)
-MBED_NOINLINE static int benchmark_aes_ccm() {
+MBED_NOINLINE static int benchmark_aes_ccm()
+{
     int ret = 0;
     int keysize;
     mbedtls_ccm_context ccm;
@@ -541,8 +558,8 @@ MBED_NOINLINE static int benchmark_aes_ccm() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_ccm_encrypt_and_tag(&ccm, BUFSIZE, tmp, 12,
-                                                        NULL, 0, buf, buf, tmp,
-                                                        16));
+                                    NULL, 0, buf, buf, tmp,
+                                    16));
     }
 
 exit:
@@ -553,7 +570,8 @@ exit:
 #endif /* MBEDTLS_AES_C && MBEDTLS_CCM_C */
 
 #if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CMAC_C)
-MBED_NOINLINE static int benchmark_aes_cmac() {
+MBED_NOINLINE static int benchmark_aes_cmac()
+{
     int ret = 0;
     unsigned char output[16];
     const mbedtls_cipher_info_t *cipher_info;
@@ -589,7 +607,7 @@ MBED_NOINLINE static int benchmark_aes_cmac() {
 
     BENCHMARK_FUNC_CALL("AES-CMAC-PRF-128",
                         mbedtls_aes_cmac_prf_128(tmp, 16, buf, BUFSIZE,
-                        output));
+                                output));
 
 exit:
 
@@ -598,7 +616,8 @@ exit:
 #endif /* MBEDTLS_AES_C && MBEDTLS_CMAC_C */
 
 #if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-MBED_NOINLINE static int benchmark_camellia() {
+MBED_NOINLINE static int benchmark_camellia()
+{
     int ret = 0;
     int keysize;
     mbedtls_camellia_context camellia;
@@ -626,25 +645,26 @@ MBED_NOINLINE static int benchmark_camellia() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_camellia_crypt_cbc(&camellia,
-                                                       MBEDTLS_CAMELLIA_ENCRYPT,
-                                                       BUFSIZE, tmp, buf, buf));
+                                    MBEDTLS_CAMELLIA_ENCRYPT,
+                                    BUFSIZE, tmp, buf, buf));
     }
 
 exit:
-        mbedtls_camellia_free(&camellia);
+    mbedtls_camellia_free(&camellia);
 
     return ret;
 }
 #endif /* MBEDTLS_CAMELLIA_C && MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-MBED_NOINLINE static int benchmark_blowfish() {
+MBED_NOINLINE static int benchmark_blowfish()
+{
     int ret = 0;
     int keysize;
     mbedtls_blowfish_context *blowfish;
 
     blowfish = (mbedtls_blowfish_context *)mbedtls_calloc(1,
-                                        sizeof(mbedtls_blowfish_context *));
+               sizeof(mbedtls_blowfish_context *));
     if (blowfish == NULL) {
         mbedtls_printf("Failed to allocate mbedtls_blowfish_context\n");
         return -1;
@@ -653,7 +673,7 @@ MBED_NOINLINE static int benchmark_blowfish() {
     mbedtls_blowfish_init(blowfish);
 
     for (keysize = 128; keysize <= 256; keysize += 64) {
-        mbedtls_snprintf(title,sizeof(title), "BLOWFISH-CBC-%d", keysize);
+        mbedtls_snprintf(title, sizeof(title), "BLOWFISH-CBC-%d", keysize);
         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
             mbedtls_printf("Failed to compose title string using "
                            "mbedtls_snprintf(): %d\n", ret);
@@ -671,9 +691,9 @@ MBED_NOINLINE static int benchmark_blowfish() {
 
         BENCHMARK_FUNC_CALL(title,
                             mbedtls_blowfish_crypt_cbc(blowfish,
-                                                       MBEDTLS_BLOWFISH_ENCRYPT,
-                                                       BUFSIZE,
-                                                       tmp, buf, buf));
+                                    MBEDTLS_BLOWFISH_ENCRYPT,
+                                    BUFSIZE,
+                                    tmp, buf, buf));
     }
 
 exit:
@@ -685,7 +705,8 @@ exit:
 #endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_HAVEGE_C)
-MBED_NOINLINE static int benchmark_havege() {
+MBED_NOINLINE static int benchmark_havege()
+{
     int ret = 0;
     mbedtls_havege_state hs;
 
@@ -701,14 +722,15 @@ exit:
 #endif /* MBEDTLS_HAVEGE_C */
 
 #if defined(MBEDTLS_CTR_DRBG_C)
-MBED_NOINLINE static int benchmark_ctr_drbg() {
+MBED_NOINLINE static int benchmark_ctr_drbg()
+{
     int ret = 0;
     mbedtls_ctr_drbg_context ctr_drbg;
 
     mbedtls_ctr_drbg_init(&ctr_drbg);
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
-    if (ret != 0 ) {
+    if (ret != 0) {
         mbedtls_printf("mbedtls_ctr_drbg_seed() returned -0x%04X\n", -ret);
         goto exit;
     }
@@ -723,19 +745,20 @@ MBED_NOINLINE static int benchmark_ctr_drbg() {
     }
 
     mbedtls_ctr_drbg_set_prediction_resistance(&ctr_drbg,
-                                               MBEDTLS_CTR_DRBG_PR_ON);
+            MBEDTLS_CTR_DRBG_PR_ON);
     BENCHMARK_FUNC_CALL("CTR_DRBG (PR)",
                         mbedtls_ctr_drbg_random(&ctr_drbg, buf, BUFSIZE));
 
 exit:
-    mbedtls_ctr_drbg_free( &ctr_drbg );
+    mbedtls_ctr_drbg_free(&ctr_drbg);
 
     return ret;
 }
 #endif /* MBEDTLS_CTR_DRBG_C */
 
 #if defined(MBEDTLS_HMAC_DRBG_C)
-MBED_NOINLINE static int benchmark_hmac_drbg() {
+MBED_NOINLINE static int benchmark_hmac_drbg()
+{
     int ret = 0;
     mbedtls_hmac_drbg_context hmac_drbg;
     const mbedtls_md_info_t *md_info;
@@ -764,7 +787,7 @@ MBED_NOINLINE static int benchmark_hmac_drbg() {
         goto exit;
     }
     mbedtls_hmac_drbg_set_prediction_resistance(&hmac_drbg,
-                                                MBEDTLS_HMAC_DRBG_PR_ON);
+            MBEDTLS_HMAC_DRBG_PR_ON);
     BENCHMARK_FUNC_CALL("HMAC_DRBG SHA-1 (PR)",
                         mbedtls_hmac_drbg_random(&hmac_drbg, buf, BUFSIZE));
 #endif /* MBEDTLS_SHA1_C */
@@ -777,7 +800,7 @@ MBED_NOINLINE static int benchmark_hmac_drbg() {
     }
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
-    if(ret != 0) {
+    if (ret != 0) {
         mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
         goto exit;
     }
@@ -785,12 +808,12 @@ MBED_NOINLINE static int benchmark_hmac_drbg() {
                         mbedtls_hmac_drbg_random(&hmac_drbg, buf, BUFSIZE));
 
     ret = mbedtls_hmac_drbg_seed(&hmac_drbg, md_info, myrand, NULL, NULL, 0);
-    if(ret != 0) {
+    if (ret != 0) {
         mbedtls_printf("mbedtls_hmac_drbg_seed() returned -0x%04X\n", -ret);
         goto exit;
     }
     mbedtls_hmac_drbg_set_prediction_resistance(&hmac_drbg,
-                                                MBEDTLS_HMAC_DRBG_PR_ON);
+            MBEDTLS_HMAC_DRBG_PR_ON);
     BENCHMARK_FUNC_CALL("HMAC_DRBG SHA-256 (PR)",
                         mbedtls_hmac_drbg_random(&hmac_drbg, buf, BUFSIZE));
 #endif /* MBEDTLS_SHA256_C */
@@ -804,7 +827,8 @@ exit:
 
 #if defined(MBEDTLS_RSA_C) && \
     defined(MBEDTLS_PEM_PARSE_C) && defined(MBEDTLS_PK_PARSE_C)
-MBED_NOINLINE static int benchmark_rsa() {
+MBED_NOINLINE static int benchmark_rsa()
+{
     int ret = 0;
     mbedtls_pk_context pk;
     mbedtls_rsa_context *rsa;
@@ -841,7 +865,7 @@ MBED_NOINLINE static int benchmark_rsa() {
         BENCHMARK_PUBLIC(title, "private",
                          buf[0] = 0;
                          ret = mbedtls_rsa_private(rsa, myrand, NULL, buf,
-                                                   buf));
+                                 buf));
 
 exit:
         mbedtls_pk_free(&pk);
@@ -852,7 +876,8 @@ exit:
 #endif /* MBEDTLS_RSA_C && MBEDTLS_PEM_PARSE_C && MBEDTLS_PK_PARSE_C */
 
 #if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_BIGNUM_C)
-MBED_NOINLINE static int benchmark_dhm() {
+MBED_NOINLINE static int benchmark_dhm()
+{
     int ret = 0;
     int dhm_sizes[] = {
         2048,
@@ -872,8 +897,8 @@ MBED_NOINLINE static int benchmark_dhm() {
     size_t i;
 
     for (i = 0;
-         i < sizeof(dhm_sizes) / sizeof(dhm_sizes[0]) && ret == 0;
-         i++) {
+            i < sizeof(dhm_sizes) / sizeof(dhm_sizes[0]) && ret == 0;
+            i++) {
         mbedtls_dhm_init(&dhm);
 
         ret = mbedtls_mpi_read_string(&dhm.P, 16, dhm_P[i]);
@@ -899,7 +924,7 @@ MBED_NOINLINE static int benchmark_dhm() {
         }
 
         ret = mbedtls_mpi_copy(&dhm.GY, &dhm.GX);
-        if(ret != 0) {
+        if (ret != 0) {
             mbedtls_printf("mbedtls_mpi_copy() returned -0x%04X\n", -ret);
             goto exit;
         }
@@ -913,10 +938,10 @@ MBED_NOINLINE static int benchmark_dhm() {
 
         BENCHMARK_PUBLIC(title, "handshake",
                          ret  = mbedtls_dhm_make_public(&dhm, (int)dhm.len,
-                                                        buf, dhm.len, myrand,
-                                                        NULL );
+                                 buf, dhm.len, myrand,
+                                 NULL);
                          ret |= mbedtls_dhm_calc_secret(&dhm, buf, sizeof(buf),
-                                                        &olen, myrand, NULL));
+                                 &olen, myrand, NULL));
 
         ret = mbedtls_snprintf(title, sizeof(title), "DH-%d", dhm_sizes[i]);
         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
@@ -927,7 +952,7 @@ MBED_NOINLINE static int benchmark_dhm() {
 
         BENCHMARK_PUBLIC(title, "handshake",
                          ret = mbedtls_dhm_calc_secret(&dhm, buf, sizeof(buf),
-                                                       &olen, myrand, NULL));
+                                 &olen, myrand, NULL));
 
 exit:
         mbedtls_dhm_free(&dhm);
@@ -938,7 +963,8 @@ exit:
 #endif /* MBEDTLS_DHM_C && MBEDTLS_BIGNUM_C */
 
 #if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C)
-MBED_NOINLINE static int benchmark_ecdsa() {
+MBED_NOINLINE static int benchmark_ecdsa()
+{
     int ret = 0;
     mbedtls_ecdsa_context ecdsa;
     const mbedtls_ecp_curve_info *curve_info;
@@ -948,12 +974,12 @@ MBED_NOINLINE static int benchmark_ecdsa() {
     memset(buf, 0x2A, sizeof(buf));
 
     for (curve_info = mbedtls_ecp_curve_list();
-         curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
-         curve_info++) {
+            curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
+            curve_info++) {
         mbedtls_ecdsa_init(&ecdsa);
 
         ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
-        if(ret != 0) {
+        if (ret != 0) {
             mbedtls_printf("mbedtls_ecdsa_genkey() returned -0x%04X\n", -ret);
             goto exit;
         }
@@ -971,17 +997,17 @@ MBED_NOINLINE static int benchmark_ecdsa() {
         hash_len = (curve_info->bit_size + 7) / 8;
         BENCHMARK_PUBLIC(title, "sign",
                          ret = mbedtls_ecdsa_write_signature(&ecdsa,
-                                                             MBEDTLS_MD_SHA256,
-                                                             buf, hash_len,
-                                                             tmp, &sig_len,
-                                                             myrand, NULL));
+                                 MBEDTLS_MD_SHA256,
+                                 buf, hash_len,
+                                 tmp, &sig_len,
+                                 myrand, NULL));
 
         mbedtls_ecdsa_free(&ecdsa);
     }
 
     for (curve_info = mbedtls_ecp_curve_list();
-         curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
-         curve_info++) {
+            curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
+            curve_info++) {
         mbedtls_ecdsa_init(&ecdsa);
 
         ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
@@ -990,10 +1016,10 @@ MBED_NOINLINE static int benchmark_ecdsa() {
             goto exit;
         }
 
-        hash_len = ( curve_info->bit_size + 7 ) / 8;
+        hash_len = (curve_info->bit_size + 7) / 8;
         ret = mbedtls_ecdsa_write_signature(&ecdsa, MBEDTLS_MD_SHA256, buf,
-                                           hash_len, tmp, &sig_len, myrand,
-                                           NULL );
+                                            hash_len, tmp, &sig_len, myrand,
+                                            NULL);
         if (ret != 0) {
             mbedtls_printf("mbedtls_ecdsa_write_signature() returned "
                            "-0x%04X\n", -ret);
@@ -1012,8 +1038,8 @@ MBED_NOINLINE static int benchmark_ecdsa() {
 
         BENCHMARK_PUBLIC(title, "verify",
                          ret = mbedtls_ecdsa_read_signature(&ecdsa, buf,
-                                                            hash_len, tmp,
-                                                            sig_len));
+                                 hash_len, tmp,
+                                 sig_len));
 
 exit:
         mbedtls_ecdsa_free(&ecdsa);
@@ -1024,15 +1050,16 @@ exit:
 #endif /* MBEDTLS_ECDSA_C && MBEDTLS_SHA2565_C */
 
 #if defined(MBEDTLS_ECDH_C)
-MBED_NOINLINE static int benchmark_ecdh() {
+MBED_NOINLINE static int benchmark_ecdh()
+{
     int ret = 0;
     mbedtls_ecdh_context ecdh;
     const mbedtls_ecp_curve_info *curve_info;
     size_t olen;
 
     for (curve_info = mbedtls_ecp_curve_list();
-         curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
-         curve_info++) {
+            curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
+            curve_info++) {
         mbedtls_ecdh_init(&ecdh);
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
@@ -1050,7 +1077,7 @@ MBED_NOINLINE static int benchmark_ecdh() {
             goto exit;
         }
 
-        ret =mbedtls_ecp_copy( &ecdh.Qp, &ecdh.Q );
+        ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
         if (ret != 0) {
             mbedtls_printf("mbedtls_ecp_copy() returned -0x%04X\n", -ret);
             goto exit;
@@ -1068,28 +1095,28 @@ MBED_NOINLINE static int benchmark_ecdh() {
 
         BENCHMARK_PUBLIC(title, "handshake",
                          ret  = mbedtls_ecdh_make_public(&ecdh, &olen, buf,
-                                                         sizeof(buf), myrand,
-                                                         NULL);
+                                 sizeof(buf), myrand,
+                                 NULL);
                          ret |= mbedtls_ecdh_calc_secret(&ecdh, &olen, buf,
-                                                         sizeof(buf), myrand,
-                                                         NULL));
+                                 sizeof(buf), myrand,
+                                 NULL));
         mbedtls_ecdh_free(&ecdh);
     }
 
     for (curve_info = mbedtls_ecp_curve_list();
-         curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
-         curve_info++) {
+            curve_info->grp_id != MBEDTLS_ECP_DP_NONE && ret == 0;
+            curve_info++) {
         mbedtls_ecdh_init(&ecdh);
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
-        if(ret != 0) {
+        if (ret != 0) {
             mbedtls_printf("mbedtls_ecp_group_load() returned -0x%04X\n",
                            -ret);
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
-                                      NULL);
+                                       NULL);
         if (ret != 0) {
             mbedtls_printf("mbedtls_ecdh_make_public() returned -0x%04X\n",
                            -ret);
@@ -1103,14 +1130,14 @@ MBED_NOINLINE static int benchmark_ecdh() {
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
-                                       NULL );
+                                       NULL);
         if (ret != 0) {
             mbedtls_printf("mbedtls_ecdh_make_public() returned -0x%04X\n",
                            -ret);
             goto exit;
         }
 
-        ecp_clear_precomputed( &ecdh.grp );
+        ecp_clear_precomputed(&ecdh.grp);
 
         ret = mbedtls_snprintf(title, sizeof(title), "ECDH-%s",
                                curve_info->name);
@@ -1121,8 +1148,8 @@ MBED_NOINLINE static int benchmark_ecdh() {
         }
         BENCHMARK_PUBLIC(title, "handshake",
                          ret = mbedtls_ecdh_calc_secret(&ecdh, &olen, buf,
-                                                        sizeof(buf), myrand,
-                                                        NULL));
+                                 sizeof(buf), myrand,
+                                 NULL));
 
 exit:
         mbedtls_ecdh_free(&ecdh);
@@ -1134,7 +1161,8 @@ exit:
 
 #if defined(MBEDTLS_ECDH_C) && defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
 /* Curve25519 needs to be handled separately */
-MBED_NOINLINE static int benchmark_ecdh_curve22519() {
+MBED_NOINLINE static int benchmark_ecdh_curve22519()
+{
     int ret = 0;
     mbedtls_ecdh_context ecdh;
     mbedtls_mpi z;
@@ -1159,10 +1187,10 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519() {
 
     BENCHMARK_PUBLIC("ECDHE-Curve25519", "handshake",
                      ret  = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d,
-                                                    &ecdh.Q, myrand, NULL);
+                             &ecdh.Q, myrand, NULL);
                      ret |= mbedtls_ecdh_compute_shared(&ecdh.grp, &z,
-                                                        &ecdh.Qp, &ecdh.d,
-                                                        myrand, NULL));
+                             &ecdh.Qp, &ecdh.d,
+                             myrand, NULL));
 
     mbedtls_ecdh_free(&ecdh);
     mbedtls_mpi_free(&z);
@@ -1190,8 +1218,8 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519() {
 
     BENCHMARK_PUBLIC("ECDH-Curve25519", "handshake",
                      ret = mbedtls_ecdh_compute_shared(&ecdh.grp, &z,
-                                                       &ecdh.Qp, &ecdh.d,
-                                                       myrand, NULL));
+                             &ecdh.Qp, &ecdh.d,
+                             myrand, NULL));
 
 exit:
     mbedtls_ecdh_free(&ecdh);
@@ -1209,7 +1237,7 @@ int main()
     memset(buf, 0xAA, sizeof(buf));
     memset(tmp, 0xBB, sizeof(tmp));
 
-    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+    if ((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
         mbedtls_printf("Platform initialization failed with error %d\r\n",
                        exit_code);
         return MBEDTLS_EXIT_FAILURE;
