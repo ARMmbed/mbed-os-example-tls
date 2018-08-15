@@ -301,9 +301,10 @@ exit:
 }
 #endif /* MBEDTLS_SHA512_C */
 
+
+#if defined(MBEDTLS_ARC4_C)
 MBED_NOINLINE static int benchmark_arc4() {
     int ret = 0;
-#if defined(MBEDTLS_ARC4_C)
     mbedtls_arc4_context arc4;
 
     mbedtls_arc4_init(&arc4);
@@ -314,14 +315,14 @@ MBED_NOINLINE static int benchmark_arc4() {
 
 exit:
     mbedtls_arc4_free(&arc4);
-#endif /* MBEDTLS_ARC4_C */
 
     return ret;
 }
+#endif /* MBEDTLS_ARC4_C */
 
+#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
 MBED_NOINLINE static int benchmark_des3() {
     int ret = 0;
-#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
     mbedtls_des3_context des3;
 
     mbedtls_des3_init(&des3);
@@ -336,14 +337,14 @@ MBED_NOINLINE static int benchmark_des3() {
 
 exit:
     mbedtls_des3_free(&des3);
-#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
 
     return ret;
 }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
 
+#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
 MBED_NOINLINE static int benchmark_des() {
     int ret = 0;
-#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
     mbedtls_des_context des;
 
     mbedtls_des_init(&des);
@@ -358,15 +359,15 @@ MBED_NOINLINE static int benchmark_des() {
 
 exit:
     mbedtls_des_free(&des);
-#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
 
     return ret;
 }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
 
-MBED_NOINLINE static int benchmark_des3_cmac() {
-    int ret = 0;
 #if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC) && \
     defined(MBEDTLS_CMAC_C)
+MBED_NOINLINE static int benchmark_des3_cmac() {
+    int ret = 0;
     unsigned char output[8];
     const mbedtls_cipher_info_t *cipher_info;
 
@@ -384,13 +385,13 @@ MBED_NOINLINE static int benchmark_des3_cmac() {
                                             BUFSIZE, output));
 
 exit:
-#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC && MBEDTLS_CMAC_C */
     return ret;
 }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC && MBEDTLS_CMAC_C */
 
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
 MBED_NOINLINE static int benchmark_aes_cbc() {
     int ret = 0;
-#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
     int keysize;
     mbedtls_aes_context aes;
 
@@ -421,14 +422,14 @@ MBED_NOINLINE static int benchmark_aes_cbc() {
 
 exit:
     mbedtls_aes_free(&aes);
-#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CBC */
 
     return ret;
 }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CBC */
 
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CTR)
 MBED_NOINLINE static int benchmark_aes_ctr() {
     int ret = 0;
-#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CTR)
     int keysize;
     size_t nc_offset = 0;
     unsigned char stream_block[16];
@@ -461,14 +462,14 @@ MBED_NOINLINE static int benchmark_aes_ctr() {
 
 exit:
     mbedtls_aes_free(&aes);
-#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CTR */
 
     return ret;
 }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CTR */
 
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_GCM_C)
 MBED_NOINLINE static int benchmark_aes_gcm() {
     int ret = 0;
-#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_GCM_C)
     int keysize;
     mbedtls_gcm_context gcm;
 
@@ -500,14 +501,14 @@ MBED_NOINLINE static int benchmark_aes_gcm() {
 
 exit:
     mbedtls_gcm_free(&gcm);
-#endif /* MBEDTLS_AES_C && MBEDTLS_GCM_C */
 
     return ret;
 }
+#endif /* MBEDTLS_AES_C && MBEDTLS_GCM_C */
 
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CCM_C)
 MBED_NOINLINE static int benchmark_aes_ccm() {
     int ret = 0;
-#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CCM_C)
     int keysize;
     mbedtls_ccm_context ccm;
 
@@ -538,14 +539,14 @@ MBED_NOINLINE static int benchmark_aes_ccm() {
 
 exit:
     mbedtls_ccm_free(&ccm);
-#endif /* MBEDTLS_AES_C && MBEDTLS_CCM_C */
 
     return ret;
 }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CCM_C */
 
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CMAC_C)
 MBED_NOINLINE static int benchmark_aes_cmac() {
     int ret = 0;
-#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CMAC_C)
     unsigned char output[16];
     const mbedtls_cipher_info_t *cipher_info;
     mbedtls_cipher_type_t cipher_type;
@@ -583,14 +584,14 @@ MBED_NOINLINE static int benchmark_aes_cmac() {
                         output));
 
 exit:
-#endif /* MBEDTLS_AES_C && MBEDTLS_CMAC_C */
 
     return ret;
 }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CMAC_C */
 
+#if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
 MBED_NOINLINE static int benchmark_camellia() {
     int ret = 0;
-#if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
     int keysize;
     mbedtls_camellia_context camellia;
 
@@ -623,14 +624,14 @@ MBED_NOINLINE static int benchmark_camellia() {
 
 exit:
         mbedtls_camellia_free(&camellia);
-#endif /* MBEDTLS_CAMELLIA_C && MBEDTLS_CIPHER_MODE_CBC */
 
     return ret;
 }
+#endif /* MBEDTLS_CAMELLIA_C && MBEDTLS_CIPHER_MODE_CBC */
 
+#if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
 MBED_NOINLINE static int benchmark_blowfish() {
     int ret = 0;
-#if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
     int keysize;
     mbedtls_blowfish_context *blowfish;
 
@@ -670,14 +671,14 @@ MBED_NOINLINE static int benchmark_blowfish() {
 exit:
     mbedtls_blowfish_free(blowfish);
     mbedtls_free(blowfish);
-#endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
 
     return ret;
 }
+#endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
 
+#if defined(MBEDTLS_HAVEGE_C)
 MBED_NOINLINE static int benchmark_havege() {
     int ret = 0;
-#if defined(MBEDTLS_HAVEGE_C)
     mbedtls_havege_state hs;
 
     mbedtls_havege_init(&hs);
@@ -686,14 +687,14 @@ MBED_NOINLINE static int benchmark_havege() {
 
 exit:
     mbedtls_havege_free(&hs);
-#endif /* MBEDTLS_HAVEGE_C */
 
     return ret;
 }
+#endif /* MBEDTLS_HAVEGE_C */
 
+#if defined(MBEDTLS_CTR_DRBG_C)
 MBED_NOINLINE static int benchmark_ctr_drbg() {
     int ret = 0;
-#if defined(MBEDTLS_CTR_DRBG_C)
     mbedtls_ctr_drbg_context ctr_drbg;
 
     mbedtls_ctr_drbg_init(&ctr_drbg);
@@ -720,14 +721,14 @@ MBED_NOINLINE static int benchmark_ctr_drbg() {
 
 exit:
     mbedtls_ctr_drbg_free( &ctr_drbg );
-#endif /* MBEDTLS_CTR_DRBG_C */
 
     return ret;
 }
+#endif /* MBEDTLS_CTR_DRBG_C */
 
+#if defined(MBEDTLS_HMAC_DRBG_C)
 MBED_NOINLINE static int benchmark_hmac_drbg() {
     int ret = 0;
-#if defined(MBEDTLS_HMAC_DRBG_C)
     mbedtls_hmac_drbg_context hmac_drbg;
     const mbedtls_md_info_t *md_info;
 
@@ -788,15 +789,15 @@ MBED_NOINLINE static int benchmark_hmac_drbg() {
 
 exit:
     mbedtls_hmac_drbg_free(&hmac_drbg);
-#endif /* MBEDTLS_HMAC_DRBG_C */
 
     return ret;
 }
+#endif /* MBEDTLS_HMAC_DRBG_C */
 
-MBED_NOINLINE static int benchmark_rsa() {
-    int ret = 0;
 #if defined(MBEDTLS_RSA_C) && \
     defined(MBEDTLS_PEM_PARSE_C) && defined(MBEDTLS_PK_PARSE_C)
+MBED_NOINLINE static int benchmark_rsa() {
+    int ret = 0;
     mbedtls_pk_context pk;
     mbedtls_rsa_context *rsa;
     const char *rsa_keys[] = {
@@ -837,14 +838,14 @@ MBED_NOINLINE static int benchmark_rsa() {
 exit:
         mbedtls_pk_free(&pk);
     }
-#endif /* MBEDTLS_RSA_C && MBEDTLS_PEM_PARSE_C && MBEDTLS_PK_PARSE_C */
 
     return ret;
 }
+#endif /* MBEDTLS_RSA_C && MBEDTLS_PEM_PARSE_C && MBEDTLS_PK_PARSE_C */
 
+#if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_BIGNUM_C)
 MBED_NOINLINE static int benchmark_dhm() {
     int ret = 0;
-#if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_BIGNUM_C)
     int dhm_sizes[] = {
         2048,
         3072,
@@ -923,14 +924,14 @@ MBED_NOINLINE static int benchmark_dhm() {
 exit:
         mbedtls_dhm_free(&dhm);
     }
-#endif /* MBEDTLS_DHM_C && MBEDTLS_BIGNUM_C */
 
     return ret;
 }
+#endif /* MBEDTLS_DHM_C && MBEDTLS_BIGNUM_C */
 
+#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C)
 MBED_NOINLINE static int benchmark_ecdsa() {
     int ret = 0;
-#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C)
     mbedtls_ecdsa_context ecdsa;
     const mbedtls_ecp_curve_info *curve_info;
     size_t sig_len;
@@ -1009,15 +1010,14 @@ MBED_NOINLINE static int benchmark_ecdsa() {
 exit:
         mbedtls_ecdsa_free(&ecdsa);
     }
-#endif /* MBEDTLS_ECDSA_C && MBEDTLS_SHA2565_C */
-
 
     return ret;
 }
+#endif /* MBEDTLS_ECDSA_C && MBEDTLS_SHA2565_C */
 
+#if defined(MBEDTLS_ECDH_C)
 MBED_NOINLINE static int benchmark_ecdh() {
     int ret = 0;
-#if defined(MBEDTLS_ECDH_C)
     mbedtls_ecdh_context ecdh;
     const mbedtls_ecp_curve_info *curve_info;
     size_t olen;
@@ -1119,15 +1119,15 @@ MBED_NOINLINE static int benchmark_ecdh() {
 exit:
         mbedtls_ecdh_free(&ecdh);
     }
-#endif /* MBEDTLS_ECDH_C */
 
     return ret;
 }
+#endif /* MBEDTLS_ECDH_C */
 
+#if defined(MBEDTLS_ECDH_C) && defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
 /* Curve25519 needs to be handled separately */
 MBED_NOINLINE static int benchmark_ecdh_curve22519() {
     int ret = 0;
-#if defined(MBEDTLS_ECDH_C) && defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
     mbedtls_ecdh_context ecdh;
     mbedtls_mpi z;
 
@@ -1188,16 +1188,15 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519() {
 exit:
     mbedtls_ecdh_free(&ecdh);
     mbedtls_mpi_free(&z);
-#endif /* MBEDTLS_ECDH_C && MBEDTLS_ECP_DP_CURVE25519_ENABLED */
 
     return ret;
 }
+#endif /* MBEDTLS_ECDH_C && MBEDTLS_ECP_DP_CURVE25519_ENABLED */
 
 int main()
 {
     mbedtls_platform_context platform_ctx;
-    int exit_code = MBEDTLS_EXIT_FAILURE;
-    int ret;
+    int exit_code = MBEDTLS_EXIT_SUCCESS;
 
     memset(buf, 0xAA, sizeof(buf));
     memset(tmp, 0xBB, sizeof(tmp));
@@ -1238,87 +1237,130 @@ int main()
     }
 #endif /* MBEDTLS_SHA256_C */
 
-    if ((ret = benchmark_arc4()) != 0) {
-        goto exit;
+#if defined(MBEDTLS_SHA256_C)
+    if (benchmark_sha512() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_SHA512_C */
+
+#if defined(MBEDTLS_ARC4_C)
+    if (benchmark_arc4() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_ARC4_C */
+
+#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+    if (benchmark_des3() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
+
+#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+    if (benchmark_des() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC */
+
+#if defined(MBEDTLS_DES_C) && defined(MBEDTLS_CIPHER_MODE_CBC) && \
+    defined(MBEDTLS_CMAC_C)
+    if (benchmark_des3_cmac() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_DES_C && MBEDTLS_CIPHER_MODE_CBC && MBEDTLS_CMAC_C */
+
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+    if (benchmark_aes_cbc() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CBC */
+
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CIPHER_MODE_CTR)
+    if (benchmark_aes_ctr() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CIPHER_MODE_CTR */
+
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_GCM_C)
+    if (benchmark_aes_gcm() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_AES_C && MBEDTLS_GCM_C */
+
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CCM_C)
+    if (benchmark_aes_ccm() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CCM_C */
+
+#if defined(MBEDTLS_AES_C) && defined(MBEDTLS_CMAC_C)
+    if (benchmark_aes_cmac() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_AES_C && MBEDTLS_CMAC_C */
+
+#if defined(MBEDTLS_CAMELLIA_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+    if (benchmark_camellia() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_CAMELLIA_C && MBEDTLS_CIPHER_MODE_CBC */
+
+#if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+    if (benchmark_blowfish() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
+
+#if defined(MBEDTLS_HAVEGE_C)
+    if (benchmark_havege() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_HAVEGE_C */
+
+#if defined(MBEDTLS_CTR_DRBG_C)
+    if (benchmark_ctr_drbg() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_CTR_DRBG_C */
+
+#if defined(MBEDTLS_HMAC_DRBG_C)
+    if (benchmark_hmac_drbg() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_HMAC_DRBG_C */
+
+#if defined(MBEDTLS_RSA_C) && \
+    defined(MBEDTLS_PEM_PARSE_C) && defined(MBEDTLS_PK_PARSE_C)
+    if (benchmark_rsa() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_RSA_C && MBEDTLS_PEM_PARSE_C && MBEDTLS_PK_PARSE_C */
+
+#if defined(MBEDTLS_DHM_C) && defined(MBEDTLS_BIGNUM_C)
+    if (benchmark_dhm() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_DHM_C && MBEDTLS_BIGNUM_C */
+
+#if defined(MBEDTLS_ECDSA_C) && defined(MBEDTLS_SHA256_C)
+    if (benchmark_ecdsa() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_ECDSA_C && MBEDTLS_SHA2565_C */
+
+#if defined(MBEDTLS_ECDH_C)
+    if (benchmark_ecdh() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
     }
 
-    if ((ret = benchmark_des3()) != 0) {
-        goto exit;
+#if defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)
+    if (benchmark_ecdh_curve22519() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
     }
-
-    if ((ret = benchmark_des()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_des3_cmac()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_aes_cbc()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_aes_ctr()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_aes_gcm()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_aes_ccm()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_aes_cmac()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_camellia()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_blowfish()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_havege()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_ctr_drbg()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_hmac_drbg()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_rsa()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_dhm()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_ecdsa()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_ecdh()) != 0) {
-        goto exit;
-    }
-
-    if ((ret = benchmark_ecdh_curve22519()) != 0) {
-        goto exit;
-    }
-
-    exit_code = MBEDTLS_EXIT_SUCCESS;
+#endif /* MBEDTLS_ECP_DP_CURVE25519_ENABLED */
+#endif /* MBEDTLS_ECDH_C */
 
     mbedtls_printf("DONE\n");
 
-exit:
     mbedtls_platform_teardown(&platform_ctx);
 
     return exit_code;
