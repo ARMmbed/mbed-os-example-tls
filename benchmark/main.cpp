@@ -229,6 +229,78 @@ static int myrand(void *rng_state, unsigned char *output, size_t len) {
     return 0;
 }
 
+#if defined(MBEDTLS_MD4_C)
+MBED_NOINLINE static int benchmark_md4() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("MD4", mbedtls_md4_ret(buf, BUFSIZE, tmp));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_MD4_C */
+
+#if defined(MBEDTLS_MD5_C)
+MBED_NOINLINE static int benchmark_md5() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("MD5", mbedtls_md5_ret(buf, BUFSIZE, tmp));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_MD5_C */
+
+#if defined(MBEDTLS_RIPEMD160_C)
+MBED_NOINLINE static int benchmark_ripemd160() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("RIPEMD160", mbedtls_ripemd160_ret(buf, BUFSIZE, tmp));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_RIPEMD160_C */
+
+#if defined(MBEDTLS_SHA1_C)
+MBED_NOINLINE static int benchmark_sha1() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("SHA-1", mbedtls_sha1_ret(buf, BUFSIZE, tmp));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_SHA1_C */
+
+#if defined(MBEDTLS_SHA256_C)
+MBED_NOINLINE static int benchmark_sha256() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("SHA-256", mbedtls_sha256_ret(buf, BUFSIZE, tmp, 0));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_SHA256_C */
+
+#if defined(MBEDTLS_SHA512_C)
+MBED_NOINLINE static int benchmark_sha512() {
+    int ret;
+
+    BENCHMARK_FUNC_CALL("SHA-512", mbedtls_sha512_ret(buf, BUFSIZE, tmp, 0));
+
+exit:
+
+    return ret;
+}
+#endif /* MBEDTLS_SHA512_C */
+
 MBED_NOINLINE static int benchmark_arc4() {
     int ret = 0;
 #if defined(MBEDTLS_ARC4_C)
@@ -1137,28 +1209,34 @@ int main()
     }
 
 #if defined(MBEDTLS_MD4_C)
-    BENCHMARK_FUNC_CALL("MD4", mbedtls_md4_ret(buf, BUFSIZE, tmp));
-#endif
+    if (benchmark_md4() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_MD4_C */
 
 #if defined(MBEDTLS_MD5_C)
-    BENCHMARK_FUNC_CALL("MD5", mbedtls_md5_ret(buf, BUFSIZE, tmp));
-#endif
+    if (benchmark_md5() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_MD5_C */
 
 #if defined(MBEDTLS_RIPEMD160_C)
-    BENCHMARK_FUNC_CALL("RIPEMD160", mbedtls_ripemd160_ret(buf, BUFSIZE, tmp));
-#endif
+    if (benchmark_ripemd160() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_RIPEMD160_C */
 
 #if defined(MBEDTLS_SHA1_C)
-    BENCHMARK_FUNC_CALL("SHA-1", mbedtls_sha1_ret(buf, BUFSIZE, tmp));
-#endif
+    if (benchmark_sha1() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_SHA1_C */
 
 #if defined(MBEDTLS_SHA256_C)
-    BENCHMARK_FUNC_CALL("SHA-256", mbedtls_sha256_ret(buf, BUFSIZE, tmp, 0));
-#endif
-
-#if defined(MBEDTLS_SHA512_C)
-    BENCHMARK_FUNC_CALL("SHA-512", mbedtls_sha512_ret(buf, BUFSIZE, tmp, 0));
-#endif
+    if (benchmark_sha256() != 0) {
+        exit_code = MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_SHA256_C */
 
     if ((ret = benchmark_arc4()) != 0) {
         goto exit;
