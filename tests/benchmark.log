@@ -8,30 +8,30 @@
 \s+3DES\s*:\s*\d+ KB/s
 \s+DES\s*:\s*\d+ KB/s
 \s+3DES-CMAC\s*:\s*\d+ KB/s
-\s+AES-CBC-128\s*:\s*\d+ KB/s
-\s+AES-CBC-192\s*:\s*\d+ KB/s
-\s+AES-CBC-256\s*:\s*\d+ KB/s
-\s+AES-CTR-128\s*:\s*\d+ KB/s
-\s+AES-CTR-192\s*:\s*\d+ KB/s
-\s+AES-CTR-256\s*:\s*\d+ KB/s
-\s+AES-GCM-128\s*:\s*\d+ KB/s
-\s+AES-GCM-192\s*:\s*\d+ KB/s
-\s+AES-GCM-256\s*:\s*\d+ KB/s
-\s+AES-CCM-128\s*:\s*\d+ KB/s
-\s+AES-CCM-192\s*:\s*\d+ KB/s
-\s+AES-CCM-256\s*:\s*\d+ KB/s
-\s+AES-CMAC-128\s*:\s*\d+ KB/s
-\s+AES-CMAC-192\s*:\s*\d+ KB/s
-\s+AES-CMAC-256\s*:\s*\d+ KB/s
-\s+AES-CMAC-PRF-128\s*:\s*\d+ KB/s
+\s+AES-CBC-128\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CBC-192\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CBC-256\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CTR-128\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CTR-192\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CTR-256\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-GCM-128\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-GCM-192\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-GCM-256\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CCM-128\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CCM-192\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CCM-256\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CMAC-128\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CMAC-192\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CMAC-256\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+AES-CMAC-PRF-128\s*:\s*(\d+ KB/s|Feature unavailable)
 \s+CAMELLIA-CBC-128\s*:\s*\d+ KB/s
 \s+CAMELLIA-CBC-192\s*:\s*\d+ KB/s
 \s+CAMELLIA-CBC-256\s*:\s*\d+ KB/s
 \s+BLOWFISH-CBC-128\s*:\s*\d+ KB/s
 \s+BLOWFISH-CBC-192\s*:\s*\d+ KB/s
 \s+BLOWFISH-CBC-256\s*:\s*\d+ KB/s
-\s+CTR_DRBG (NOPR)\s*:\s*\d+ KB/s
-\s+CTR_DRBG (PR)\s*:\s*\d+ KB/s
+\s+CTR_DRBG (NOPR)\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+CTR_DRBG (PR)\s*:\s*(\d+ KB/s|Feature unavailable)
 \s+HMAC_DRBG SHA-1 (NOPR)\s*:\s*\d+ KB/s
 \s+HMAC_DRBG SHA-1 (PR)\s*:\s*\d+ KB/s
 \s+HMAC_DRBG SHA-256 (NOPR)\s*:\s*\d+ KB/s

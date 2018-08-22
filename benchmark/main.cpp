@@ -747,6 +747,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
 {
     int ret = 0;
     const char *nopr_title = "CTR_DRBG (NOPR)";
+    const char *pr_title = "CTR_DRBG (PR)";
     mbedtls_ctr_drbg_context ctr_drbg;
 
     mbedtls_ctr_drbg_init(&ctr_drbg);
@@ -755,6 +756,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
     if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
         /* Do not consider this as a failure */
         mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", nopr_title);
+        mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", pr_title);
         goto exit;
     } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
@@ -772,7 +774,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
 
     mbedtls_ctr_drbg_set_prediction_resistance(&ctr_drbg,
             MBEDTLS_CTR_DRBG_PR_ON);
-    BENCHMARK_FUNC_CALL("CTR_DRBG (PR)",
+    BENCHMARK_FUNC_CALL(pr_title,
                         mbedtls_ctr_drbg_random(&ctr_drbg, buf, BUFSIZE));
 
 exit:
