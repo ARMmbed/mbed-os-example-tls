@@ -156,7 +156,11 @@ do {                                                                        \
                                                                             \
     for (i = 1, alarmed = 0, t.attach(alarm, 1.0); !alarmed; i++)           \
     {                                                                       \
-        if ((ret = (CODE)) != 0) {                                          \
+        ret = CODE;                                                         \
+        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {                   \
+            mbedtls_printf("Feature unavailable\n");                        \
+            break;                                                          \
+        } else if (ret != 0) {                                              \
             PRINT_ERROR(ret, #CODE);                                        \
             goto exit;                                                      \
         }                                                                   \
@@ -435,6 +439,8 @@ MBED_NOINLINE static int benchmark_aes_cbc()
 
         ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
@@ -478,6 +484,8 @@ MBED_NOINLINE static int benchmark_aes_ctr()
 
         ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
@@ -519,6 +527,8 @@ MBED_NOINLINE static int benchmark_aes_gcm()
 
         ret = mbedtls_gcm_setkey(&gcm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
         if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
@@ -560,7 +570,11 @@ MBED_NOINLINE static int benchmark_aes_ccm()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_ccm_setkey(&ccm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
             goto exit;
         }
@@ -732,17 +746,22 @@ exit:
 MBED_NOINLINE static int benchmark_ctr_drbg()
 {
     int ret = 0;
+    const char *nopr_title = "CTR_DRBG (NOPR)";
     mbedtls_ctr_drbg_context ctr_drbg;
 
     mbedtls_ctr_drbg_init(&ctr_drbg);
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", nopr_title);
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
 
-    BENCHMARK_FUNC_CALL("CTR_DRBG (NOPR)",
+    BENCHMARK_FUNC_CALL(nopr_title,
                         mbedtls_ctr_drbg_random(&ctr_drbg, buf, BUFSIZE));
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
