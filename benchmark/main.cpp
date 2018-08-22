@@ -208,7 +208,7 @@ void ecp_clear_precomputed(mbedtls_ecp_group *grp)
     grp->T_size = 0;
 }
 #else
-#define ecp_clear_precomputed( g )
+#define ecp_clear_precomputed(g)
 #endif /* MBEDTLS_ECP_C */
 
 static unsigned char buf[BUFSIZE];
