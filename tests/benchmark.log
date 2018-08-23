@@ -30,12 +30,12 @@
 \s+BLOWFISH-CBC-128\s*:\s*\d+ KB/s
 \s+BLOWFISH-CBC-192\s*:\s*\d+ KB/s
 \s+BLOWFISH-CBC-256\s*:\s*\d+ KB/s
-\s+CTR_DRBG (NOPR)\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+CTR_DRBG (PR)\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+HMAC_DRBG SHA-1 (NOPR)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-1 (PR)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-256 (NOPR)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-256 (PR)\s*:\s*\d+ KB/s
+\s+CTR_DRBG \(NOPR\)\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+CTR_DRBG \(PR\)\s*:\s*(\d+ KB/s|Feature unavailable)
+\s+HMAC_DRBG SHA-1 \(NOPR\)\s*:\s*\d+ KB/s
+\s+HMAC_DRBG SHA-1 \(PR\)\s*:\s*\d+ KB/s
+\s+HMAC_DRBG SHA-256 \(NOPR\)\s*:\s*\d+ KB/s
+\s+HMAC_DRBG SHA-256 \(PR\)\s*:\s*\d+ KB/s
 \s+RSA-2048\s*:\s*\d+ ms/ public
 \s+RSA-2048\s*:\s*\d+ ms/private
 \s+RSA-4096\s*:\s*\d+ ms/ public
