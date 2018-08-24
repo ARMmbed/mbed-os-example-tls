@@ -1357,11 +1357,11 @@ int main()
     }
 #endif /* MBEDTLS_CAMELLIA_C && MBEDTLS_CIPHER_MODE_CBC */
 
-#if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
-    if (benchmark_blowfish() != 0) {
-        exit_code = MBEDTLS_EXIT_FAILURE;
-    }
-#endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
+// #if defined(MBEDTLS_BLOWFISH_C) && defined(MBEDTLS_CIPHER_MODE_CBC)
+//     if (benchmark_blowfish() != 0) {
+//         exit_code = MBEDTLS_EXIT_FAILURE;
+//     }
+// #endif /* MBEDTLS_BLOWFISH_C && MBEDTLS_CIPHER_MODE_CBC */
 
 #if defined(MBEDTLS_HAVEGE_C)
     if (benchmark_havege() != 0) {
