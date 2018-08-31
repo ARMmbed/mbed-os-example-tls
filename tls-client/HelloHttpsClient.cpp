@@ -21,8 +21,6 @@
 
 #include "HelloHttpsClient.h"
 
-#include "easy-connect.h"
-
 #include "mbedtls/platform.h"
 #include "mbedtls/config.h"
 #include "mbedtls/ssl.h"
@@ -33,6 +31,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "mbed.h"
 
 const char *HelloHttpsClient::DRBG_PERSONALIZED_STR =
                                                 "Mbed TLS helloword client";
@@ -232,19 +231,15 @@ int HelloHttpsClient::configureTCPSocket()
 {
     int ret;
 
-    /*
-     * Use easy-connect lib to support multiple network bearers. See
-     * https://github.com/ARMmbed/easy-connect README.md for more information.
-     */
-#if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
-    NetworkInterface *network = easy_connect(true);
-#else
-    NetworkInterface *network = easy_connect(false);
-#endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
+    NetworkInterface *network = NetworkInterface::get_default_instance();
     if(network == NULL) {
-        mbedtls_printf("easy_connect() returned NULL\n"
-                       "Failed to connect to the network\n");
+        mbedtls_printf("ERROR: No network interface found!\n");
         return -1;
+    }
+    ret = network->connect();
+    if (ret != 0) {
+        mbedtls_printf("Error! network->connect() returned: %d\n", ret);
+        return ret;
     }
 
     if ((ret = socket.open(network)) != NSAPI_ERROR_OK) {
