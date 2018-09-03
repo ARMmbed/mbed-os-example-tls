@@ -24,15 +24,14 @@
 #include "mbedtls/platform.h"
 
 int main() {
-    mbedtls_platform_context platform_ctx;
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
-    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+    if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
         printf("Platform initialization failed with error %d\n", exit_code);
         return MBEDTLS_EXIT_FAILURE;
     }
 
-    Authcrypt *authcrypt = new Authcrypt(&platform_ctx);
+    Authcrypt *authcrypt = new Authcrypt();
 
     if ((exit_code = authcrypt->run()) != 0) {
         mbedtls_printf("Example failed with error %d\n", exit_code);
@@ -41,6 +40,6 @@ int main() {
 
     delete authcrypt;
 
-    mbedtls_platform_teardown(&platform_ctx);
+    mbedtls_platform_teardown(NULL);
     return exit_code;
 }

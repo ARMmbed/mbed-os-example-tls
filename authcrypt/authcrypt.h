@@ -35,7 +35,7 @@ public:
     /**
      * Construct an Authcrypt instance
      */
-    Authcrypt(mbedtls_platform_context* platform_ctx);
+    Authcrypt();
 
     /**
      * Free any allocated resources
@@ -104,11 +104,6 @@ private:
      * The block cipher configuration
      */
     mbedtls_cipher_context_t cipher;
-    
-    /**
-     * The platform context
-     */
-    mbedtls_platform_context* _platform_ctx;
 };
 
 #endif /* _AUTHCRYPT_H_ */
