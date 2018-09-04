@@ -961,11 +961,20 @@ MBED_NOINLINE static int benchmark_dhm()
             goto exit;
         }
 
+        /*
+         * Benchmarking this requires two function calls that can fail. We
+         * add a check in between them to check for any errors. In normal
+         * operation, the overhead of this check is negligible
+         */
         BENCHMARK_PUBLIC(title, "handshake",
-                         ret  = mbedtls_dhm_make_public(&dhm, (int)dhm.len,
+                         ret = mbedtls_dhm_make_public(&dhm, (int)dhm.len,
                                  buf, dhm.len, myrand,
                                  NULL);
-                         ret |= mbedtls_dhm_calc_secret(&dhm, buf, sizeof(buf),
+                         if (ret != 0) {
+                             PRINT_ERROR(ret, "mbedtls_dhm_make_public()");
+                             goto exit;
+                         }
+                         ret = mbedtls_dhm_calc_secret(&dhm, buf, sizeof(buf),
                                  &olen, myrand, NULL));
 
         ret = mbedtls_snprintf(title, sizeof(title), "DH-%d", dhm_sizes[i]);
@@ -1115,11 +1124,20 @@ MBED_NOINLINE static int benchmark_ecdh()
             goto exit;
         }
 
+        /*
+         * Benchmarking this requires two function calls that can fail. We
+         * add a check in between them to check for any errors. In normal
+         * operation, the overhead of this check is negligible
+         */
         BENCHMARK_PUBLIC(title, "handshake",
-                         ret  = mbedtls_ecdh_make_public(&ecdh, &olen, buf,
+                         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf,
                                  sizeof(buf), myrand,
                                  NULL);
-                         ret |= mbedtls_ecdh_calc_secret(&ecdh, &olen, buf,
+                         if (ret != 0) {
+                             PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
+                             goto exit;
+                         }
+                         ret = mbedtls_ecdh_calc_secret(&ecdh, &olen, buf,
                                  sizeof(buf), myrand,
                                  NULL));
         mbedtls_ecdh_free(&ecdh);
@@ -1202,10 +1220,19 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
         goto exit;
     }
 
+    /*
+     * Benchmarking this requires two function calls that can fail. We
+     * add a check in between them to check for any errors. In normal
+     * operation, the overhead of this check is negligible
+     */
     BENCHMARK_PUBLIC("ECDHE-Curve25519", "handshake",
-                     ret  = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d,
+                     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d,
                              &ecdh.Q, myrand, NULL);
-                     ret |= mbedtls_ecdh_compute_shared(&ecdh.grp, &z,
+                     if (ret != 0) {
+                         PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
+                         goto exit;
+                     }
+                     ret = mbedtls_ecdh_compute_shared(&ecdh.grp, &z,
                              &ecdh.Qp, &ecdh.d,
                              myrand, NULL));
 
