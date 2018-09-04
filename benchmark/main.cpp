@@ -212,7 +212,12 @@ void ecp_clear_precomputed(mbedtls_ecp_group *grp)
 #endif /* MBEDTLS_ECP_C */
 
 static unsigned char buf[BUFSIZE];
-static unsigned char tmp[200];
+/*
+ * Buffer used to hold various data such as IV, signatures, keys, etc. ECDSA
+ * seems to be the benchmark that uses the most memory from this buffer as it
+ * is holds the output signature
+ */
+static unsigned char tmp[150];
 /* The longest error message has 134 characters (including \0) */
 static char err_buf[134];
 static char title[TITLE_LEN];
