@@ -213,7 +213,8 @@ void ecp_clear_precomputed(mbedtls_ecp_group *grp)
 
 static unsigned char buf[BUFSIZE];
 static unsigned char tmp[200];
-static char err_buf[200];
+/* The longest error message has 134 characters (including \0) */
+static char err_buf[134];
 static char title[TITLE_LEN];
 
 static volatile int alarmed;
