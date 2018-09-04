@@ -687,7 +687,7 @@ MBED_NOINLINE static int benchmark_blowfish()
     mbedtls_blowfish_context *blowfish;
 
     blowfish = (mbedtls_blowfish_context *)mbedtls_calloc(1,
-               sizeof(mbedtls_blowfish_context *));
+               sizeof(mbedtls_blowfish_context));
     if (blowfish == NULL) {
         mbedtls_printf("Failed to allocate mbedtls_blowfish_context\n");
         return -1;
