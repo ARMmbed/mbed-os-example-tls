@@ -795,12 +795,7 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
     mbedtls_ctr_drbg_init(&ctr_drbg);
 
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
-    if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
-        /* Do not consider this as a failure */
-        mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", nopr_title);
-        mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", pr_title);
-        goto exit;
-    } else if (ret != 0) {
+    if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
