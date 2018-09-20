@@ -260,6 +260,8 @@ MBED_NOINLINE static int benchmark_md4()
 
     BENCHMARK_FUNC_CALL("MD4", mbedtls_md4_ret(buf, BUFSIZE, tmp));
 
+    ret = 0;
+
 exit:
 
     return ret;
@@ -272,6 +274,8 @@ MBED_NOINLINE static int benchmark_md5()
     int ret;
 
     BENCHMARK_FUNC_CALL("MD5", mbedtls_md5_ret(buf, BUFSIZE, tmp));
+
+    ret = 0;
 
 exit:
 
@@ -286,6 +290,8 @@ MBED_NOINLINE static int benchmark_ripemd160()
 
     BENCHMARK_FUNC_CALL("RIPEMD160", mbedtls_ripemd160_ret(buf, BUFSIZE, tmp));
 
+    ret = 0;
+
 exit:
 
     return ret;
@@ -298,6 +304,8 @@ MBED_NOINLINE static int benchmark_sha1()
     int ret;
 
     BENCHMARK_FUNC_CALL("SHA-1", mbedtls_sha1_ret(buf, BUFSIZE, tmp));
+
+    ret = 0;
 
 exit:
 
@@ -312,6 +320,8 @@ MBED_NOINLINE static int benchmark_sha256()
 
     BENCHMARK_FUNC_CALL("SHA-256", mbedtls_sha256_ret(buf, BUFSIZE, tmp, 0));
 
+    ret = 0;
+
 exit:
 
     return ret;
@@ -324,6 +334,8 @@ MBED_NOINLINE static int benchmark_sha512()
     int ret;
 
     BENCHMARK_FUNC_CALL("SHA-512", mbedtls_sha512_ret(buf, BUFSIZE, tmp, 0));
+
+    ret = 0;
 
 exit:
 
@@ -343,6 +355,8 @@ MBED_NOINLINE static int benchmark_arc4()
     mbedtls_arc4_setup(&arc4, tmp, 32);
     BENCHMARK_FUNC_CALL("ARC4",
                         mbedtls_arc4_crypt(&arc4, BUFSIZE, buf, buf));
+
+    ret = 0;
 
 exit:
     mbedtls_arc4_free(&arc4);
@@ -367,6 +381,8 @@ MBED_NOINLINE static int benchmark_des3()
                         mbedtls_des3_crypt_cbc(&des3, MBEDTLS_DES_ENCRYPT,
                                 BUFSIZE, tmp, buf, buf));
 
+    ret = 0;
+
 exit:
     mbedtls_des3_free(&des3);
 
@@ -389,6 +405,8 @@ MBED_NOINLINE static int benchmark_des()
     BENCHMARK_FUNC_CALL("DES",
                         mbedtls_des_crypt_cbc(&des, MBEDTLS_DES_ENCRYPT,
                                 BUFSIZE, tmp, buf, buf));
+
+    ret = 0;
 
 exit:
     mbedtls_des_free(&des);
@@ -417,6 +435,8 @@ MBED_NOINLINE static int benchmark_des3_cmac()
     BENCHMARK_FUNC_CALL("3DES-CMAC",
                         mbedtls_cipher_cmac(cipher_info, tmp, 192, buf,
                                             BUFSIZE, output));
+
+    ret = 0;
 
 exit:
     return ret;
@@ -458,6 +478,8 @@ MBED_NOINLINE static int benchmark_aes_cbc()
                                     MBEDTLS_AES_ENCRYPT, BUFSIZE,
                                     tmp, buf, buf));
     }
+
+    ret = 0;
 
 exit:
     mbedtls_aes_free(&aes);
@@ -504,6 +526,8 @@ MBED_NOINLINE static int benchmark_aes_ctr()
                                     buf));
     }
 
+    ret = 0;
+
 exit:
     mbedtls_aes_free(&aes);
 
@@ -548,6 +572,8 @@ MBED_NOINLINE static int benchmark_aes_gcm()
                                     0, buf, buf, 16, tmp));
     }
 
+    ret = 0;
+
 exit:
     mbedtls_gcm_free(&gcm);
 
@@ -590,6 +616,8 @@ MBED_NOINLINE static int benchmark_aes_ccm()
                                     NULL, 0, buf, buf, tmp,
                                     16));
     }
+
+    ret = 0;
 
 exit:
     mbedtls_ccm_free(&ccm);
@@ -638,6 +666,8 @@ MBED_NOINLINE static int benchmark_aes_cmac()
                         mbedtls_aes_cmac_prf_128(tmp, 16, buf, BUFSIZE,
                                 output));
 
+    ret = 0;
+
 exit:
 
     return ret;
@@ -676,6 +706,8 @@ MBED_NOINLINE static int benchmark_camellia()
                                     MBEDTLS_CAMELLIA_ENCRYPT,
                                     BUFSIZE, tmp, buf, buf));
     }
+
+    ret = 0;
 
 exit:
     mbedtls_camellia_free(&camellia);
@@ -723,6 +755,8 @@ MBED_NOINLINE static int benchmark_blowfish()
                                     tmp, buf, buf));
     }
 
+    ret = 0;
+
 exit:
     mbedtls_blowfish_free(blowfish);
     mbedtls_free(blowfish);
@@ -740,6 +774,8 @@ MBED_NOINLINE static int benchmark_havege()
     mbedtls_havege_init(&hs);
 
     BENCHMARK_FUNC_CALL("HAVEGE", mbedtls_havege_random(&hs, buf, BUFSIZE));
+
+    ret = 0;
 
 exit:
     mbedtls_havege_free(&hs);
@@ -782,6 +818,8 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
             MBEDTLS_CTR_DRBG_PR_ON);
     BENCHMARK_FUNC_CALL(pr_title,
                         mbedtls_ctr_drbg_random(&ctr_drbg, buf, BUFSIZE));
+
+    ret = 0;
 
 exit:
     mbedtls_ctr_drbg_free(&ctr_drbg);
@@ -851,6 +889,8 @@ MBED_NOINLINE static int benchmark_hmac_drbg()
     BENCHMARK_FUNC_CALL("HMAC_DRBG SHA-256 (PR)",
                         mbedtls_hmac_drbg_random(&hmac_drbg, buf, BUFSIZE));
 #endif /* MBEDTLS_SHA256_C */
+
+    ret = 0;
 
 exit:
     mbedtls_hmac_drbg_free(&hmac_drbg);
