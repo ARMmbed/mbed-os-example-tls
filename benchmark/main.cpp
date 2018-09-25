@@ -175,9 +175,14 @@
 #define PRINT_ERROR                                            \
         mbedtls_strerror( ret, ( char * )tmp, sizeof( tmp ) ); \
         mbedtls_printf( "FAILED: %s\r\n", tmp );
+#define PRINT_SKIP                                            \
+        mbedtls_strerror( ret, ( char * )tmp, sizeof( tmp ) ); \
+        mbedtls_printf( "SKIPPED: %s\r\n", tmp );
 #else
 #define PRINT_ERROR                                    \
         mbedtls_printf( "FAILED: -0x%04x\r\n", -ret );
+#define PRINT_SKIP                                    \
+        mbedtls_printf( "SKIPPED: -0x%04x\r\n", -ret );
 #endif
 
 static volatile int alarmed;
@@ -235,7 +240,11 @@ do {                                                \
     t.stop();                                       \
     ms = t.read_ms();                               \
                                                     \
-    if( ret != 0 )                                  \
+    if( is_allowed_alloc_failure( ret ) )           \
+    {                                               \
+        PRINT_SKIP;                                 \
+    }                                               \
+    else if( ret != 0 )                             \
     {                                               \
         PRINT_ERROR;                                \
     }                                               \
@@ -246,6 +255,17 @@ do {                                                \
         mbedtls_printf( "\r\n" );                   \
     }                                               \
 } while( 0 )
+
+static bool is_allowed_alloc_failure( int error_code )
+{
+    return error_code & (
+        MBEDTLS_ERR_CIPHER_ALLOC_FAILED |
+        MBEDTLS_ERR_DHM_ALLOC_FAILED |
+        MBEDTLS_ERR_ECP_ALLOC_FAILED |
+        MBEDTLS_ERR_MD_ALLOC_FAILED |
+        MBEDTLS_ERR_MPI_ALLOC_FAILED |
+        MBEDTLS_ERR_PK_ALLOC_FAILED );
+}
 
 static int myrand( void *rng_state, unsigned char *output, size_t len )
 {
