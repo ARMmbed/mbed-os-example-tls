@@ -28,14 +28,14 @@ int main() {
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
     if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
-        printf("Platform initialization failed with error %d\r\n", exit_code);
+        printf("Platform initialization failed with error %d\n", exit_code);
         return MBEDTLS_EXIT_FAILURE;
     }
 
     Authcrypt *authcrypt = new Authcrypt(&platform_ctx);
 
     if ((exit_code = authcrypt->run()) != 0) {
-        mbedtls_printf("Example failed with error %d\r\n", exit_code);
+        mbedtls_printf("Example failed with error %d\n", exit_code);
         exit_code = MBEDTLS_EXIT_FAILURE;
     }
 
