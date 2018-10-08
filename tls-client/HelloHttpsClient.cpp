@@ -28,6 +28,7 @@
 #include "mbedtls/ctr_drbg.h"
 #include "mbedtls/error.h"
 #include "mbedtls/debug.h"
+#include "mbedtls/x509.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -290,8 +291,10 @@ int HelloHttpsClient::configureTlsContexts()
      */
     mbedtls_ssl_conf_authmode(&ssl_conf, MBEDTLS_SSL_VERIFY_REQUIRED);
 
-#if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
+    /* Configure certificate verification function to clear time/date flags */
     mbedtls_ssl_conf_verify(&ssl_conf, sslVerify, this);
+
+#if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
     mbedtls_ssl_conf_dbg(&ssl_conf, sslDebug, NULL);
     mbedtls_debug_set_threshold(HELLO_HTTPS_CLIENT_DEBUG_LEVEL);
 #endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
@@ -358,9 +361,18 @@ void HelloHttpsClient::sslDebug(void *ctx, int level, const char *file,
 int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
                                 uint32_t *flags)
 {
-    HelloHttpsClient *client = static_cast<HelloHttpsClient *>(ctx);
+    int ret = 0;
 
-    int ret = -1;
+    /*
+     * If MBEDTLS_HAVE_TIME_DATE is defined, then the certificate date and time
+     * validity checks will probably fail because this application does not set
+     * up the clock correctly. We filter out date and time related failures
+     * instead
+     */
+    *flags &= ~MBEDTLS_X509_BADCERT_FUTURE & ~MBEDTLS_X509_BADCERT_EXPIRED;
+
+#if HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0
+    HelloHttpsClient *client = static_cast<HelloHttpsClient *>(ctx);
 
     ret = mbedtls_x509_crt_info(client->gp_buf, sizeof(gp_buf), "\r  ", crt);
     if (ret < 0) {
@@ -370,6 +382,7 @@ int HelloHttpsClient::sslVerify(void *ctx, mbedtls_x509_crt *crt, int depth,
         mbedtls_printf("Verifying certificate at depth %d:\n%s\n",
                        depth, client->gp_buf);
     }
+#endif /* HELLO_HTTPS_CLIENT_DEBUG_LEVEL > 0 */
 
     return ret;
 }
