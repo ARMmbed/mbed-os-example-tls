@@ -145,7 +145,7 @@
 /*
  * Uncomment this line to enable ECDSA benchmark.
  */
-#define ENABLE_ECDSA
+//#define ENABLE_ECDSA
 
 /*
  * For heap usage estimates, we need an estimate of the overhead per allocated
