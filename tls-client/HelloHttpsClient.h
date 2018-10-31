@@ -25,7 +25,6 @@
 #include "TCPSocket.h"
 
 #include "mbedtls/config.h"
-#include "mbedtls/platform.h"
 #include "mbedtls/ssl.h"
 #include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
@@ -64,8 +63,7 @@ public:
      */
     HelloHttpsClient(const char *in_server_name,
                      const char *in_server_addr,
-                     const uint16_t in_server_port,
-                     mbedtls_platform_context* in_platform_ctx);
+                     const uint16_t in_server_port);
 
     /**
      * Free any allocated resources
@@ -233,8 +231,6 @@ private:
      * The TLS configuration in use
      */
     mbedtls_ssl_config ssl_conf;
-
-    mbedtls_platform_context* platform_ctx;
 };
 
 #endif /* _HELLOHTTPSCLIENT_H_ */

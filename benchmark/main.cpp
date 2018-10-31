@@ -343,7 +343,6 @@ exit:
 }
 #endif /* MBEDTLS_SHA512_C */
 
-
 #if defined(MBEDTLS_ARC4_C)
 MBED_NOINLINE static int benchmark_arc4()
 {
@@ -1316,13 +1315,12 @@ exit:
 
 int main()
 {
-    mbedtls_platform_context platform_ctx;
     int exit_code = MBEDTLS_EXIT_SUCCESS;
 
     memset(buf, 0xAA, sizeof(buf));
     memset(tmp, 0xBB, sizeof(tmp));
 
-    if ((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+    if ((exit_code = mbedtls_platform_setup(NULL)) != 0) {
         mbedtls_printf("Platform initialization failed with error %d\r\n",
                        exit_code);
         return MBEDTLS_EXIT_FAILURE;
@@ -1482,7 +1480,6 @@ int main()
 
     mbedtls_printf("DONE\n");
 
-    mbedtls_platform_teardown(&platform_ctx);
-
+    mbedtls_platform_teardown(NULL);
     return exit_code;
 }

@@ -50,10 +50,9 @@ const int SERVER_PORT = 443;
  */
 int main()
 {
-    mbedtls_platform_context platform_ctx;
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
-    if((exit_code = mbedtls_platform_setup(&platform_ctx)) != 0) {
+    if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
         printf("Platform initialization failed with error %d\r\n", exit_code);
         return MBEDTLS_EXIT_FAILURE;
     }
@@ -74,13 +73,12 @@ int main()
 #endif /* MBEDTLS_MAJOR_VERSION */
 
     /* Allocate a HTTPS client */
-    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_ADDR, SERVER_PORT,
-                                                 &platform_ctx);
+    client = new (std::nothrow) HelloHttpsClient(SERVER_NAME, SERVER_ADDR, SERVER_PORT);
 
     if (client == NULL) {
         mbedtls_printf("Failed to allocate HelloHttpsClient object\n"
                        "\nFAIL\n");
-        mbedtls_platform_teardown(&platform_ctx);
+        mbedtls_platform_teardown(NULL);
         return exit_code;
     }
 
@@ -94,6 +92,6 @@ int main()
 
     delete client;
 
-    mbedtls_platform_teardown(&platform_ctx);
+    mbedtls_platform_teardown(NULL);
     return exit_code;
 }
