@@ -1,51 +1,51 @@
-\s+MD4\s*:\s*\d+ KB/s
-\s+MD5\s*:\s*\d+ KB/s
-\s+RIPEMD160\s*:\s*\d+ KB/s
-\s+SHA-1\s*:\s*\d+ KB/s
-\s+SHA-256\s*:\s*\d+ KB/s
-\s+SHA-512\s*:\s*\d+ KB/s
-\s+ARC4\s*:\s*\d+ KB/s
-\s+3DES\s*:\s*\d+ KB/s
-\s+DES\s*:\s*\d+ KB/s
-\s+3DES-CMAC\s*:\s*\d+ KB/s
-\s+AES-CBC-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CBC-192\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CBC-256\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CTR-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CTR-192\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CTR-256\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-GCM-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-GCM-192\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-GCM-256\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CCM-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CCM-192\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CCM-256\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CMAC-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CMAC-192\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CMAC-256\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+AES-CMAC-PRF-128\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+CAMELLIA-CBC-128\s*:\s*\d+ KB/s
-\s+CAMELLIA-CBC-192\s*:\s*\d+ KB/s
-\s+CAMELLIA-CBC-256\s*:\s*\d+ KB/s
-\s+BLOWFISH-CBC-128\s*:\s*\d+ KB/s
-\s+BLOWFISH-CBC-192\s*:\s*\d+ KB/s
-\s+BLOWFISH-CBC-256\s*:\s*\d+ KB/s
-\s+CTR_DRBG \(NOPR\)\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+CTR_DRBG \(PR\)\s*:\s*(\d+ KB/s|Feature unavailable)
-\s+HMAC_DRBG SHA-1 \(NOPR\)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-1 \(PR\)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-256 \(NOPR\)\s*:\s*\d+ KB/s
-\s+HMAC_DRBG SHA-256 \(PR\)\s*:\s*\d+ KB/s
-\s+RSA-2048\s*:\s*\d+ ms/ public
-\s+RSA-2048\s*:\s*\d+ ms/private
-\s+ECDSA-secp384r1\s*:\s*\d+ ms/sign
-\s+ECDSA-secp256r1\s*:\s*\d+ ms/sign
-\s+ECDSA-secp384r1\s*:\s*\d+ ms/verify
-\s+ECDSA-secp256r1\s*:\s*\d+ ms/verify
-\s+ECDHE-secp384r1\s*:\s*\d+ ms/handshake
-\s+ECDHE-secp256r1\s*:\s*\d+ ms/handshake
-\s+ECDH-secp384r1\s*:\s*\d+ ms/handshake
-\s+ECDH-secp256r1\s*:\s*\d+ ms/handshake
-\s+ECDHE-Curve25519\s*:\s*\d+ ms/handshake
-\s+ECDH-Curve25519\s*:\s*\d+ ms/handshake
+\s+MD4\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+MD5\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+RIPEMD160\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+SHA-1\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+SHA-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+SHA-512\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+ARC4\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+3DES\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+DES\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+3DES-CMAC\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CBC-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CBC-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CBC-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CTR-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CTR-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CTR-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-GCM-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-GCM-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-GCM-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CCM-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CCM-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CCM-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CMAC-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CMAC-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CMAC-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+AES-CMAC-PRF-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+CAMELLIA-CBC-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+CAMELLIA-CBC-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+CAMELLIA-CBC-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+BLOWFISH-CBC-128\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+BLOWFISH-CBC-192\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+BLOWFISH-CBC-256\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+CTR_DRBG \(NOPR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+CTR_DRBG \(PR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+HMAC_DRBG SHA-1 \(NOPR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+HMAC_DRBG SHA-1 \(PR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+HMAC_DRBG SHA-256 \(NOPR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+HMAC_DRBG SHA-256 \(PR\)\s*:\s*(\d+ KB/s|Feature unsupported)
+\s+RSA-2048\s*:\s*(\d+ ms/ public|Feature unsupported)
+\s+RSA-2048\s*:\s*(\d+ ms/private|Feature unsupported)
+\s+ECDSA-secp384r1\s*:\s*(\d+ ms/sign|Feature unsupported)
+\s+ECDSA-secp256r1\s*:\s*(\d+ ms/sign|Feature unsupported)
+\s+ECDSA-secp384r1\s*:\s*(\d+ ms/verify|Feature unsupported)
+\s+ECDSA-secp256r1\s*:\s*(\d+ ms/verify|Feature unsupported)
+\s+ECDHE-secp384r1\s*:\s*(\d+ ms/handshake|Feature unsupported)
+\s+ECDHE-secp256r1\s*:\s*(\d+ ms/handshake|Feature unsupported)
+\s+ECDH-secp384r1\s*:\s*(\d+ ms/handshake|Feature unsupported)
+\s+ECDH-secp256r1\s*:\s*(\d+ ms/handshake|Feature unsupported)
+\s+ECDHE-Curve25519\s*:\s*(\d+ ms/handshake|Feature unsupported)
+\s+ECDH-Curve25519\s*:\s*(\d+ ms/handshake|Feature unsupported)
 DONE
