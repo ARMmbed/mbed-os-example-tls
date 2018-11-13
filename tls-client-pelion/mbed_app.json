@@ -1,7 +1,7 @@
 {
     "macros": [
         "MBED_CONF_APP_MAIN_STACK_SIZE=4096",
-        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_entropy_config.h\""
+        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_mbedos_pelion_config.h\""
     ],
     "config": {
         "network-interface":{
