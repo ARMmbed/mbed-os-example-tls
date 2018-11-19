@@ -63,7 +63,7 @@ int main()
 
     HelloHttpsClient *client;
 
-    mbedtls_printf("Starting mbed-os-example-tls/tls-client\n");
+    mbedtls_printf("Starting mbed-os-example-tls/tls-client-pelion\n");
 
 #if defined(MBED_MAJOR_VERSION)
     mbedtls_printf("Using Mbed OS %d.%d.%d\n",
