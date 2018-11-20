@@ -132,7 +132,7 @@ int HelloHttpsClient::run()
 
     /* Fill the request buffer */
     ret = snprintf(gp_buf, sizeof(gp_buf),
-                   "GET %s HTTP/1.1\nHost: %s\n\n", HTTP_REQUEST_FILE_PATH,
+                   "GET %s HTTP/1.1\r\nHost: %s\r\n\r\n", HTTP_REQUEST_FILE_PATH,
                    server_name);
     req_len = static_cast<size_t>(ret);
     if (ret < 0 || req_len >= sizeof(gp_buf)) {
