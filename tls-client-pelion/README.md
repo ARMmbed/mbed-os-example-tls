@@ -1,4 +1,4 @@
-# HTTPS File Download Example for TLS Client on Mbed OS
+# HTTPS File Download Example for Pelion TLS Client on Mbed OS
 
 This application downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
@@ -24,7 +24,7 @@ __NOTE:__ Make sure that the network is functional before running the applicatio
 The output in the terminal window should be similar to this:
 
 ```
-Starting mbed-os-example-tls/tls-client
+Starting mbed-os-example-tls/tls-client-pelion
 Using Mbed OS 5.6.3
 [EasyConnect] IPv4 mode
 Successfully connected to os.mbed.com at port 443
