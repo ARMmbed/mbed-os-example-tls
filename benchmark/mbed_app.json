@@ -1,6 +1,7 @@
 {
     "macros": [
-        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_config.h\""
+        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_config.h\"",
+        "MBEDTLS_MPI_MAX_SIZE=512"
     ],
     "target_overrides": {
         "*": {
