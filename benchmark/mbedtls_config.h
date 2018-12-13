@@ -89,10 +89,6 @@
 #define MBEDTLS_RSA_C
 #endif
 
-#if !defined(MBEDTLS_DHM_C)
-#define MBEDTLS_DHM_C
-#endif
-
 #if !defined(MBEDTLS_ECDSA_C)
 #define MBEDTLS_ECDSA_C
 #endif

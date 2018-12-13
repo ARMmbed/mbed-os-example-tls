@@ -38,12 +38,6 @@
 \s+HMAC_DRBG SHA-256 \(PR\)\s*:\s*\d+ KB/s
 \s+RSA-2048\s*:\s*\d+ ms/ public
 \s+RSA-2048\s*:\s*\d+ ms/private
-\s+RSA-4096\s*:\s*\d+ ms/ public
-\s+RSA-4096\s*:\s*\d+ ms/private
-\s+DHE-2048\s*:\s*\d+ ms/handshake
-\s+DH-2048\s*:\s*\d+ ms/handshake
-\s+DHE-3072\s*:\s*\d+ ms/handshake
-\s+DH-3072\s*:\s*\d+ ms/handshake
 \s+ECDSA-secp384r1\s*:\s*\d+ ms/sign
 \s+ECDSA-secp256r1\s*:\s*\d+ ms/sign
 \s+ECDSA-secp384r1\s*:\s*\d+ ms/verify

@@ -902,7 +902,6 @@ MBED_NOINLINE static int benchmark_rsa()
     mbedtls_rsa_context *rsa;
     const char *rsa_keys[] = {
         RSA_PRIVATE_KEY_2048,
-        RSA_PRIVATE_KEY_4096,
     };
     size_t i;
 
