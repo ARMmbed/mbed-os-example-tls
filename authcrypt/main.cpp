@@ -24,17 +24,18 @@
 #include "mbedtls/platform.h"
 
 int main() {
-    int exit_code = MBEDTLS_EXIT_FAILURE;
+    int exit_code = MBEDTLS_EXIT_SUCCESS;
+    int ret;
 
-    if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
-        printf("Platform initialization failed with error %d\n", exit_code);
+    if ((ret = mbedtls_platform_setup(NULL)) != 0) {
+        printf("Platform initialization failed with error %d\n", ret);
         return MBEDTLS_EXIT_FAILURE;
     }
 
     Authcrypt *authcrypt = new Authcrypt();
 
-    if ((exit_code = authcrypt->run()) != 0) {
-        mbedtls_printf("Example failed with error %d\n", exit_code);
+    if ((ret = authcrypt->run()) != 0) {
+        mbedtls_printf("Example failed with error %d\n", ret);
         exit_code = MBEDTLS_EXIT_FAILURE;
     }
 
