@@ -5,7 +5,7 @@ This repository contains a collection of Mbed TLS example applications based on 
 # Getting started
 
 ## Required hardware
-* Any Mbed OS capable development board listed [here](https://os.mbed.com/platforms/), which has an entropy source integrated with Mbed TLS. The single example that does not need an entropy source is `hashing`. The `tls-client` example should also have a network interface supported on your board.
+* Any Mbed OS capable development board such as those listed [here](https://os.mbed.com/platforms/), which have an entropy source integrated into Mbed TLS. The single example that does not need an entropy source is `hashing`. The `tls-client` example should also have a network interface supported on your board.
 * A micro-USB cable.
 
 If your board has no hardware entropy source or its entropy source is not integrated with Mbed TLS, but you want to try these examples anyway, then you may want to consider compiling Mbed TLS without real entropy sources.
