@@ -5,12 +5,8 @@ This repository contains a collection of Mbed TLS example applications based on 
 # Getting started
 
 ## Required hardware
-* An [FRDM-K64F](http://os.mbed.com/platforms/FRDM-K64F/) development board.
+* Any Mbed OS capable development board such as those listed [here](https://os.mbed.com/platforms/), which have an entropy source integrated into Mbed TLS. The single example that does not need an entropy source is `hashing`. The `tls-client` example should also have a network interface supported on your board.
 * A micro-USB cable.
-
-### Other hardware
-
-Although the only board supported by these examples is K64F, they should work on any Mbed enabled hardware, if it has a hardware entropy source, and this entropy source is integrated with Mbed TLS. The single example that does not need an entropy source is `hashing`.
 
 If your board has no hardware entropy source or its entropy source is not integrated with Mbed TLS, but you want to try these examples anyway, then you may want to consider compiling Mbed TLS without real entropy sources.
 
@@ -27,6 +23,8 @@ An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.
 * [tls-client](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
 
 ## Building and running the examples
+
+The following example shows how to build and run on FRDM-K64F, but it should work on any Mbed OS capable device.
 
 1. Clone the repository containing the collection of examples:
     ```
@@ -55,7 +53,7 @@ Please browse the subdirectories for specific documentation.
 * [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
 * [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
-The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://os.mbed.com/handbook/Terminals) and connect to the [virtual serial port](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications) presented by FRDM-K64F. Use the following settings:
+The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://os.mbed.com/handbook/Terminals) and connect to the [virtual serial port](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications) presented by your board. Use the following settings:
 
 * 9600 baud.
 * 8N1.
