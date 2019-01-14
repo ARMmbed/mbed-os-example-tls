@@ -15,7 +15,7 @@ It's possible to switch to another network interface by using [the Mbed OS Netwo
 
 The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
 
-To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/tls_porting/).
+To learn why entropy is required, read the [entropy Porting guide](https://os.mbed.com/docs/latest/porting/entropy-sources.html).
 
 ## Monitoring the application
 
