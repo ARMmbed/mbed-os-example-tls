@@ -188,10 +188,14 @@ do {                                                    \
     {                                                   \
         mbedtls_printf("Feature unsupported\n");        \
             break;                                      \
-    } else    if (ret != 0) {                           \
+    }                                                   \
+    else if (ret != 0)                                  \
+    {                                                   \
         PRINT_ERROR(ret, "Public function");            \
         goto exit;                                      \
-    } else {                                            \
+    }                                                   \
+    else                                                \
+    {                                                   \
         mbedtls_printf("%6lu ms/" TYPE, ms);            \
         mbedtls_printf("\n");                           \
     }                                                   \
@@ -1086,7 +1090,7 @@ MBED_NOINLINE static int benchmark_ecdsa()
         mbedtls_ecdsa_init(&ecdsa);
 
         ret = mbedtls_snprintf(title, sizeof(title), "ECDSA-%s",
-                                       curve_info->name);
+                               curve_info->name);
         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
             mbedtls_printf("Failed to compose title string using "
                            "mbedtls_snprintf(): %d\n", ret);
@@ -1239,8 +1243,6 @@ MBED_NOINLINE static int benchmark_ecdh()
 
         ecp_clear_precomputed(&ecdh.grp);
 
-
-
         /*
          * Benchmarking this requires two function calls that can fail. We
          * add a check in between them to check for any errors. In normal
@@ -1354,8 +1356,9 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
     mbedtls_mpi_init(&z);
 
     ret = mbedtls_snprintf(title, sizeof(title), "ECDHE-Curve25519");
-     if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
-         mbedtls_printf("Failed to compose title string using "
+    if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title))
+    {
+        mbedtls_printf("Failed to compose title string using "
                         "mbedtls_snprintf(): %d\n", ret);
          goto exit;
      }
