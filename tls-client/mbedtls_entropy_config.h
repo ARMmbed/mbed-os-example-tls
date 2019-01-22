@@ -36,4 +36,14 @@
 #undef MBEDTLS_MPI_MAX_SIZE
 #define MBEDTLS_MPI_MAX_SIZE        256
 
+/* This macro determines whether Mbed TLS uses its own legacy crypto library
+ * or an implementation of the PSA Crypto API such as Mbed Crypto.
+ *
+ * To confirm the use of PSA Crypto, you may enable debugging by setting
+ * HELLO_HTTPS_CLIENT_DEBUG_LEVEL in HelloHttpsClient.h and look for
+ * PSA-related debugging output on the serial line.
+ *
+ * Uncomment this to use the PSA Crypto API. */
+//#define MBEDTLS_USE_PSA_CRYPTO
+
 #define MBEDTLS_MPI_WINDOW_SIZE     1

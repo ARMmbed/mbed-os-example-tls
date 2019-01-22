@@ -35,6 +35,9 @@
 #include "mbed.h"
 
 #include "mbedtls/platform.h"
+#if defined(MBEDTLS_USE_PSA_CRYPTO)
+#include "psa/crypto.h"
+#endif /* MBEDTLS_USE_PSA_CRYPTO */
 
 #include "HelloHttpsClient.h"
 
@@ -51,6 +54,24 @@ const int SERVER_PORT = 443;
 int main()
 {
     int exit_code = MBEDTLS_EXIT_FAILURE;
+
+#if defined(MBEDTLS_USE_PSA_CRYPTO)
+    /*
+     * Initialize underlying PSA Crypto implementation.
+     * Even if the HTTPS client doesn't make use of
+     * PSA-specific API, for example for setting opaque PSKs
+     * or opaque private keys, Mbed TLS will use PSA
+     * for public and symmetric key operations as well as
+     * hashing.
+     */
+    psa_status_t status;
+    status = psa_crypto_init();
+    if( status != PSA_SUCCESS )
+    {
+        printf("psa_crypto_init() failed with %d\r\n", status );
+        return MBEDTLS_EXIT_FAILURE;
+    }
+#endif /* MBEDTLS_USE_PSA_CRYPTO */
 
     if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
         printf("Platform initialization failed with error %d\r\n", exit_code);
