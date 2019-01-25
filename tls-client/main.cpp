@@ -55,6 +55,11 @@ int main()
 {
     int exit_code = MBEDTLS_EXIT_FAILURE;
 
+    if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
+        printf("Platform initialization failed with error %d\r\n", exit_code);
+        return MBEDTLS_EXIT_FAILURE;
+    }
+
 #if defined(MBEDTLS_USE_PSA_CRYPTO)
     /*
      * Initialize underlying PSA Crypto implementation.
@@ -73,10 +78,6 @@ int main()
     }
 #endif /* MBEDTLS_USE_PSA_CRYPTO */
 
-    if((exit_code = mbedtls_platform_setup(NULL)) != 0) {
-        printf("Platform initialization failed with error %d\r\n", exit_code);
-        return MBEDTLS_EXIT_FAILURE;
-    }
     /*
      * The default 9600 bps is too slow to print full TLS debug info and could
      * cause the other party to time out.
