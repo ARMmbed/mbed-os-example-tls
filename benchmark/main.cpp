@@ -154,11 +154,10 @@ do {                                                                        \
     mbedtls_printf(HEADER_FORMAT, TITLE);                                   \
     fflush(stdout);                                                         \
                                                                             \
-    for (i = 1, alarmed = 0, t.attach(alarm, 1.0); !alarmed; i++)           \
-    {                                                                       \
+    for (i = 1, alarmed = 0, t.attach(alarm, 1.0); !alarmed; i++) {         \
         ret = CODE;                                                         \
-        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {                   \
-            mbedtls_printf("Feature unavailable\n");                        \
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {              \
+            mbedtls_printf("Feature unsupported\n");                        \
             break;                                                          \
         } else if (ret != 0) {                                              \
             PRINT_ERROR(ret, #CODE);                                        \
@@ -171,26 +170,29 @@ do {                                                                        \
     }                                                                       \
 } while(0)
 
-#define BENCHMARK_PUBLIC(TITLE, TYPE, CODE)             \
-do {                                                    \
-    unsigned long ms;                                   \
-    Timer t;                                            \
-                                                        \
-    mbedtls_printf(HEADER_FORMAT, TITLE);               \
-    fflush(stdout);                                     \
-                                                        \
-    t.start();                                          \
-    CODE;                                               \
-    t.stop();                                           \
-    ms = t.read_ms();                                   \
-                                                        \
-    if (ret != 0) {                                     \
-        PRINT_ERROR(ret, "Public function");            \
-        goto exit;                                      \
-    } else {                                            \
-        mbedtls_printf("%6lu ms/" TYPE, ms);            \
-        mbedtls_printf("\n");                           \
-    }                                                   \
+#define BENCHMARK_PUBLIC(TITLE, TYPE, CODE)               \
+do {                                                      \
+    unsigned long ms;                                     \
+    Timer t;                                              \
+                                                          \
+    mbedtls_printf(HEADER_FORMAT, TITLE);                 \
+    fflush(stdout);                                       \
+                                                          \
+    t.start();                                            \
+    CODE;                                                 \
+    t.stop();                                             \
+    ms = t.read_ms();                                     \
+                                                          \
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {\
+        mbedtls_printf("Feature unsupported\n");          \
+            break;                                        \
+    } else if (ret != 0) {                                \
+        PRINT_ERROR(ret, "Public function");              \
+        goto exit;                                        \
+    } else {                                              \
+        mbedtls_printf("%6lu ms/" TYPE, ms);              \
+        mbedtls_printf("\n");                             \
+    }                                                     \
 } while(0)
 
 /* Clear some memory that was used to prepare the context */
@@ -463,9 +465,9 @@ MBED_NOINLINE static int benchmark_aes_cbc()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
-        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
             /* Do not consider this as a failure */
-            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
@@ -510,9 +512,9 @@ MBED_NOINLINE static int benchmark_aes_ctr()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_aes_setkey_enc(&aes, tmp, keysize);
-        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
             /* Do not consider this as a failure */
-            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_aes_setkey_enc()");
@@ -555,9 +557,9 @@ MBED_NOINLINE static int benchmark_aes_gcm()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_gcm_setkey(&gcm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
-        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
             /* Do not consider this as a failure */
-            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
@@ -601,9 +603,9 @@ MBED_NOINLINE static int benchmark_aes_ccm()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_ccm_setkey(&ccm, MBEDTLS_CIPHER_ID_AES, tmp, keysize);
-        if (ret == MBEDTLS_ERR_AES_FEATURE_UNAVAILABLE) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
             /* Do not consider this as a failure */
-            mbedtls_printf(HEADER_FORMAT "Feature unavailable\n", title);
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
             continue;
         } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_gcm_setkey()");
@@ -695,7 +697,12 @@ MBED_NOINLINE static int benchmark_camellia()
         memset(tmp, 0, sizeof(tmp));
 
         ret = mbedtls_camellia_setkey_enc(&camellia, tmp, keysize);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_camellia_setkey_enc()");
             goto exit;
         }
@@ -742,7 +749,13 @@ MBED_NOINLINE static int benchmark_blowfish()
         memset(buf, 0, sizeof(buf));
         memset(tmp, 0, sizeof(tmp));
 
-        if ((ret = mbedtls_blowfish_setkey(blowfish, tmp, keysize)) != 0) {
+        ret = mbedtls_blowfish_setkey(blowfish, tmp, keysize);
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_blowfish_setkey()");
             goto exit;
         }
@@ -910,7 +923,12 @@ MBED_NOINLINE static int benchmark_rsa()
 
         ret = mbedtls_pk_parse_key(&pk, (const unsigned char *)rsa_keys[i],
                                    strlen(rsa_keys[i]) + 1, NULL, 0);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_pk_parse_key()");
             goto exit;
         }
@@ -982,7 +1000,12 @@ MBED_NOINLINE static int benchmark_dhm()
         dhm.len = mbedtls_mpi_size(&dhm.P);
         ret = mbedtls_dhm_make_public(&dhm, (int) dhm.len, buf, dhm.len,
                                       myrand, NULL);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_dhm_make_public()");
             goto exit;
         }
@@ -1051,14 +1074,6 @@ MBED_NOINLINE static int benchmark_ecdsa()
             curve_info++) {
         mbedtls_ecdsa_init(&ecdsa);
 
-        ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
-        if (ret != 0) {
-            PRINT_ERROR(ret, "mbedtls_ecdsa_genkey()");
-            goto exit;
-        }
-
-        ecp_clear_precomputed(&ecdsa.grp);
-
         ret = mbedtls_snprintf(title, sizeof(title), "ECDSA-%s",
                                curve_info->name);
         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
@@ -1066,6 +1081,19 @@ MBED_NOINLINE static int benchmark_ecdsa()
                            "mbedtls_snprintf(): %d\n", ret);
             goto exit;
         }
+
+        ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
+            PRINT_ERROR(ret, "mbedtls_ecdsa_genkey()");
+            goto exit;
+        }
+
+        ecp_clear_precomputed(&ecdsa.grp);
 
         hash_len = (curve_info->bit_size + 7) / 8;
         BENCHMARK_PUBLIC(title, "sign",
@@ -1084,7 +1112,12 @@ MBED_NOINLINE static int benchmark_ecdsa()
         mbedtls_ecdsa_init(&ecdsa);
 
         ret = mbedtls_ecdsa_genkey(&ecdsa, curve_info->grp_id, myrand, NULL);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecdsa_genkey()");
             goto exit;
         }
@@ -1093,7 +1126,12 @@ MBED_NOINLINE static int benchmark_ecdsa()
         ret = mbedtls_ecdsa_write_signature(&ecdsa, MBEDTLS_MD_SHA256, buf,
                                             hash_len, tmp, &sig_len, myrand,
                                             NULL);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecdsa_write_signature()");
             goto exit;
         }
@@ -1135,25 +1173,15 @@ MBED_NOINLINE static int benchmark_ecdh()
         mbedtls_ecdh_init(&ecdh);
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
             goto exit;
         }
-
-        ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf),
-                                       myrand, NULL);
-        if (ret != 0) {
-            PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
-            goto exit;
-        }
-
-        ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
-        if (ret != 0) {
-            PRINT_ERROR(ret, "mbedtls_ecp_copy()");
-            goto exit;
-        }
-
-        ecp_clear_precomputed(&ecdh.grp);
 
         ret = mbedtls_snprintf(title, sizeof(title), "ECDHE-%s",
                                curve_info->name);
@@ -1162,6 +1190,31 @@ MBED_NOINLINE static int benchmark_ecdh()
                            "mbedtls_snprintf(): %d\n", ret);
             goto exit;
         }
+
+        ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf),
+                                       myrand, NULL);
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
+            PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
+            goto exit;
+        }
+
+        ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
+            PRINT_ERROR(ret, "mbedtls_ecp_copy()");
+            goto exit;
+        }
+
+        ecp_clear_precomputed(&ecdh.grp);
 
         /*
          * Benchmarking this requires two function calls that can fail. We
@@ -1188,40 +1241,61 @@ MBED_NOINLINE static int benchmark_ecdh()
         mbedtls_ecdh_init(&ecdh);
 
         ret = mbedtls_ecp_group_load(&ecdh.grp, curve_info->grp_id);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
+            goto exit;
+        }
+
+        ret = mbedtls_snprintf(title, sizeof(title), "ECDH-%s",
+                                       curve_info->name);
+        if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
+            mbedtls_printf("Failed to compose title string using "
+                           "mbedtls_snprintf(): %d\n", ret);
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
                                        NULL);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
             goto exit;
         }
 
         ret = mbedtls_ecp_copy(&ecdh.Qp, &ecdh.Q);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecp_copy()");
             goto exit;
         }
 
         ret = mbedtls_ecdh_make_public(&ecdh, &olen, buf, sizeof(buf), myrand,
                                        NULL);
-        if (ret != 0) {
+        if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+            /* Do not consider this as a failure */
+            mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+            ret = 0;
+            continue;
+        } else if (ret != 0) {
             PRINT_ERROR(ret, "mbedtls_ecdh_make_public()");
             goto exit;
         }
 
         ecp_clear_precomputed(&ecdh.grp);
 
-        ret = mbedtls_snprintf(title, sizeof(title), "ECDH-%s",
-                               curve_info->name);
-        if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
-            mbedtls_printf("Failed to compose title string using "
-                           "mbedtls_snprintf(): %d\n", ret);
-            goto exit;
-        }
         BENCHMARK_PUBLIC(title, "handshake",
                          ret = mbedtls_ecdh_calc_secret(&ecdh, &olen, buf,
                                  sizeof(buf), myrand,
@@ -1246,15 +1320,32 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
     mbedtls_ecdh_init(&ecdh);
     mbedtls_mpi_init(&z);
 
+    ret = mbedtls_snprintf(title, sizeof(title), "ECDHE-Curve25519");
+    if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
+        mbedtls_printf("Failed to compose title string using "
+                        "mbedtls_snprintf(): %d\n", ret);
+         goto exit;
+     }
+
     ret = mbedtls_ecp_group_load(&ecdh.grp, MBEDTLS_ECP_DP_CURVE25519);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+        ret = 0;
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Qp, myrand,
                                   NULL);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+        ret = 0;
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
@@ -1264,7 +1355,7 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
      * add a check in between them to check for any errors. In normal
      * operation, the overhead of this check is negligible
      */
-    BENCHMARK_PUBLIC("ECDHE-Curve25519", "handshake",
+    BENCHMARK_PUBLIC(title, "handshake",
                      ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d,
                              &ecdh.Q, myrand, NULL);
                      if (ret != 0) {
@@ -1281,25 +1372,46 @@ MBED_NOINLINE static int benchmark_ecdh_curve22519()
     mbedtls_ecdh_init(&ecdh);
     mbedtls_mpi_init(&z);
 
+    ret = mbedtls_snprintf(title, sizeof(title), "ECDH-Curve25519");
+         if (ret < 0 || static_cast<size_t>(ret) >= sizeof(title)) {
+             mbedtls_printf("Failed to compose title string using "
+                            "mbedtls_snprintf(): %d\n", ret);
+             goto exit;
+         }
     ret = mbedtls_ecp_group_load(&ecdh.grp, MBEDTLS_ECP_DP_CURVE25519);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+        ret = 0;
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ecp_group_load()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Qp, myrand, NULL);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+        ret = 0;
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
 
     ret = mbedtls_ecdh_gen_public(&ecdh.grp, &ecdh.d, &ecdh.Q, myrand, NULL);
-    if (ret != 0) {
+    if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {
+        /* Do not consider this as a failure */
+        mbedtls_printf(HEADER_FORMAT "Feature unsupported\n", title);
+        ret = 0;
+        goto exit;
+    } else if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ecdh_gen_public()");
         goto exit;
     }
 
-    BENCHMARK_PUBLIC("ECDH-Curve25519", "handshake",
+    BENCHMARK_PUBLIC(title, "handshake",
                      ret = mbedtls_ecdh_compute_shared(&ecdh.grp, &z,
                              &ecdh.Qp, &ecdh.d,
                              myrand, NULL));
