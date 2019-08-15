@@ -154,7 +154,7 @@ do {                                                                        \
     mbedtls_printf(HEADER_FORMAT, TITLE);                                   \
     fflush(stdout);                                                         \
                                                                             \
-    for (i = 1, alarmed = 0, t.attach(alarm, (s_timestamp_t)1); !alarmed; i++) {           \
+    for (i = 1, alarmed = 0, t.attach_s(alarm, 1); !alarmed; i++) {         \
         ret = CODE;                                                         \
         if (ret == MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED) {              \
             mbedtls_printf("Feature unsupported\n");                        \
