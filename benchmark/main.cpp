@@ -805,22 +805,21 @@ MBED_NOINLINE static int benchmark_ctr_drbg()
     mbedtls_ctr_drbg_context ctr_drbg;
 
     mbedtls_ctr_drbg_init(&ctr_drbg);
-
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
     if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
-
     BENCHMARK_FUNC_CALL(nopr_title,
                         mbedtls_ctr_drbg_random(&ctr_drbg, buf, BUFSIZE));
+    mbedtls_ctr_drbg_free(&ctr_drbg);
 
+    mbedtls_ctr_drbg_init(&ctr_drbg);
     ret = mbedtls_ctr_drbg_seed(&ctr_drbg, myrand, NULL, NULL, 0);
     if (ret != 0) {
         PRINT_ERROR(ret, "mbedtls_ctr_drbg_seed()");
         goto exit;
     }
-
     mbedtls_ctr_drbg_set_prediction_resistance(&ctr_drbg,
             MBEDTLS_CTR_DRBG_PR_ON);
     BENCHMARK_FUNC_CALL(pr_title,
