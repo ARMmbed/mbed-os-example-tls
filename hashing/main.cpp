@@ -37,8 +37,13 @@ static void print_hex(const char *title, const unsigned char buf[], size_t len)
 {
     mbedtls_printf("%s: ", title);
 
-    for (size_t i = 0; i < len; i++)
-        mbedtls_printf("%02x", buf[i]);
+    for (size_t i = 0; i < len; i++) {
+        if (buf[i] < 0xF) {
+            mbedtls_printf("0%x", buf[i]);
+        } else {
+            mbedtls_printf("%x", buf[i]);
+        }
+    }
 
     mbedtls_printf("\n");
 }
