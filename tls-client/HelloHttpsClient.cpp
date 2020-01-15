@@ -110,7 +110,11 @@ int HelloHttpsClient::run()
         return ret;
 
     /* Start a connection to the server */
-    if ((ret = socket.connect(server_addr, server_port)) != NSAPI_ERROR_OK) {
+    SocketAddress saddr;
+    NetworkInterface *network = NetworkInterface::get_default_instance();
+    network->gethostbyname(server_addr, &saddr);
+    saddr.set_port(server_port);
+    if ((ret = socket.connect(saddr)) != NSAPI_ERROR_OK) {
         mbedtls_printf("socket.connect() returned %d\n", ret);
         return ret;
     }
