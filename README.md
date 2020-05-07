@@ -64,3 +64,9 @@ After pressing the **RESET** button on the board, you should be able to observe 
 ## Debugging Mbed TLS
 
 To optionally print out more debug information, edit the `main.cpp` for the sample and change the definition of `DEBUG_LEVEL` (near the top of the file) from 0 to a positive number between 1 and 4.
+
+## License and contributions
+
+The software is provided under Apache-2.0 license. Contributions to this project are accepted under the same license. Please see [contributing.md](CONTRIBUTING.md) for more info.
+
+This project contains code from other projects. The original license text is included in those source files. They must comply with our license guide.
