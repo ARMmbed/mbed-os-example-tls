@@ -1,3 +1,4 @@
+![](./resources/official_armmbed_example_badge.png)
 # Mbed TLS Examples on Mbed OS
 
 This repository contains a collection of Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable.
