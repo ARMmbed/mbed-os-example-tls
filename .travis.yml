@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 Arm Limited. All rights reserved.
+# Copyright (c) 2020 Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -84,9 +84,9 @@ matrix:
         - ccache -s
 
     - <<: *cmake-build-test
-      name: "CMake tls  example - release (K64F)"
+      name: "CMake TLS example - release (K64F)"
       env: NAME=cmake_test TARGET_NAME=K64F PROFILE=release CACHE_NAME=release-K64F
 
     - <<: *cmake-build-test
-      name: "CMake blinky example - debug (K64F)"
+      name: "CMake TLS example - debug (K64F)"
       env: NAME=cmake_test TARGET_NAME=K64F PROFILE=debug CACHE_NAME=debug-K64F

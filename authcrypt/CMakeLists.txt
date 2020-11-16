@@ -26,7 +26,7 @@ target_include_directories(${APP_TARGET}
 
 target_sources(${APP_TARGET}
     PRIVATE
-	authcrypt.cpp
+        authcrypt.cpp
         main.cpp
 )
 
