@@ -1,21 +1,20 @@
 ![](./resources/official_armmbed_example_badge.png)
 # Mbed TLS Examples on Mbed OS
 
-This repository contains a collection of Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable.
+The example project is part of the [Arm Mbed OS Official Examples](https://os.mbed.com/code/). This repository contains a collection of Mbed TLS example applications based on Mbed OS. Each subdirectory contains a separate example meant for building as an executable.
 
 # Getting started
 
 ## Required hardware
-* Any Mbed OS capable development board such as those listed [here](https://os.mbed.com/platforms/), which have an entropy source integrated into Mbed TLS. The single example that does not need an entropy source is `hashing`. The `tls-client` example should also have a network interface supported on your board.
-* A micro-USB cable.
+* Any Mbed OS capable development board such as those listed [here](https://os.mbed.com/platforms/), which have an entropy source integrated into Mbed TLS. The single example that does not need an entropy source is `hashing`. To use the `tls-client` example you should also have a network interface supported on your board.
 
 If your board has no hardware entropy source or its entropy source is not integrated with Mbed TLS, but you want to try these examples anyway, then you may want to consider compiling Mbed TLS without real entropy sources.
 
 *Warning!* Without entropy sources Mbed TLS does not provide any security whatsoever. If you still want to compile Mbed TLS without entropy sources, then consult the section "How to test without entropy sources" in the Mbed TLS Porting Guide.
 
 ## Required software
-* [Mbed CLI](https://github.com/ARMmbed/mbed-cli) - to build the example program. To learn how to build Mbed OS applications with Mbed CLI, see the [user guide](https://github.com/ARMmbed/mbed-cli/blob/master/README.md)
-* [Serial port monitor](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications).
+
+* [Mbed CLI](https://github.com/ARMmbed/mbed-cli) or [Mbed CLI 2](https://github.com/ARMmbed/mbed-tools). This will be used to configure and build the project.
 
 An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.com/compiler/). In this case, you need to import the example projects from [Mbed developer](https://os.mbed.com/) to your Mbed Online Compiler session using the links below:
 * [authcrypt](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-authcrypt)
@@ -23,28 +22,64 @@ An alternative to Mbed CLI is to use the [Mbed Online Compiler](https://os.mbed.
 * [hashing](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-hashing)
 * [tls-client](https://os.mbed.com/teams/mbed-os-examples/code/mbed-os-example-tls-tls-client)
 
+## Mbed OS build tools
+
+### Mbed CLI 2
+Starting with version 6.5, Mbed OS uses Mbed CLI 2. It uses Ninja as a build system, and CMake to generate the build environment and manage the build process in a compiler-independent manner. If you are working with Mbed OS version prior to 6.5 then check the section [Mbed CLI 1](#mbed-cli-1).
+
+[Install Mbed CLI 2](https://os.mbed.com/docs/mbed-os/latest/build-tools/install-or-upgrade.html)
+
+### Mbed CLI 1
+[Install Mbed CLI 1](https://os.mbed.com/docs/mbed-os/latest/quick-start/offline-with-mbed-cli.html)
+
 ## Building and running the examples
 
-The following example shows how to build and run on FRDM-K64F, but it should work on any Mbed OS capable device.
-
 1. Clone the repository containing the collection of examples:
-    ```
+    ```bash
     $ git clone https://github.com/ARMmbed/mbed-os-example-tls
     ```
 
 1. Open a command line tool and navigate to one of the project’s subdirectories.
 
-1. Update `mbed-os` sources using the `mbed deploy` command.
+1. Update the source tree:
 
-1. Build the application by selecting the board and build toolchain using the command `mbed compile -m K64F -t GCC_ARM`. mbed-cli builds a binary file under the project’s `BUILD` directory.
+    * Mbed CLI 2
+    ```bash
+    $ mbed-tools deploy
+    ```
 
-1. Connect the FRDM-K64F to the computer with the micro-USB cable, being careful to use the **OpenSDA** connector on the target board. The board is listed as a mass-storage device.
+    * Mbed CLI 1
+    ```bash
+    $ mbed deploy
+    ```
 
-1. Drag the binary `BUILD/K64F/GCC_ARM/<EXAMPLE>.bin` to the board to flash the application.
+1. Connect a USB cable between the USB port on the board and the host computer.
+1. Run the following command to build the example project, program the microcontroller flash memory, and open a serial terminal to the device:
 
-1. The board is automatically programmed with the new binary. A flashing LED on it indicates that it is still working. When the LED stops blinking, the board is ready to work.
+    * Mbed CLI 2
+
+    ```bash
+    $ mbed-tools compile -m <TARGET> -t <TOOLCHAIN> --flash --sterm
+    ```
+
+    * Mbed CLI 1
+
+    ```bash
+    $ mbed compile -m <TARGET> -t <TOOLCHAIN> --flash --sterm
+    ```
 
 1. Press the **RESET** button on the board to run the program.
+
+
+Your PC may take a few minutes to compile your code.
+
+The binary will be located in the following directory:
+* **Mbed CLI 2** - `./cmake_build/<TARGET>/develop/<TOOLCHAIN>/`
+* **Mbed CLI 1** - `./BUILD/<TARGET>/<TOOLCHAIN>/`
+
+You can manually copy the binary to the target, which gets mounted on the host computer through USB, rather than using the `--flash` option.
+
+You can also open a serial terminal separately, as explained below, rather than using the `--sterm` option.
 
 ## Monitoring the application
 
@@ -54,11 +89,26 @@ Please browse the subdirectories for specific documentation.
 * [hashing](./hashing/README.md): performs hashing of a buffer with SHA-256 using various APIs.
 * [tls-client](./tls-client/README.md): downloads a file from an HTTPS server (os.mbed.com) and looks for a specific string in that file.
 
-The application prints debug messages over the serial port, so you can monitor its activity with a serial terminal emulator. Start the [serial terminal emulator](https://os.mbed.com/handbook/Terminals) and connect to the [virtual serial port](https://os.mbed.com/handbook/SerialPC#host-interface-and-terminal-applications) presented by your board. Use the following settings:
+The application prints debug messages over the serial port, so you can monitor its activity with a
+serial terminal emulator. The default serial baudrate has been set to 9600 for these examples.
+If not using the `--sterm` option when flashing, have a client open and connected to board. You may use:
 
-* 9600 baud.
-* 8N1.
-* No flow control.
+- Mbed CLI 2 
+    ```bash
+    $ mbed-tools sterm
+    ```
+
+- Mbed CLI 1
+    ```bash
+    $ mbed sterm
+    ```
+
+- [Tera Term](https://ttssh2.osdn.jp/index.html.en) for Windows
+
+- screen or minicom for Linux
+    ```bash
+    $ screen /dev/serial/<your board> 9600
+    ```
 
 After pressing the **RESET** button on the board, you should be able to observe the application's output.
 
