@@ -80,7 +80,7 @@ matrix:
         - pip install "intelhex>=1.3,<=2.2.1"
       script:
         - examples=( authcrypt benchmark hashing tls-client ) ;
-        - for i in "${examples[@]}" ; do cd $i ; echo cd $i ; mbedtools checkout ; echo mbedtools build -t GCC_ARM -m ${TARGET_NAME} -b ${PROFILE} ; mbedtools build -t GCC_ARM -m ${TARGET_NAME} -b ${PROFILE} || exit 1 ; cd .. ; done
+        - for i in "${examples[@]}" ; do cd $i ; echo cd $i ; mbedtools deploy ; echo mbedtools compile -t GCC_ARM -m ${TARGET_NAME} -b ${PROFILE} ; mbedtools compile -t GCC_ARM -m ${TARGET_NAME} -b ${PROFILE} || exit 1 ; cd .. ; done
         - ccache -s
 
     - <<: *cmake-build-test
