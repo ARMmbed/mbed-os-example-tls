@@ -22,7 +22,7 @@ target_include_directories(${APP_TARGET}
 
 target_sources(${APP_TARGET}
     PRIVATE
-        main.cpp
+        benchmark.c
 )
 
 target_link_libraries(${APP_TARGET}
