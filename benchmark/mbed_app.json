@@ -4,7 +4,8 @@
     ],
     "target_overrides": {
         "*": {
-             "platform.stdio-convert-newlines": true
+            "rtos.main-thread-stack-size": 32768,
+            "platform.stdio-convert-newlines": true
         }
     }
 }
