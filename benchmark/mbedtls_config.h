@@ -89,10 +89,22 @@
 #define MBEDTLS_RSA_C
 #endif
 
+#if !defined(MBEDTLS_GENPRIME)
+#define MBEDTLS_GENPRIME
+#endif
+
 #if !defined(MBEDTLS_ECDSA_C)
 #define MBEDTLS_ECDSA_C
 #endif
 
 #if !defined(MBEDTLS_ECDH_C)
 #define MBEDTLS_ECDH_C
+#endif
+
+#if !defined(MBEDTLS_TIMING_C)
+#define MBEDTLS_TIMING_C
+#endif
+
+#if !defined(MBEDTLS_TIMING_ALT)
+#define MBEDTLS_TIMING_ALT
 #endif
