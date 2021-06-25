@@ -12,4 +12,4 @@ You can also compile this example with the [Mbed Online Compiler](https://os.mbe
 
 See [../tests/benchmark.log](../tests/benchmark.log) for expected output.
 
-**Note**: This application can takes several minutes to 20 minutes to finish.
+**Note**: This application can take several minutes to 20 minutes to finish.
