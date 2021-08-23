@@ -9,12 +9,11 @@ set(APP_TARGET hashing)
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
 
+project(${APP_TARGET})
+
 add_subdirectory(${MBED_PATH})
 
 add_executable(${APP_TARGET})
-
-project(${APP_TARGET})
-
 
 target_sources(${APP_TARGET}
     PRIVATE
