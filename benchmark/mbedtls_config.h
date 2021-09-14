@@ -17,10 +17,6 @@
  *  This file is part of Mbed TLS (https://tls.mbed.org)
  */
 
-#if !defined(MBEDTLS_MD4_C)
-#define MBEDTLS_MD4_C
-#endif
-
 #if !defined(MBEDTLS_MD5_C)
 #define MBEDTLS_MD5_C
 #endif
@@ -39,10 +35,6 @@
 
 #if !defined(MBEDTLS_SHA512_C)
 #define MBEDTLS_SHA512_C
-#endif
-
-#if !defined(MBEDTLS_ARC4_C)
-#define MBEDTLS_ARC4_C
 #endif
 
 #if !defined(MBEDTLS_DES_C)
@@ -71,10 +63,6 @@
 
 #if !defined(MBEDTLS_CAMELLIA_C)
 #define MBEDTLS_CAMELLIA_C
-#endif
-
-#if !defined(MBEDTLS_BLOWFISH_C)
-#define MBEDTLS_BLOWFISH_C
 #endif
 
 #if !defined(MBEDTLS_CTR_DRBG_C)
