@@ -1,10 +1,8 @@
-\s+MD4\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+MD5\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+RIPEMD160\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+SHA-1\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+SHA-256\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+SHA-512\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
-\s+ARC4\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+3DES\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+DES\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+3DES-CMAC\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
@@ -27,9 +25,6 @@
 \s+CAMELLIA-CBC-256\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+ChaCha20\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+Poly1305\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
-\s+BLOWFISH-CBC-128\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
-\s+BLOWFISH-CBC-192\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
-\s+BLOWFISH-CBC-256\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+CTR_DRBG \(NOPR\)\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+CTR_DRBG \(PR\)\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
 \s+HMAC_DRBG SHA-1 \(NOPR\)\s*:\s*\d+ KiB/s,\s*\d+ cycles/byte
