@@ -1,0 +1,57 @@
+name: Build example application
+
+on:
+  pull_request:
+  push:
+
+jobs: 
+  build-cli-v1:
+    container:
+      image: ghcr.io/armmbed/mbed-os-env:master-latest
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [K64F]
+        profile: [release, debug, develop]
+        example: [authcrypt, benchmark, hashing, tls-client]
+        
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+          
+      -
+        name: build-example
+        run: |
+          set -e
+          cd ${{ matrix.example }}
+          mbed deploy
+          mbed compile -t GCC_ARM -m ${{ matrix.target }} --profile ${{ matrix.profile }}
+          
+
+  build-cli-v2:
+    container:
+      image: ghcr.io/armmbed/mbed-os-env:master-latest
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [K64F]
+        profile: [release, debug, develop]
+        example: [authcrypt, benchmark, hashing, tls-client]
+        
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+          
+      -
+        name: build-example-application
+        run: |
+          set -e
+          cd ${{ matrix.example }}
+          mbed-tools deploy
+          mbed-tools compile -t GCC_ARM -m ${{ matrix.target }} --profile ${{ matrix.profile }}
