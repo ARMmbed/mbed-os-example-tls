@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        target: [K64F]
+        target: [K64F, ARM_MUSCA_S1]
         profile: [release, debug, develop]
         example: [authcrypt, benchmark, hashing, tls-client]
         
@@ -39,7 +39,7 @@ jobs:
 
     strategy:
       matrix:
-        target: [K64F]
+        target: [K64F, ARM_MUSCA_S1]
         profile: [release, debug, develop]
         example: [authcrypt, benchmark, hashing, tls-client]
         
