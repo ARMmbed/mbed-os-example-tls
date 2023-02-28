@@ -10,10 +10,9 @@ You can also compile this example with the [Mbed Online Compiler](https://os.mbe
 
 ## Requirements
 
-This example uses by default an Ethernet connection to the internet.
-It's possible to switch to another network interface by using [Easy Connect](https://github.com/ARMmbed/easy-connect/blob/master/README.md). The [Mbed OS Example Client](https://github.com/ARMmbed/mbed-os-example-client#application-setup) application shows an example of how to configure other network interfaces.
+This example uses the default network connection available to the target development board. Where that board uses ethernet, no further configuration is necessary, but where the board uses Wifi, the SSID, password and WiFi security protocol will need to be defined in your `mbed_app.json` file.
 
-The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. This would result in compile time or linking failures.
+The networking stack used in this example requires TLS functionality to be enabled on Mbed TLS. On devices where hardware entropy is not present, TLS is disabled by default. Building the example withou an entropy source will result in a build time failure.
 
 To learn why entropy is required, read the [TLS Porting guide](https://docs.mbed.com/docs/mbed-os-handbook/en/latest/advanced/tls_porting/).
 
@@ -25,41 +24,40 @@ The output in the terminal window should be similar to this:
 
 ```
 Starting mbed-os-example-tls/tls-client
-Using Mbed OS 5.6.3
-[EasyConnect] IPv4 mode
+Using Mbed OS 5.11.5
 Successfully connected to os.mbed.com at port 443
 Starting the TLS handshake...
 Successfully completed the TLS handshake
 Server certificate:
   cert. version     : 3
-  serial number     : 65:7B:6D:8D:15:A5:B6:86:87:6B:5E:BC
-  issuer name       : C=BE, O=GlobalSign nv-sa, CN=GlobalSign Organization Validation CA - SHA256 - G2
-  subject name      : C=GB, ST=Cambridgeshire, L=Cambridge, O=ARM Ltd, CN=*.mbed.com
-  issued  on        : 2017-04-03 13:54:02
-  expires on        : 2018-05-06 10:31:02
+  serial number     : 09:48:30:25:4C:0E:DD:47:E3:73:A7:AE:17:AE:1A:92
+  issuer name       : C=US, O=Amazon, OU=Server CA 1B, CN=Amazon
+  subject name      : CN=*.mbed.com
+  issued  on        : 2019-01-31 00:00:00
+  expires on        : 2020-02-29 12:00:00
   signed using      : RSA with SHA-256
   RSA key size      : 2048 bits
   basic constraints : CA=false
-  subject alt name  : *.mbed.com, mbed.org, *.mbed.org, mbed.com
+  subject alt name  : *.mbed.com, mbed.com, *.mbed.org, mbed.org, *.core.mbed.cm
   key usage         : Digital Signature, Key Encipherment
-  ext key usage     : TLS Web Server Authentication, TLS Web Client Authentication
+  ext key usage     : TLS Web Server Authentication, TLS Web Client Authenticatn
 
 Certificate verification passed
 Established TLS connection to os.mbed.com
-HTTP: Received 365 chars from server
+HTTP: Received 320 chars from server
 HTTP: Received '200 OK' status ... OK
 HTTP: Received message:
 HTTP/1.1 200 OK
-Server: nginx/1.11.10
-Date: Wed, 08 Nov 2017 09:07:59 GMT
-Content-Type: text/plain
-Content-Length: 14
-Connection: keep-alive
-Last-Modified: Fri, 27 Jul 2012 13:30:34 GMT
 Accept-Ranges: bytes
 Cache-Control: max-age=36000
-Expires: Wed, 08 Nov 2017 19:07:59 GMT
-Strict-Transport-Security: max-age=31536000; includeSubdomains
+Content-Type: text/plain
+Date: Wed, 24 Apr 2019 18:57:54 GMT
+ETag: "5bf0036d-e"
+Expires: Thu, 25 Apr 2019 04:57:54 GMT
+Last-Modified: Sat, 17 Nov 2018 12:02:53 GMT
+Server: nginx/1.15.6
+Content-Length: 14
+Connection: keep-alive
 
 Hello world!
 
